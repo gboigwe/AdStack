@@ -10,6 +10,11 @@ path = 'contracts/ad-content-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.analytics-aggregator]
+path = 'contracts/analytics-aggregator.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.campaign-manager]
 path = 'contracts/campaign-manager.clar'
 clarity_version = 2
