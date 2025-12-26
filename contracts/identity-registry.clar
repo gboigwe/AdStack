@@ -1,5 +1,5 @@
-;; user-registry.clar
-;; Advanced user management and profile system
+;; identity-registry.clar
+;; Advanced identity management and profile system
 ;; Version: 1.0.0
 
 ;; ============================================

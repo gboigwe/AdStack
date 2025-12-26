@@ -1,5 +1,5 @@
-;; view-verifier.clar
-;; Advanced view verification and fraud prevention system for ad campaigns
+;; fraud-prevention.clar
+;; Advanced fraud prevention and view verification system for ad campaigns
 ;; Version: 1.0.0
 
 ;; ============================================

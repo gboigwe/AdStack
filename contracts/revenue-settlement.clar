@@ -1,5 +1,5 @@
-;; payment-distributor.clar
-;; Complete payment distribution system with advanced security and validation
+;; revenue-settlement.clar
+;; Complete revenue settlement system with advanced security and validation
 ;; Version: 1.0.0
 
 ;; ============================================

@@ -20,8 +20,8 @@ path = 'contracts/auction-system.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.campaign-manager]
-path = 'contracts/campaign-manager.clar'
+[contracts.campaign-orchestrator]
+path = 'contracts/campaign-orchestrator.clar'
 clarity_version = 4
 epoch = 'latest'
 
@@ -45,8 +45,8 @@ path = 'contracts/oracle-integration.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.payment-distributor]
-path = 'contracts/payment-distributor.clar'
+[contracts.revenue-settlement]
+path = 'contracts/revenue-settlement.clar'
 clarity_version = 4
 epoch = 'latest'
 
@@ -70,13 +70,13 @@ path = 'contracts/targeting-engine.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.user-registry]
-path = 'contracts/user-registry.clar'
+[contracts.identity-registry]
+path = 'contracts/identity-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.view-verifier]
-path = 'contracts/view-verifier.clar'
+[contracts.fraud-prevention]
+path = 'contracts/fraud-prevention.clar'
 clarity_version = 4
 epoch = 'latest'
 [repl.analysis]

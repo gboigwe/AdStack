@@ -1,5 +1,5 @@
-;; campaign-manager.clar
-;; Advanced decentralized advertising campaign management system
+;; campaign-orchestrator.clar
+;; Advanced decentralized advertising campaign orchestration system
 ;; Version: 1.0.0
 
 ;; ============================================
