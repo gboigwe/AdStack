@@ -1,5 +1,5 @@
-;; payment-distributor.clar
-;; Complete payment distribution system with advanced security and validation
+;; revenue-settlement.clar
+;; Complete revenue settlement system with advanced security and validation
 ;; Version: 1.0.0
 
 ;; ============================================
@@ -167,8 +167,8 @@
 )
 
 (define-private (check-daily-limit (address principal) (amount uint))
-    (let 
-        ((current-day (/ block-height u144))
+    (let
+        ((current-day (/ stacks-block-time u86400))
          (limit-data (default-to 
             { tx-count: u0, total-amount: u0, last-tx-height: u0 } 
             (map-get? daily-limits { address: address, day: current-day }))))
@@ -181,8 +181,8 @@
 )
 
 (define-private (update-daily-limit (address principal) (amount uint))
-    (let 
-        ((current-day (/ block-height u144))
+    (let
+        ((current-day (/ stacks-block-time u86400))
          (limit-data (default-to 
             { tx-count: u0, total-amount: u0, last-tx-height: u0 } 
             (map-get? daily-limits { address: address, day: current-day }))))
@@ -192,7 +192,7 @@
             {
                 tx-count: (+ (get tx-count limit-data) u1),
                 total-amount: (+ (get total-amount limit-data) amount),
-                last-tx-height: block-height
+                last-tx-height: stacks-block-time
             }
         )
     )
@@ -202,7 +202,7 @@
     (match (map-get? revenue-pools { pool-id: pool-id })
         pool (and
             (is-eq (get status pool) "active")
-            (< block-height (get end-height pool))
+            (< stacks-block-time (get end-height pool))
             (> (get remaining-amount pool) u0)
         )
         false
@@ -218,7 +218,7 @@
             total-earned: u0,
             reward-points: u0,
             tier: "bronze",
-            last-activity: block-height,
+            last-activity: stacks-block-time,
             total-claims: u0,
             pending-claims: u0,
             status: "active"
@@ -239,7 +239,7 @@
                 balance: (+ (get balance existing-data) amount),
                 total-earned: (+ (get total-earned existing-data) amount),
                 reward-points: (+ (get reward-points existing-data) points),
-                last-activity: block-height
+                last-activity: stacks-block-time
             })
         )
         (initialize-publisher-account publisher)
