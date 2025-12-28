@@ -1,5 +1,5 @@
-;; user-registry.clar
-;; Advanced user management and profile system
+;; identity-registry.clar
+;; Advanced identity management and profile system
 ;; Version: 1.0.0
 
 ;; ============================================
@@ -173,7 +173,7 @@
                 total-campaigns: (+ (get total-campaigns existing-stats) campaigns),
                 total-spent: (+ (get total-spent existing-stats) spent),
                 total-earned: (+ (get total-earned existing-stats) earned),
-                last-updated: block-height
+                last-updated: stacks-block-time
             })
         )
         (map-set user-stats
@@ -184,7 +184,7 @@
                 total-earned: earned,
                 reputation-score: u100,
                 activity-score: u0,
-                last-updated: block-height
+                last-updated: stacks-block-time
             }
         )
     )
@@ -218,10 +218,10 @@
             {
                 status: STATUS-ACTIVE,
                 roles: (list profile-type),
-                join-height: block-height,
-                last-active: block-height,
+                join-height: stacks-block-time,
+                last-active: stacks-block-time,
                 verification-status: VERIFICATION-PENDING,
-                verification-expires: (+ block-height verification-duration),
+                verification-expires: (+ stacks-block-time verification-duration),
                 profiles-count: u1,
                 metadata: metadata
             }
@@ -274,8 +274,8 @@
                         url: ""
                     }
                 ),
-                created-at: block-height,
-                updated-at: block-height,
+                created-at: stacks-block-time,
+                updated-at: stacks-block-time,
                 status: STATUS-ACTIVE
             }
         )
@@ -285,7 +285,7 @@
             { user-id: user }
             (merge user-data {
                 profiles-count: (+ (get profiles-count user-data) u1),
-                last-active: block-height
+                last-active: stacks-block-time
             })
         )
         
@@ -312,7 +312,7 @@
                 { user-id: user-id }
                 (merge user-data {
                     status: new-status,
-                    last-active: block-height
+                    last-active: stacks-block-time
                 })
             ))
             ERR-not-found
@@ -335,8 +335,8 @@
                 verifier: tx-sender,
                 verification-type: verification-type,
                 verification-data: verification-data,
-                verified-at: block-height,
-                expires-at: (+ block-height verification-duration),
+                verified-at: stacks-block-time,
+                expires-at: (+ stacks-block-time verification-duration),
                 status: VERIFICATION-VERIFIED
             }
         )
@@ -349,7 +349,7 @@
                     { user-id: user-id }
                     (merge user-data {
                         verification-status: VERIFICATION-VERIFIED,
-                        verification-expires: (+ block-height verification-duration)
+                        verification-expires: (+ stacks-block-time verification-duration)
                     })
                 )
                 true

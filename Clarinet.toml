@@ -10,10 +10,20 @@ path = 'contracts/ad-content-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.campaign-manager]
-path = 'contracts/campaign-manager.clar'
-clarity_version = 2
-epoch = '2.5'
+[contracts.analytics-aggregator]
+path = 'contracts/analytics-aggregator.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.auction-system]
+path = 'contracts/auction-system.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.campaign-orchestrator]
+path = 'contracts/campaign-orchestrator.clar'
+clarity_version = 4
+epoch = 'latest'
 
 [contracts.dispute-resolution]
 path = 'contracts/dispute-resolution.clar'
@@ -25,13 +35,33 @@ path = 'contracts/escrow-manager.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.payment-distributor]
-path = 'contracts/payment-distributor.clar'
-clarity_version = 2
-epoch = '2.5'
+[contracts.governance-dao]
+path = 'contracts/governance-dao.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.oracle-integration]
+path = 'contracts/oracle-integration.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.revenue-settlement]
+path = 'contracts/revenue-settlement.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.publisher-network]
+path = 'contracts/publisher-network.clar'
+clarity_version = 4
+epoch = 'latest'
 
 [contracts.rewards-distributor]
 path = 'contracts/rewards-distributor.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.subscription-manager]
+path = 'contracts/subscription-manager.clar'
 clarity_version = 4
 epoch = 'latest'
 
@@ -40,15 +70,15 @@ path = 'contracts/targeting-engine.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.user-registry]
-path = 'contracts/user-registry.clar'
-clarity_version = 2
-epoch = '2.5'
+[contracts.identity-registry]
+path = 'contracts/identity-registry.clar'
+clarity_version = 4
+epoch = 'latest'
 
-[contracts.view-verifier]
-path = 'contracts/view-verifier.clar'
-clarity_version = 2
-epoch = '2.5'
+[contracts.fraud-prevention]
+path = 'contracts/fraud-prevention.clar'
+clarity_version = 4
+epoch = 'latest'
 [repl.analysis]
 passes = ['check_checker']
 
