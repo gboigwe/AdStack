@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "@stacks/blockchain-api-client": "^8.13.6",
-    "@stacks/connect": "^8.2.4",
+    "@stacks/connect": "^8.2.5",
     "@stacks/network": "^7.3.1",
     "@stacks/transactions": "^7.3.1",
+    "@stacks/common": "^7.3.1",
     "@tanstack/react-query": "^5.90.12",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
