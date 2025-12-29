@@ -5,10 +5,16 @@ A decentralized advertising platform built on Stacks blockchain with **Stacks.js
 ## Features
 
 - **Stacks.js v7+ Integration**: Full support for latest Stacks SDK
+- **Reown AppKit (WalletConnect v2)**: Multi-wallet support with 5+ Stacks wallets
 - **Clarity v4 Contracts**: Leveraging `stacks-block-time` for Unix timestamps
 - **Type-Safe**: Complete TypeScript definitions for all contract interactions
 - **React Query**: Automatic caching and state management
-- **Wallet Integration**: Seamless Stacks wallet connection
+- **Multi-Wallet Support**: Leather, Xverse, Hiro, BOOM, OKX wallets
+- **Mobile-Responsive**: Touch-optimized UI with wallet deep linking
+- **Session Persistence**: Auto-reconnect on page reload
+- **Transaction History**: View all wallet transactions with filtering
+- **NFT Gallery**: Portfolio viewer with grid and list views
+- **Wallet Analytics**: Track connections and user behavior
 - **Error Handling**: User-friendly error messages
 - **Post-Conditions**: Transaction safety guarantees
 
@@ -48,6 +54,23 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
+### Configuration
+
+Create a `.env.local` file from the example:
+
+```bash
+cp .env.example .env.local
+```
+
+Get a WalletConnect Project ID:
+1. Visit [Reown Cloud](https://cloud.reown.com/)
+2. Create a new project
+3. Add your Project ID to `.env.local`:
+
+```bash
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id_here
+```
+
 ### Build
 
 ```bash
@@ -80,6 +103,28 @@ src/
     ├── clarity-v4.ts   # Clarity type definitions
     └── contracts.ts    # Contract interfaces
 ```
+
+## Wallet Integration
+
+This project uses **Reown AppKit** (formerly WalletConnect) for multi-wallet support on Stacks. See [REOWN_APPKIT_INTEGRATION.md](./REOWN_APPKIT_INTEGRATION.md) for:
+
+- Multi-wallet setup (Leather, Xverse, Hiro, BOOM, OKX)
+- Mobile wallet deep linking
+- Session persistence
+- Transaction history
+- NFT gallery
+- Analytics tracking
+- Best practices and troubleshooting
+
+### Supported Wallets
+
+| Wallet | Desktop | Mobile |
+|--------|---------|--------|
+| Leather | ✅ | ✅ |
+| Xverse | ✅ | ✅ |
+| Hiro | ✅ | ❌ |
+| BOOM | ❌ | ✅ |
+| OKX | ✅ | ✅ |
 
 ## Stacks.js v7+ Migration
 
@@ -156,8 +201,10 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
 
 ## Resources
 
+- [Reown AppKit Docs](https://docs.reown.com/appkit)
 - [Stacks.js v7 Docs](https://docs.hiro.so/stacks.js)
 - [Clarity v4 Reference](https://docs.stacks.co/clarity)
+- [Stacks Wallets](https://www.stacks.co/explore/wallets)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Query Docs](https://tanstack.com/query)
 
