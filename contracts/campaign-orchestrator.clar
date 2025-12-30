@@ -279,6 +279,250 @@
     )
 )
 
+;; Bulk Operations
+
+;; Bulk create campaigns (up to 5 campaigns per transaction)
+(define-private (create-single-campaign
+    (campaign-data {
+        campaign-type: uint,
+        budget: uint,
+        cost-per-view: uint,
+        duration: uint,
+        target-views: uint,
+        daily-view-limit: uint,
+        targeting-data: (optional (string-utf8 500)),
+        refundable: bool
+    }))
+    (let
+        (
+            (campaign-type (get campaign-type campaign-data))
+            (budget (get budget campaign-data))
+            (cost-per-view (get cost-per-view campaign-data))
+            (duration (get duration campaign-data))
+            (target-views (get target-views campaign-data))
+            (daily-view-limit (get daily-view-limit campaign-data))
+            (targeting-data (get targeting-data campaign-data))
+            (refundable (get refundable campaign-data))
+            (campaign-id (+ (var-get campaign-counter) u1))
+            (start-block stacks-block-height)
+            (end-block (+ stacks-block-height duration))
+            (platform-fee (calculate-platform-fee budget))
+            (campaign-type-data (unwrap! (map-get? CampaignTypes { type-id: campaign-type }) ERR-INVALID-PARAMS))
+        )
+        ;; Validations
+        (asserts! (>= budget (get min-budget campaign-type-data)) ERR-INVALID-PARAMS)
+        (asserts! (and
+            (>= duration (get min-duration campaign-type-data))
+            (<= duration (get max-duration campaign-type-data))) ERR-INVALID-PARAMS)
+
+        ;; Create campaign
+        (map-set Campaigns
+            { campaign-id: campaign-id }
+            {
+                advertiser: tx-sender,
+                campaign-type: campaign-type,
+                budget: budget,
+                remaining-budget: budget,
+                cost-per-view: cost-per-view,
+                start-height: start-block,
+                end-height: end-block,
+                status: "active",
+                target-views: target-views,
+                current-views: u0,
+                daily-view-limit: daily-view-limit,
+                targeting-data: targeting-data,
+                refundable: refundable,
+                platform-fee: platform-fee,
+                created-at: stacks-block-time,
+                last-updated: stacks-block-time
+            }
+        )
+
+        ;; Update platform fees
+        (var-set total-platform-fees (+ (var-get total-platform-fees) platform-fee))
+
+        ;; Update advertiser stats
+        (update-advertiser-stats tx-sender campaign-id budget)
+
+        ;; Increment campaign counter
+        (var-set campaign-counter campaign-id)
+
+        ;; Return campaign details
+        (ok {
+            campaign-id: campaign-id,
+            platform-fee: platform-fee,
+            start-height: start-block,
+            end-height: end-block
+        })
+    )
+)
+
+(define-public (bulk-create-campaigns
+    (campaigns (list 5 {
+        campaign-type: uint,
+        budget: uint,
+        cost-per-view: uint,
+        duration: uint,
+        target-views: uint,
+        daily-view-limit: uint,
+        targeting-data: (optional (string-utf8 500)),
+        refundable: bool
+    })))
+    (let
+        (
+            (total-campaigns (len campaigns))
+            (total-budget u0)
+            (total-fees u0)
+        )
+        (asserts! (> total-campaigns u0) ERR-INVALID-PARAMS)
+
+        ;; Process all campaign creations - each will validate individually
+        (let ((results (map create-single-campaign campaigns)))
+            (print {
+                event: "bulk-campaigns-created",
+                advertiser: tx-sender,
+                total-campaigns: total-campaigns,
+                timestamp: stacks-block-time
+            })
+            (ok {
+                total-campaigns: total-campaigns,
+                results: results
+            })
+        )
+    )
+)
+
+;; Bulk record views (up to 10 views per transaction)
+(define-private (record-single-view
+    (view-data {
+        campaign-id: uint,
+        publisher: principal,
+        view-proof: (optional (buff 32))
+    }))
+    (let
+        (
+            (campaign-id (get campaign-id view-data))
+            (publisher (get publisher view-data))
+            (view-proof (get view-proof view-data))
+            (campaign (unwrap! (map-get? Campaigns { campaign-id: campaign-id }) ERR-NOT-FOUND))
+            (publisher-data (unwrap! (map-get? VerifiedPublishers { publisher: publisher })
+                                   ERR-PUBLISHER-NOT-VERIFIED))
+        )
+        ;; Comprehensive validation
+        (asserts! (is-verified-publisher publisher) ERR-PUBLISHER-NOT-VERIFIED)
+        (asserts! (is-eq (get status campaign) "active") ERR-CAMPAIGN-PAUSED)
+        (asserts! (<= stacks-block-height (get end-height campaign)) ERR-CAMPAIGN-EXPIRED)
+        (asserts! (>= (get remaining-budget campaign) (get cost-per-view campaign))
+                 ERR-INSUFFICIENT-FUNDS)
+        (asserts! (check-daily-view-limit campaign-id) ERR-VIEW-LIMIT-REACHED)
+
+        ;; Process payment (in production)
+        ;; (try! (as-contract (stx-transfer? (get cost-per-view campaign) tx-sender publisher)))
+
+        ;; Update campaign stats
+        (try! (update-campaign-stats campaign-id))
+
+        ;; Update daily views
+        (asserts! (update-daily-views campaign-id) ERR-NOT-FOUND)
+
+        ;; Update publisher stats
+        (try! (update-publisher-stats publisher (get cost-per-view campaign)))
+
+        ;; Return view details
+        (ok {
+            campaign-id: campaign-id,
+            publisher: publisher,
+            amount-paid: (get cost-per-view campaign),
+            timestamp: stacks-block-time
+        })
+    )
+)
+
+(define-public (bulk-record-views
+    (views (list 10 {
+        campaign-id: uint,
+        publisher: principal,
+        view-proof: (optional (buff 32))
+    })))
+    (let
+        (
+            (total-views (len views))
+            (total-amount u0)
+        )
+        (asserts! (> total-views u0) ERR-INVALID-PARAMS)
+
+        ;; Process all view recordings - each will validate individually
+        (let ((results (map record-single-view views)))
+            (print {
+                event: "bulk-views-recorded",
+                recorder: tx-sender,
+                total-views: total-views,
+                timestamp: stacks-block-time
+            })
+            (ok {
+                total-views: total-views,
+                results: results
+            })
+        )
+    )
+)
+
+;; Bulk verify publishers (admin only, up to 10 publishers per transaction)
+(define-private (verify-single-publisher
+    (publisher-data {publisher: principal, initial-score: uint}))
+    (let
+        (
+            (publisher (get publisher publisher-data))
+            (initial-score (get initial-score publisher-data))
+        )
+        ;; Validate score range
+        (asserts! (and (>= initial-score u0) (<= initial-score u100)) ERR-INVALID-PARAMS)
+
+        (map-set VerifiedPublishers
+            { publisher: publisher }
+            {
+                verified: true,
+                reputation-score: initial-score,
+                total-earnings: u0,
+                join-height: stacks-block-time,
+                last-active: stacks-block-time
+            }
+        )
+
+        ;; Return verification details
+        (ok {
+            publisher: publisher,
+            initial-score: initial-score,
+            verified-at: stacks-block-time
+        })
+    )
+)
+
+(define-public (bulk-verify-publishers
+    (publishers (list 10 {publisher: principal, initial-score: uint})))
+    (let
+        (
+            (total-publishers (len publishers))
+        )
+        (asserts! (is-contract-owner) ERR-NOT-AUTHORIZED)
+        (asserts! (> total-publishers u0) ERR-INVALID-PARAMS)
+
+        ;; Process all publisher verifications
+        (let ((results (map verify-single-publisher publishers)))
+            (print {
+                event: "bulk-publishers-verified",
+                admin: tx-sender,
+                total-publishers: total-publishers,
+                timestamp: stacks-block-time
+            })
+            (ok {
+                total-publishers: total-publishers,
+                results: results
+            })
+        )
+    )
+)
+
 ;; ============================================
 ;; Read-Only Functions
 ;; ============================================
@@ -286,10 +530,10 @@
 ;; Get Campaign Details with Performance Metrics
 (define-read-only (get-campaign-metrics (campaign-id uint))
     (match (map-get? Campaigns { campaign-id: campaign-id })
-        campaign 
+        campaign
         (let
             ((total-spent (- (get budget campaign) (get remaining-budget campaign)))
-             (completion-rate (/ (* (get current-views campaign) u100) 
+             (completion-rate (/ (* (get current-views campaign) u100)
                                (get target-views campaign))))
         (ok {
             campaign: campaign,
