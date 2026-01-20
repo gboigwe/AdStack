@@ -1,17 +1,51 @@
-
 {
-  "name": "AdStack-tests",
+  "name": "adstack",
   "version": "1.0.0",
-  "description": "Run unit tests on this project.",
-  "type": "module",
+  "description": "Decentralized advertising protocol built on the Stacks blockchain for transparent, efficient, and user-centric advertising ecosystem",
   "private": true,
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
+    "install:all": "npm install && cd frontend && npm install",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "preview:frontend": "cd frontend && npm run preview",
+    "lint:frontend": "cd frontend && npm run lint",
     "test": "vitest run",
     "test:report": "vitest run -- --coverage --costs",
-    "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\""
+    "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\"",
+    "clarinet:check": "clarinet check",
+    "clarinet:test": "clarinet test",
+    "clarinet:console": "clarinet console",
+    "clarinet:integrate": "clarinet integrate"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdekunleBamz/AdStack.git"
+  },
+  "keywords": [
+    "stacks",
+    "clarity",
+    "blockchain",
+    "advertising",
+    "defi",
+    "smart-contracts",
+    "web3",
+    "decentralized-advertising",
+    "stx",
+    "campaign-management"
+  ],
+  "author": "Adekunle Bamz",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdekunleBamz/AdStack/issues"
+  },
+  "homepage": "https://github.com/AdekunleBamz/AdStack#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
   "dependencies": {
     "@hirosystems/clarinet-sdk": "^2.3.2",
     "@stacks/transactions": "^6.12.0",
