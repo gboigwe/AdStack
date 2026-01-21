@@ -5,80 +5,132 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
-[contracts.asset-library]
+
+[contracts.digital-content-vault-hub]
 path = 'contracts/ad-content-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.stats-tracker]
+[contracts.performance-metrics-analytics-engine]
 path = 'contracts/analytics-aggregator.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.offer-exchange]
+[contracts.real-time-bidding-marketplace]
 path = 'contracts/auction-system.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.promo-manager]
+[contracts.campaign-orchestration-control-center]
 path = 'contracts/campaign-orchestrator.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.mediation-hub]
+[contracts.decentralized-dispute-resolution-system]
 path = 'contracts/dispute-resolution.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.funds-keeper]
+[contracts.secure-treasury-escrow-vault]
 path = 'contracts/escrow-manager.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.vote-handler]
+[contracts.intelligent-fraud-detection-shield]
+path = 'contracts/fraud-prevention.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.community-governance-voting-dao]
 path = 'contracts/governance-dao.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.oracle-link]
-path = 'contracts/oracle-integration.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.cash-distributor]
-path = 'contracts/revenue-settlement.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.partner-hub]
-path = 'contracts/publisher-network.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.prize-pool]
-path = 'contracts/rewards-distributor.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.subscription-hub]
-path = 'contracts/subscription-manager.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.audience-selector]
-path = 'contracts/targeting-engine.clar'
-clarity_version = 4
-epoch = 'latest'
-
-[contracts.user-profiles]
+[contracts.verified-identity-registry-vault]
 path = 'contracts/identity-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
-[contracts.threat-detector]
-path = 'contracts/fraud-prevention.clar'
+[contracts.external-oracle-data-bridge]
+path = 'contracts/oracle-integration.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.publisher-network-collaboration-hub]
+path = 'contracts/publisher-network.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.automated-revenue-settlement-flow]
+path = 'contracts/revenue-settlement.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.incentive-rewards-distribution-pool]
+path = 'contracts/rewards-distributor.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.subscription-plan-management-system]
+path = 'contracts/subscription-manager.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.precision-audience-targeting-engine]
+path = 'contracts/targeting-engine.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.campaign-lifecycle]
+path = 'contracts/campaign-lifecycle.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.escrow-vault]
+path = 'contracts/escrow-vault.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.auction-engine]
+path = 'contracts/auction-engine.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.performance-oracle]
+path = 'contracts/performance-oracle.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.payout-automation]
+path = 'contracts/payout-automation.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.campaign-extension]
+path = 'contracts/campaign-extension.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.refund-processor]
+path = 'contracts/refund-processor.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.milestone-tracker]
+path = 'contracts/milestone-tracker.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.budget-optimizer]
+path = 'contracts/budget-optimizer.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.campaign-analytics-v4]
+path = 'contracts/campaign-analytics-v4.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
