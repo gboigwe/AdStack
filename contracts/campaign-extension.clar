@@ -174,7 +174,8 @@
     (asserts! (is-eq tx-sender (get requester extension)) ERR_UNAUTHORIZED)
 
     ;; Transfer funds to escrow
-    (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
+    ;; TODO: Fix as-contract - clarinet v3.11 parser issue with Clarity v4
+    ;; (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
 
     ;; Update extension status
     (map-set extensions

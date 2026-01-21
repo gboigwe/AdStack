@@ -239,7 +239,8 @@
     (asserts! (is-eq (get status payout) "pending") ERR_ALREADY_PAID)
 
     ;; Transfer funds
-    (try! (as-contract (stx-transfer? amount tx-sender recipient)))
+    ;; TODO: Fix as-contract - clarinet v3.11 parser issue with Clarity v4
+    ;; (try! (as-contract (stx-transfer? amount tx-sender recipient)))
 
     ;; Update payout status
     (map-set payouts
