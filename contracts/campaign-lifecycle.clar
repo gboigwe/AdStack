@@ -1,6 +1,6 @@
 ;; Campaign Lifecycle Manager - Clarity v4
 ;; Complete state machine for campaign lifecycle management
-;; Handles: draft → funded → active → paused → completed → cancelled
+;; Handles: draft > funded > active > paused > completed > cancelled
 
 ;; ===================================
 ;; Constants
