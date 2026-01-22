@@ -155,6 +155,11 @@ path = 'contracts/subscription-manager.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.timelock-executor]
+path = 'contracts/timelock-executor.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.verified-identity-registry-vault]
 path = 'contracts/identity-registry.clar'
 clarity_version = 4
