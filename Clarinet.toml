@@ -90,6 +90,11 @@ path = 'contracts/milestone-tracker.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.multisig-treasury]
+path = 'contracts/multisig-treasury.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.payout-automation]
 path = 'contracts/payout-automation.clar'
 clarity_version = 4
