@@ -183,4 +183,25 @@ plan:
             path: contracts/campaign-analytics-v4.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: publisher-verification
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 155000
+            path: contracts/publisher-verification.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: kyc-registry
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 135000
+            path: contracts/kyc-registry.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: publisher-reputation
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 165000
+            path: contracts/publisher-reputation.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"

@@ -1,6 +1,6 @@
 ;; Campaign Lifecycle Manager - Clarity v4
 ;; Complete state machine for campaign lifecycle management
-;; Handles: draft → funded → active → paused → completed → cancelled
+;; Handles: draft > funded > active > paused > completed > cancelled
 
 ;; ===================================
 ;; Constants
@@ -194,8 +194,8 @@
   (let
     (
       (campaign-id (var-get campaign-nonce))
-      (start-block block-height)
-      (end-block (+ block-height duration-blocks))
+      (start-block stacks-block-height)
+      (end-block (+ stacks-block-height duration-blocks))
     )
     ;; Validate inputs
     (asserts! (> budget u0) ERR_INSUFFICIENT_FUNDS)
@@ -376,7 +376,7 @@
     (asserts! (is-eq current-state STATE_ACTIVE) ERR_INVALID_STATE)
     (asserts! (or
       (is-eq (get advertiser campaign) tx-sender)
-      (>= block-height (get end-block campaign))
+      (>= stacks-block-height (get end-block campaign))
     ) ERR_UNAUTHORIZED)
 
     ;; Update state

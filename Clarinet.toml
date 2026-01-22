@@ -131,6 +131,21 @@ path = 'contracts/campaign-analytics-v4.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.publisher-verification]
+path = 'contracts/publisher-verification.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.kyc-registry]
+path = 'contracts/kyc-registry.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.publisher-reputation]
+path = 'contracts/publisher-reputation.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
