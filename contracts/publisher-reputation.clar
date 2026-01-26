@@ -15,6 +15,66 @@
 (define-constant TIER_GOLD u3)
 (define-constant TIER_PLATINUM u4)
 
+;; REPUTATION EVENTS
+(define-event reputation-initialized
+  (publisher principal)
+  (initialized-by principal)
+  (timestamp uint)
+)
+
+(define-event reputation-score-changed
+  (publisher principal)
+  (old-score uint)
+  (new-score uint)
+  (old-tier uint)
+  (new-tier uint)
+  (score-change int)
+  (reason (string-ascii 256))
+  (triggered-by principal)
+  (timestamp uint)
+)
+
+(define-event campaign-recorded
+  (publisher principal)
+  (campaign-id uint)
+  (successful bool)
+  (performance-score uint)
+  (revenue uint)
+  (total-campaigns uint)
+  (success-rate uint)
+  (recorded-by principal)
+  (timestamp uint)
+)
+
+(define-event penalty-applied
+  (publisher principal)
+  (penalty-id uint)
+  (reason (string-ascii 256))
+  (score-deduction uint)
+  (duration-seconds (optional uint))
+  (applied-by principal)
+  (timestamp uint)
+)
+
+(define-event bonus-awarded
+  (publisher principal)
+  (reward-id uint)
+  (reason (string-ascii 256))
+  (score-addition uint)
+  (criteria (string-ascii 128))
+  (awarded-by principal)
+  (timestamp uint)
+)
+
+(define-event fraud-flagged
+  (publisher principal)
+  (evidence (string-ascii 256))
+  (fraud-flags uint)
+  (penalty-applied bool)
+  (flagged-by principal)
+  (timestamp uint)
+)
+
 ;; Score thresholds for tiers
 (define-constant BRONZE_THRESHOLD u100)
 (define-constant SILVER_THRESHOLD u250)
@@ -121,7 +181,7 @@
         created-at: stacks-block-time
       }
     )
-
+    (emit-event (reputation-initialized publisher tx-sender stacks-block-time))
     (ok true)
   )
 )
@@ -171,6 +231,17 @@
       { publisher: publisher }
       { count: (+ event-count u1) }
     )
+     (emit-event (reputation-score-changed
+      publisher
+      current-score
+      new-score
+      current-tier
+      new-tier
+      score-change
+      reason
+      tx-sender
+      stacks-block-time
+    ))
 
     (ok new-score)
   )
@@ -218,7 +289,17 @@
 
     ;; Update score
     (try! (update-score publisher score-change (if successful "Campaign success" "Campaign failure")))
-
+       (emit-event (campaign-recorded
+      publisher
+      campaign-id
+      successful
+      performance-score
+      revenue
+      total-campaigns
+      success-rate
+      tx-sender
+      stacks-block-time
+    ))
     (ok true)
   )
 )
@@ -256,7 +337,15 @@
 
     ;; Update score
     (try! (update-score publisher (* -1 (to-int score-deduction)) reason))
-
+       (emit-event (penalty-applied
+      publisher
+      event-count
+      reason
+      score-deduction
+      duration-seconds
+      tx-sender
+      stacks-block-time
+    ))
     (ok true)
   )
 )
@@ -289,7 +378,15 @@
 
     ;; Update score
     (try! (update-score publisher (to-int score-addition) reason))
-
+      (emit-event (bonus-awarded
+      publisher
+      event-count
+      reason
+      score-addition
+      criteria
+      tx-sender
+      stacks-block-time
+    ))
     (ok true)
   )
 )
@@ -314,6 +411,14 @@
 
     ;; Apply penalty
     (try! (apply-penalty publisher evidence u50 (some u2592000))) ;; 30 days
+      (emit-event (fraud-flagged
+      publisher
+      evidence
+      fraud-flags
+      true  ;; penalty applied
+      tx-sender
+      stacks-block-time
+    ))
 
     (ok fraud-flags)
   )
