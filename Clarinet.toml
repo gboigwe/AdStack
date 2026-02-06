@@ -5,6 +5,11 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
+[contracts.ad-creative-nft]
+path = 'contracts/ad-creative-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.auction-engine]
 path = 'contracts/auction-engine.clar'
 clarity_version = 4
@@ -45,6 +50,11 @@ path = 'contracts/governance-dao.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.creative-marketplace]
+path = 'contracts/creative-marketplace.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.decentralized-dispute-resolution-system]
 path = 'contracts/dispute-resolution.clar'
 clarity_version = 4
@@ -72,6 +82,11 @@ epoch = 'latest'
 
 [contracts.governance-token]
 path = 'contracts/governance-token.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.impression-proof-nft]
+path = 'contracts/impression-proof-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
