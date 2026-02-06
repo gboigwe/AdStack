@@ -232,4 +232,25 @@ plan:
             path: contracts/timelock-executor.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: ad-creative-nft
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 160000
+            path: contracts/ad-creative-nft.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: creative-marketplace
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 180000
+            path: contracts/creative-marketplace.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: impression-proof-nft
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 165000
+            path: contracts/impression-proof-nft.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"
