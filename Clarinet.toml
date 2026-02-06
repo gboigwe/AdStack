@@ -50,6 +50,11 @@ path = 'contracts/governance-dao.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.creative-marketplace]
+path = 'contracts/creative-marketplace.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.decentralized-dispute-resolution-system]
 path = 'contracts/dispute-resolution.clar'
 clarity_version = 4
