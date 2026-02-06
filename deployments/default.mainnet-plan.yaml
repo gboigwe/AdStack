@@ -204,4 +204,32 @@ plan:
             path: contracts/publisher-reputation.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: governance-core
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 175000
+            path: contracts/governance-core.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: governance-token
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 95000
+            path: contracts/governance-token.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: multisig-treasury
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 155000
+            path: contracts/multisig-treasury.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: timelock-executor
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 145000
+            path: contracts/timelock-executor.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"
