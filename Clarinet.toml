@@ -75,6 +75,11 @@ path = 'contracts/oracle-integration.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.fraud-oracle]
+path = 'contracts/fraud-oracle.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.governance-core]
 path = 'contracts/governance-core.clar'
 clarity_version = 4
