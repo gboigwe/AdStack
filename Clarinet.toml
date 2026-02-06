@@ -10,6 +10,11 @@ path = 'contracts/ad-creative-nft.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.anomaly-detector]
+path = 'contracts/anomaly-detector.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.auction-engine]
 path = 'contracts/auction-engine.clar'
 clarity_version = 4
@@ -72,6 +77,11 @@ epoch = 'latest'
 
 [contracts.external-oracle-data-bridge]
 path = 'contracts/oracle-integration.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.fraud-oracle]
+path = 'contracts/fraud-oracle.clar'
 clarity_version = 4
 epoch = 'latest'
 

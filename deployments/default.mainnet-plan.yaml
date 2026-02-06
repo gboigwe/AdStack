@@ -253,4 +253,18 @@ plan:
             path: contracts/impression-proof-nft.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: fraud-oracle
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 185000
+            path: contracts/fraud-oracle.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: anomaly-detector
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 170000
+            path: contracts/anomaly-detector.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"
