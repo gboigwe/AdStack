@@ -352,7 +352,7 @@
   (map-get? execution-queue { proposal-id: proposal-id })
 )
 
-(define-read-only (get-governance-params))
+(define-read-only (get-governance-params)
   (ok {
     proposal-threshold: (var-get proposal-threshold),
     quorum-percentage: (var-get quorum-percentage),

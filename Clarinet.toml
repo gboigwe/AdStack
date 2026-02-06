@@ -5,6 +5,11 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
+[contracts.ad-creative-nft]
+path = 'contracts/ad-creative-nft.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.auction-engine]
 path = 'contracts/auction-engine.clar'
 clarity_version = 4
