@@ -267,4 +267,32 @@ plan:
             path: contracts/anomaly-detector.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: token-bridge
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 195000
+            path: contracts/token-bridge.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: wrapped-token-manager
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 185000
+            path: contracts/wrapped-token-manager.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: liquidity-pool
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 175000
+            path: contracts/liquidity-pool.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: payment-processor-v2
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 205000
+            path: contracts/payment-processor-v2.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"
