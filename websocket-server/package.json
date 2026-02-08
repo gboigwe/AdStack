@@ -1,24 +1,43 @@
 {
   "name": "adstack-websocket-server",
   "version": "1.0.0",
-  "description": "Real-time WebSocket analytics server for AdStack",
+  "description": "Real-time WebSocket analytics server for AdStack blockchain advertising platform",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "watch": "nodemon --watch src --exec ts-node src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:load": "node tests/load-test.js",
+    "test:stress": "node tests/stress-test.js",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write 'src/**/*.ts'"
   },
   "keywords": [
     "websocket",
     "socket.io",
     "real-time",
     "analytics",
-    "stacks"
+    "stacks",
+    "blockchain",
+    "advertising",
+    "real-time-analytics"
   ],
-  "author": "AdStack",
+  "author": "AdStack Contributors",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gboigwe/AdStack"
+  },
+  "bugs": {
+    "url": "https://github.com/gboigwe/AdStack/issues"
+  },
+  "homepage": "https://github.com/gboigwe/AdStack#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "@stacks/blockchain-api-client": "^7.8.0",
     "@stacks/stacks-blockchain-api-types": "^7.8.0",
