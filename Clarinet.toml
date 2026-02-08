@@ -115,6 +115,11 @@ path = 'contracts/kyc-registry.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.liquidity-pool]
+path = 'contracts/liquidity-pool.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.milestone-tracker]
 path = 'contracts/milestone-tracker.clar'
 clarity_version = 4
@@ -122,6 +127,11 @@ epoch = 'latest'
 
 [contracts.multisig-treasury]
 path = 'contracts/multisig-treasury.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.payment-processor-v2]
+path = 'contracts/payment-processor-v2.clar'
 clarity_version = 4
 epoch = 'latest'
 
@@ -185,8 +195,18 @@ path = 'contracts/timelock-executor.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.token-bridge]
+path = 'contracts/token-bridge.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.verified-identity-registry-vault]
 path = 'contracts/identity-registry.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.wrapped-token-manager]
+path = 'contracts/wrapped-token-manager.clar'
 clarity_version = 4
 epoch = 'latest'
 [repl.analysis]
