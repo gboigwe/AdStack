@@ -1,0 +1,298 @@
+name: WebSocket Server CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'websocket-server/**'
+      - '.github/workflows/websocket-cd.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  prepare:
+    name: Prepare Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      environment: ${{ steps.env.outputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.event.inputs.environment }}" != "" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="v$(date +%Y%m%d)-$(echo ${{ github.sha }} | cut -c1-7)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Deployment version: $VERSION"
+
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: prepare
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./websocket-server
+          file: ./websocket-server/Dockerfile
+          push: true
+          tags: |
+            adstack/websocket-server:${{ needs.prepare.outputs.version }}
+            adstack/websocket-server:latest
+            ghcr.io/${{ github.repository }}/websocket-server:${{ needs.prepare.outputs.version }}
+            ghcr.io/${{ github.repository }}/websocket-server:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [prepare, build-and-push]
+    if: needs.prepare.outputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://ws-staging.adstack.io
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+      - name: Deploy to staging server
+        run: |
+          ssh -o StrictHostKeyChecking=no deploy@staging.adstack.io << 'EOF'
+            cd /var/www/adstack-websocket
+            git pull origin main
+            docker-compose pull websocket-server
+            docker-compose up -d websocket-server
+            docker-compose ps
+          EOF
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Health check
+        run: |
+          for i in {1..10}; do
+            if curl -f https://ws-staging.adstack.io/health; then
+              echo "✓ Staging deployment successful"
+              exit 0
+            fi
+            echo "Waiting for staging server... ($i/10)"
+            sleep 10
+          done
+          echo "✗ Staging health check failed"
+          exit 1
+
+      - name: Run smoke tests
+        run: |
+          curl -f https://ws-staging.adstack.io/status
+          echo "✓ Smoke tests passed"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [prepare, build-and-push]
+    if: needs.prepare.outputs.environment == 'production'
+    environment:
+      name: production
+      url: https://ws.adstack.io
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+      - name: Create deployment backup
+        run: |
+          ssh -o StrictHostKeyChecking=no deploy@prod1.adstack.io << 'EOF'
+            cd /var/www/adstack-websocket
+            pm2 save
+            tar -czf /backup/websocket-$(date +%Y%m%d-%H%M%S).tar.gz .
+          EOF
+
+      - name: Deploy to production servers
+        run: |
+          SERVERS=("prod1.adstack.io" "prod2.adstack.io")
+
+          for SERVER in "${SERVERS[@]}"; do
+            echo "Deploying to $SERVER..."
+
+            ssh -o StrictHostKeyChecking=no deploy@$SERVER << 'EOF'
+              cd /var/www/adstack-websocket
+              git pull origin main
+              npm ci --production
+              npm run build
+              pm2 reload ecosystem.config.js --env production --update-env
+              sleep 5
+              pm2 status
+          EOF
+
+            echo "✓ Deployed to $SERVER"
+          done
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Health check all servers
+        run: |
+          SERVERS=("ws1.adstack.io" "ws2.adstack.io")
+
+          for SERVER in "${SERVERS[@]}"; do
+            echo "Checking $SERVER..."
+
+            for i in {1..10}; do
+              if curl -f https://$SERVER/health; then
+                echo "✓ $SERVER is healthy"
+                break
+              fi
+              echo "Waiting for $SERVER... ($i/10)"
+              sleep 10
+            done
+          done
+
+      - name: Run production smoke tests
+        run: |
+          curl -f https://ws.adstack.io/health
+          curl -f https://ws.adstack.io/status
+          echo "✓ Production smoke tests passed"
+
+      - name: Verify load balancer
+        run: |
+          for i in {1..5}; do
+            curl -s https://ws.adstack.io/health | jq -r '.timestamp'
+          done
+
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: failure() && needs.prepare.outputs.environment == 'production'
+
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+      - name: Rollback production deployment
+        run: |
+          echo "⚠️ Rolling back production deployment"
+
+          SERVERS=("prod1.adstack.io" "prod2.adstack.io")
+
+          for SERVER in "${SERVERS[@]}"; do
+            ssh -o StrictHostKeyChecking=no deploy@$SERVER << 'EOF'
+              cd /var/www/adstack-websocket
+              git reset --hard HEAD~1
+              npm ci --production
+              npm run build
+              pm2 reload ecosystem.config.js --env production
+          EOF
+          done
+
+      - name: Notify team
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            🚨 PRODUCTION ROLLBACK EXECUTED
+            Deployment failed and was rolled back
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URGENT }}
+
+  post-deployment:
+    name: Post-Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: [prepare, deploy-staging, deploy-production]
+    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
+
+    steps:
+      - name: Create GitHub Release
+        if: needs.prepare.outputs.environment == 'production'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: websocket-${{ needs.prepare.outputs.version }}
+          release_name: WebSocket Server ${{ needs.prepare.outputs.version }}
+          body: |
+            ## WebSocket Server Release ${{ needs.prepare.outputs.version }}
+
+            ### Changes
+            - Automated deployment from commit ${{ github.sha }}
+
+            ### Deployment
+            - Environment: ${{ needs.prepare.outputs.environment }}
+            - Timestamp: ${{ github.event.head_commit.timestamp }}
+          draft: false
+          prerelease: false
+
+      - name: Update deployment status
+        run: |
+          echo "Deployment completed successfully"
+          echo "Version: ${{ needs.prepare.outputs.version }}"
+          echo "Environment: ${{ needs.prepare.outputs.environment }}"
+
+      - name: Send success notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            ✅ WebSocket Server Deployed Successfully
+            Version: ${{ needs.prepare.outputs.version }}
+            Environment: ${{ needs.prepare.outputs.environment }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}

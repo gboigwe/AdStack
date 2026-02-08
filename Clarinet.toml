@@ -1,10 +1,19 @@
 [project]
 name = 'AdStack'
-description = ''
-authors = []
+description = 'Decentralized blockchain advertising platform with real-time analytics, cross-chain bridge, and DAO governance'
+authors = ['AdStack Contributors']
 telemetry = true
 cache_dir = './.cache'
 requirements = []
+
+[project.analytics]
+websocket_server = 'websocket-server/'
+frontend_components = 'frontend/src/components/analytics/'
+documentation = 'docs/REALTIME_ANALYTICS.md'
+
+[project.services]
+redis_required = true
+stacks_node_ws = true
 [contracts.ad-creative-nft]
 path = 'contracts/ad-creative-nft.clar'
 clarity_version = 4
