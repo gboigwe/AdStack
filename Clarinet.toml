@@ -130,6 +130,11 @@ path = 'contracts/multisig-treasury.clar'
 clarity_version = 4
 epoch = 'latest'
 
+[contracts.payment-processor-v2]
+path = 'contracts/payment-processor-v2.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [contracts.payout-automation]
 path = 'contracts/payout-automation.clar'
 clarity_version = 4
