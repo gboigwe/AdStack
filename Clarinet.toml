@@ -218,6 +218,16 @@ epoch = 'latest'
 path = 'contracts/wrapped-token-manager.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.recurring-payment-processor]
+path = 'contracts/recurring-payment.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.subscription-benefits-manager]
+path = 'contracts/subscription-benefits.clar'
+clarity_version = 4
+epoch = 'latest'
 [repl.analysis]
 passes = ['check_checker']
 

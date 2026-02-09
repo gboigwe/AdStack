@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Canceled - AdStack</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    h1 {
+      color: #1f2937;
+      font-size: 24px;
+      margin: 0 0 20px 0;
+    }
+    .alert-box {
+      background-color: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .info-box {
+      background-color: #f9fafb;
+      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .detail-row {
+      padding: 10px 0;
+    }
+    .cta-button {
+      display: inline-block;
+      background-color: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+    .cta-button:hover {
+      background-color: #1d4ed8;
+    }
+    .secondary-button {
+      display: inline-block;
+      background-color: #ffffff;
+      color: #2563eb;
+      border: 2px solid #2563eb;
+      text-decoration: none;
+      padding: 10px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 10px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">AdStack</div>
+      <h1>Your Subscription Has Been Canceled</h1>
+    </div>
+
+    <p>We're sorry to see you go. Your AdStack subscription has been canceled effective immediately.</p>
+
+    <div class="alert-box">
+      <strong>What This Means:</strong>
+      <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Your subscription ended on {{effectiveDate}}</li>
+        <li>You will not be charged again</li>
+        <li>You no longer have access to premium features</li>
+        <li>Your account data will be retained for 30 days</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h3 style="margin-top: 0;">We'd Love Your Feedback</h3>
+      <p>Could you take a moment to tell us why you canceled? Your feedback helps us improve AdStack for everyone.</p>
+      <div style="text-align: center;">
+        <a href="{{feedbackUrl}}" class="secondary-button">Share Feedback</a>
+      </div>
+    </div>
+
+    <h3>What Happens Next?</h3>
+    <div class="detail-row">
+      <strong>📊 Your Data:</strong> Your account data will be kept for 30 days. After that, it will be permanently deleted unless you reactivate your subscription.
+    </div>
+    <div class="detail-row">
+      <strong>🔄 Reactivate Anytime:</strong> Changed your mind? You can reactivate your subscription at any time and pick up where you left off.
+    </div>
+    <div class="detail-row">
+      <strong>💳 Billing:</strong> All future billing has been stopped. You won't receive any further charges.
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="{{reactivateUrl}}" class="cta-button">Reactivate Subscription</a>
+    </div>
+
+    <p style="margin-top: 30px; text-align: center; color: #6b7280;">
+      If you canceled by mistake, you can reactivate your subscription immediately from your account settings.
+    </p>
+
+    <div class="footer">
+      <p>Questions? Contact us at <a href="mailto:support@adstack.io">support@adstack.io</a></p>
+      <p>&copy; 2024 AdStack. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
