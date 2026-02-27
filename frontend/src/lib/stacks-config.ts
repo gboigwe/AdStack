@@ -45,6 +45,8 @@ export const CONTRACTS = {
   AUDIENCE_SELECTOR: 'audience-selector',
   USER_PROFILES: 'user-profiles',
   THREAT_DETECTOR: 'threat-detector',
+  AUDIENCE_SEGMENTS: 'audience-segments',
+  PRIVACY_LAYER: 'privacy-layer',
   DISPUTE_MANAGER: 'dispute-manager',
   ARBITRATOR_REGISTRY: 'arbitrator-registry',
   EVIDENCE_VAULT: 'evidence-vault',
