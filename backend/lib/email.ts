@@ -33,17 +33,23 @@ function getTransporter(): nodemailer.Transporter {
           pass: emailConfig.apiKey,
         },
       });
-    } else {
+    } else if (emailConfig.smtp) {
       transporter = nodemailer.createTransport({
-        host: emailConfig.host || 'localhost',
-        port: emailConfig.port || 587,
-        secure: emailConfig.secure || false,
-        auth: emailConfig.user
+        host: emailConfig.smtp.host,
+        port: emailConfig.smtp.port,
+        secure: emailConfig.smtp.secure,
+        auth: emailConfig.smtp.user
           ? {
-              user: emailConfig.user,
-              pass: emailConfig.password,
+              user: emailConfig.smtp.user,
+              pass: emailConfig.smtp.password,
             }
           : undefined,
+      });
+    } else {
+      transporter = nodemailer.createTransport({
+        host: 'localhost',
+        port: 587,
+        secure: false,
       });
     }
   }

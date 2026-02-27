@@ -10,7 +10,7 @@ const logLevels = {
 };
 
 function getLogLevel(): string {
-  const env = config.app?.environment || 'development';
+  const env = config.app?.env || 'development';
   if (env === 'production') return 'info';
   if (env === 'test') return 'error';
   return 'debug';
@@ -35,7 +35,7 @@ const transports: winston.transport[] = [
   }),
 ];
 
-const env = config.app?.environment || 'development';
+const env = config.app?.env || 'development';
 if (env === 'production') {
   transports.push(
     new winston.transports.File({
