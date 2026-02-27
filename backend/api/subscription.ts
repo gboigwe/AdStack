@@ -4,7 +4,7 @@
  * RESTful API endpoints for subscription management
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { validateRequest } from '../middleware/validation';
 import { auth } from '../middleware/auth';
 import * as subscriptionService from '../services/subscription';
@@ -421,3 +421,18 @@ export function handleSubscriptionError(
     message: 'An unexpected error occurred'
   });
 }
+
+const router = Router();
+
+router.get('/plans', getPlans);
+router.get('/:userId', auth, getSubscription);
+router.post('/', auth, createSubscription);
+router.post('/:id/cancel', auth, cancelSubscription);
+router.post('/:id/change-plan', auth, changePlan);
+router.get('/:id/usage', auth, getUsage);
+router.post('/:id/usage', auth, trackUsage);
+router.get('/:id/invoices', auth, getInvoices);
+router.post('/:id/payment-methods', auth, addPaymentMethod);
+router.use(handleSubscriptionError);
+
+export default router;
