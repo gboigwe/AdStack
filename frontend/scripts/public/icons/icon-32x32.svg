@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#2563eb"/>
+  <rect x="3" y="3" width="26" height="26" rx="4" fill="white" fill-opacity="0.15"/>
+  <text x="16" y="16.64" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle">Ad</text>
+  <text x="16" y="24.32" font-family="Arial,Helvetica,sans-serif" font-size="4" font-weight="600" fill="white" fill-opacity="0.85" text-anchor="middle" dominant-baseline="middle">STACK</text>
+</svg>
