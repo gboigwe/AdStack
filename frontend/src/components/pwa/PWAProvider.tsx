@@ -4,6 +4,7 @@ import { useEffect, createContext, useContext, type ReactNode } from 'react';
 import { useNetworkStatus, useServiceWorker } from '@/hooks/usePWA';
 import { OfflineBanner } from './OfflineFallback';
 import { InstallPrompt } from './InstallPrompt';
+import { UpdateNotification } from './UpdateNotification';
 import { startAutoSync } from '@/lib/background-sync';
 
 interface PWAContextValue {
@@ -62,6 +63,7 @@ export function PWAProvider({ children }: PWAProviderProps) {
       <OfflineBanner isOnline={network.isOnline} />
       {children}
       <InstallPrompt />
+      <UpdateNotification />
     </PWAContext.Provider>
   );
 }
