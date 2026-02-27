@@ -14,6 +14,7 @@ import paymentRoutes from './api/payments';
 import userRoutes from './api/users';
 import webhookRoutes from './api/webhooks';
 import healthRoutes from './api/health';
+import publisherRoutes from './api/publishers';
 import docsRoutes from './api/docs';
 
 const app = express();
@@ -51,6 +52,7 @@ app.use('/api/campaigns', campaignRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/publishers', publisherRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
 app.use(notFoundHandler);
