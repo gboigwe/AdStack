@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "./types"]
+  },
+  "include": [
+    "api/**/*.ts",
+    "config/**/*.ts",
+    "lib/**/*.ts",
+    "middleware/**/*.ts",
+    "services/**/*.ts",
+    "types/**/*.ts",
+    "app.ts",
+    "server.ts"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}
