@@ -3,6 +3,7 @@ import { config } from './config/config';
 import { testConnection, closePool } from './lib/database';
 import { connectRedis, closeRedis } from './lib/cache';
 import { logger } from './lib/logger';
+import { startScheduler, stopScheduler } from './services/scheduler';
 
 const PORT = config.app.port;
 
@@ -26,6 +27,10 @@ async function start() {
     logger.info(`API URL: ${config.app.apiUrl}`);
   });
 
+  if (config.app.env !== 'test') {
+    startScheduler();
+  }
+
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 
@@ -35,6 +40,7 @@ async function start() {
     server.close(async () => {
       logger.info('HTTP server closed');
 
+      stopScheduler();
       await closePool();
       await closeRedis();
 
