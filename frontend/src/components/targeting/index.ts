@@ -1,3 +1,4 @@
+export { TargetingDashboard } from './TargetingDashboard';
 export { TargetingRuleBuilder } from './TargetingRuleBuilder';
 export { AudienceSegmentCreator } from './AudienceSegmentCreator';
 export { PrivacySettingsUI } from './PrivacySettingsUI';
