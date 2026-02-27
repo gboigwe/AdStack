@@ -79,6 +79,20 @@ plan:
             anchor-block-only: true
             clarity-version: 4
         - contract-publish:
+            contract-name: audience-segment-manager
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 138940
+            path: contracts/audience-segments.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: gdpr-privacy-compliance-layer
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 112780
+            path: contracts/privacy-layer.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
             contract-name: publisher-network-collaboration-hub
             expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
             cost: 106470
