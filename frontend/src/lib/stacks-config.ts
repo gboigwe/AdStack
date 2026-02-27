@@ -45,6 +45,10 @@ export const CONTRACTS = {
   AUDIENCE_SELECTOR: 'audience-selector',
   USER_PROFILES: 'user-profiles',
   THREAT_DETECTOR: 'threat-detector',
+  DISPUTE_MANAGER: 'dispute-manager',
+  ARBITRATOR_REGISTRY: 'arbitrator-registry',
+  EVIDENCE_VAULT: 'evidence-vault',
+  JUDGMENT_EXECUTOR: 'judgment-executor',
 } as const;
 
 export type ContractName = typeof CONTRACTS[keyof typeof CONTRACTS];
