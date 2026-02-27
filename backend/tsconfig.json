@@ -25,7 +25,8 @@
     "services/**/*.ts",
     "types/**/*.ts",
     "app.ts",
-    "server.ts"
+    "server.ts",
+    "migrate.ts"
   ],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

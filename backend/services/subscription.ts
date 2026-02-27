@@ -411,7 +411,7 @@ async function processInitialPayment(
   }
 
   const Stripe = require('stripe');
-  const stripe = new Stripe(config.payment.stripeSecretKey);
+  const stripe = new Stripe(config.payment.stripe.secretKey);
 
   await stripe.paymentIntents.create({
     amount: Math.round(amount * 100),

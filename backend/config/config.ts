@@ -1,13 +1,6 @@
-/**
- * Application Configuration
- *
- * Centralized configuration management
- */
-
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 interface Config {
@@ -326,11 +319,11 @@ if (config.app.env === 'production') {
 
   // Warn about insecure secrets
   if (config.auth.jwtSecret.includes('change-this')) {
-    console.warn('WARNING: Using default JWT secret in production!');
+    process.stderr.write('WARNING: Using default JWT secret in production!\n');
   }
 
   if (config.webhooks.secret.includes('change-this')) {
-    console.warn('WARNING: Using default webhook secret in production!');
+    process.stderr.write('WARNING: Using default webhook secret in production!\n');
   }
 }
 
