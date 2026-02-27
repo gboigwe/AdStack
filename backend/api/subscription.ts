@@ -1,18 +1,7 @@
-/**
- * Subscription API Routes
- *
- * RESTful API endpoints for subscription management
- */
-
 import { Router, Request, Response, NextFunction } from 'express';
-import { validateRequest } from '../middleware/validation';
 import { auth } from '../middleware/auth';
 import * as subscriptionService from '../services/subscription';
 
-/**
- * GET /api/subscription/:userId
- * Get user's active subscription
- */
 export async function getSubscription(
   req: Request,
   res: Response,
@@ -44,10 +33,6 @@ export async function getSubscription(
   }
 }
 
-/**
- * POST /api/subscription
- * Create new subscription
- */
 export async function createSubscription(
   req: Request,
   res: Response,
@@ -87,10 +72,6 @@ export async function createSubscription(
   }
 }
 
-/**
- * POST /api/subscription/:id/cancel
- * Cancel subscription
- */
 export async function cancelSubscription(
   req: Request,
   res: Response,
@@ -112,7 +93,7 @@ export async function cancelSubscription(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only cancel your own subscription'
@@ -131,10 +112,6 @@ export async function cancelSubscription(
   }
 }
 
-/**
- * POST /api/subscription/:id/change-plan
- * Change subscription plan
- */
 export async function changePlan(
   req: Request,
   res: Response,
@@ -163,7 +140,7 @@ export async function changePlan(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only modify your own subscription'
@@ -182,10 +159,6 @@ export async function changePlan(
   }
 }
 
-/**
- * GET /api/subscription/:id/usage
- * Get subscription usage metrics
- */
 export async function getUsage(
   req: Request,
   res: Response,
@@ -206,7 +179,7 @@ export async function getUsage(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only view your own usage'
@@ -221,10 +194,6 @@ export async function getUsage(
   }
 }
 
-/**
- * POST /api/subscription/:id/usage
- * Track usage event
- */
 export async function trackUsage(
   req: Request,
   res: Response,
@@ -253,7 +222,7 @@ export async function trackUsage(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only track your own usage'
@@ -277,10 +246,6 @@ export async function trackUsage(
   }
 }
 
-/**
- * GET /api/subscription/plans
- * Get all available subscription plans
- */
 export async function getPlans(
   req: Request,
   res: Response,
@@ -294,10 +259,6 @@ export async function getPlans(
   }
 }
 
-/**
- * GET /api/subscription/:id/invoices
- * Get subscription invoices
- */
 export async function getInvoices(
   req: Request,
   res: Response,
@@ -319,7 +280,7 @@ export async function getInvoices(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only view your own invoices'
@@ -338,10 +299,6 @@ export async function getInvoices(
   }
 }
 
-/**
- * POST /api/subscription/:id/payment-method
- * Add payment method to subscription
- */
 export async function addPaymentMethod(
   req: Request,
   res: Response,
@@ -370,7 +327,7 @@ export async function addPaymentMethod(
     }
 
     // Verify ownership
-    if (subscription.userId !== userId && !req.user?.isAdmin) {
+    if (subscription.user_id !== userId && !req.user?.isAdmin) {
       return res.status(403).json({
         error: 'Forbidden',
         message: 'You can only modify your own payment methods'
@@ -389,14 +346,11 @@ export async function addPaymentMethod(
   }
 }
 
-/**
- * Error handler middleware
- */
 export function handleSubscriptionError(
   error: any,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) {
   console.error('Subscription API Error:', error);
 
