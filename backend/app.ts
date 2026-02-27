@@ -14,6 +14,7 @@ import paymentRoutes from './api/payments';
 import userRoutes from './api/users';
 import webhookRoutes from './api/webhooks';
 import healthRoutes from './api/health';
+import docsRoutes from './api/docs';
 
 const app = express();
 
@@ -39,6 +40,11 @@ if (config.app.env !== 'test') {
 }
 
 app.use('/api/health', healthRoutes);
+
+if (config.development.enableApiDocs) {
+  app.use('/api/docs', docsRoutes);
+}
+
 app.use('/api/auth', authRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/campaigns', campaignRoutes);
