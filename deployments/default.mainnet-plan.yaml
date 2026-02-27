@@ -309,4 +309,32 @@ plan:
             path: contracts/payment-processor-v2.clar
             anchor-block-only: true
             clarity-version: 4
+        - contract-publish:
+            contract-name: dispute-manager
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 215000
+            path: contracts/dispute-manager.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: arbitrator-registry
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 185000
+            path: contracts/arbitrator-registry.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: evidence-vault
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 165000
+            path: contracts/evidence-vault.clar
+            anchor-block-only: true
+            clarity-version: 4
+        - contract-publish:
+            contract-name: judgment-executor
+            expected-sender: SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD
+            cost: 190000
+            path: contracts/judgment-executor.clar
+            anchor-block-only: true
+            clarity-version: 4
       epoch: "3.3"
