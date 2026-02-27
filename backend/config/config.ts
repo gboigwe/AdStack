@@ -1,13 +1,6 @@
-/**
- * Application Configuration
- *
- * Centralized configuration management
- */
-
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 interface Config {
@@ -19,6 +12,11 @@ interface Config {
   };
   database: {
     url: string;
+    host: string;
+    port: number;
+    name: string;
+    user: string;
+    password: string;
     poolMin: number;
     poolMax: number;
     ssl: boolean;
@@ -26,6 +24,8 @@ interface Config {
   stacks: {
     network: 'mainnet' | 'testnet' | 'devnet';
     apiUrl: string;
+    senderKey: string;
+    senderAddress: string;
     contracts: {
       subscriptionManager: string;
       recurringPayment: string;
@@ -82,7 +82,7 @@ interface Config {
     alertThresholds: number[];
   };
   cache: {
-    redisUrl?: string;
+    url: string;
     ttl: number;
     maxItems: number;
   };
@@ -150,6 +150,11 @@ const config: Config = {
 
   database: {
     url: process.env.DATABASE_URL || 'postgresql://localhost:5432/adstack_db',
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+    name: process.env.DATABASE_NAME || 'adstack_db',
+    user: process.env.DATABASE_USER || 'postgres',
+    password: process.env.DATABASE_PASSWORD || '',
     poolMin: parseInt(process.env.DATABASE_POOL_MIN || '2', 10),
     poolMax: parseInt(process.env.DATABASE_POOL_MAX || '10', 10),
     ssl: process.env.DATABASE_SSL === 'true',
@@ -158,6 +163,8 @@ const config: Config = {
   stacks: {
     network: (process.env.STACKS_NETWORK as any) || 'testnet',
     apiUrl: process.env.STACKS_API_URL || 'https://stacks-node-api.testnet.stacks.co',
+    senderKey: process.env.STACKS_SENDER_KEY || '',
+    senderAddress: process.env.STACKS_SENDER_ADDRESS || '',
     contracts: {
       subscriptionManager: process.env.CONTRACT_SUBSCRIPTION_MANAGER || '',
       recurringPayment: process.env.CONTRACT_RECURRING_PAYMENT || '',
@@ -227,7 +234,7 @@ const config: Config = {
   },
 
   cache: {
-    redisUrl: process.env.REDIS_URL,
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
     ttl: parseInt(process.env.CACHE_TTL || '3600', 10),
     maxItems: parseInt(process.env.CACHE_MAX_ITEMS || '1000', 10),
   },
@@ -312,12 +319,13 @@ if (config.app.env === 'production') {
 
   // Warn about insecure secrets
   if (config.auth.jwtSecret.includes('change-this')) {
-    console.warn('WARNING: Using default JWT secret in production!');
+    process.stderr.write('WARNING: Using default JWT secret in production!\n');
   }
 
   if (config.webhooks.secret.includes('change-this')) {
-    console.warn('WARNING: Using default webhook secret in production!');
+    process.stderr.write('WARNING: Using default webhook secret in production!\n');
   }
 }
 
+export { config };
 export default config;

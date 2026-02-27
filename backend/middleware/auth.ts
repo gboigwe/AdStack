@@ -1,14 +1,7 @@
-/**
- * Authentication Middleware
- *
- * Handles user authentication and authorization
- */
-
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { config } from '../config/config';
 import * as subscriptionService from '../services/subscription';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 export interface User {
   id: string;
@@ -25,9 +18,6 @@ declare global {
   }
 }
 
-/**
- * Authenticate user from JWT token
- */
 export async function auth(
   req: Request,
   res: Response,
@@ -46,7 +36,7 @@ export async function auth(
     const token = authHeader.substring(7);
 
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as User;
+      const decoded = jwt.verify(token, config.auth.jwtSecret) as User;
       req.user = decoded;
       next();
     } catch (error) {
@@ -60,9 +50,6 @@ export async function auth(
   }
 }
 
-/**
- * Optional authentication - doesn't fail if no token
- */
 export async function optionalAuth(
   req: Request,
   res: Response,
@@ -75,7 +62,7 @@ export async function optionalAuth(
       const token = authHeader.substring(7);
 
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as User;
+        const decoded = jwt.verify(token, config.auth.jwtSecret) as User;
         req.user = decoded;
       } catch (error) {
         // Invalid token, but continue without user
@@ -88,9 +75,6 @@ export async function optionalAuth(
   }
 }
 
-/**
- * Require admin role
- */
 export function requireAdmin(
   req: Request,
   res: Response,
@@ -106,9 +90,6 @@ export function requireAdmin(
   next();
 }
 
-/**
- * Require active subscription
- */
 export async function requireActiveSubscription(
   req: Request,
   res: Response,
@@ -138,9 +119,6 @@ export async function requireActiveSubscription(
   }
 }
 
-/**
- * Require specific subscription tier or higher
- */
 export function requireTier(minimumTier: 'basic' | 'pro' | 'enterprise') {
   const tierHierarchy = {
     free: 0,
@@ -190,9 +168,6 @@ export function requireTier(minimumTier: 'basic' | 'pro' | 'enterprise') {
   };
 }
 
-/**
- * Require specific feature access
- */
 export function requireFeature(featureName: string) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -233,9 +208,6 @@ export function requireFeature(featureName: string) {
   };
 }
 
-/**
- * Check feature access (placeholder - integrate with smart contract)
- */
 async function checkFeatureAccess(
   userId: string,
   featureName: string
@@ -245,21 +217,15 @@ async function checkFeatureAccess(
   return true;
 }
 
-/**
- * Generate JWT token
- */
 export function generateToken(user: User): string {
-  return jwt.sign(user, JWT_SECRET, {
-    expiresIn: '7d',
+  return jwt.sign(user, config.auth.jwtSecret, {
+    expiresIn: config.auth.jwtExpiration,
   });
 }
 
-/**
- * Verify JWT token
- */
 export function verifyToken(token: string): User | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as User;
+    return jwt.verify(token, config.auth.jwtSecret) as User;
   } catch (error) {
     return null;
   }

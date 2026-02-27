@@ -1,13 +1,9 @@
-/**
- * Subscription Service
- *
- * Business logic for subscription management
- */
-
-import { db } from '../lib/database';
-import { contractCall, contractRead } from '../lib/stacks';
+import { query, queryOne, queryMany, transaction } from '../lib/database';
+import { contractCall, contractRead, waitForTransaction } from '../lib/stacks';
 import { sendEmail } from '../lib/email';
-import { calculateProration } from '../../frontend/src/lib/subscription';
+import { cacheGet, cacheSet, cacheDelete } from '../lib/cache';
+import { logger } from '../lib/logger';
+import { config } from '../config/config';
 
 interface CreateSubscriptionInput {
   userId: string;
@@ -16,499 +12,429 @@ interface CreateSubscriptionInput {
   billingInterval: 'monthly' | 'yearly';
 }
 
-interface Subscription {
+interface SubscriptionRow {
   id: string;
-  userId: string;
-  subscriptionId: number;
-  planId: number;
+  user_id: string;
+  subscription_id: number;
+  plan_id: number;
+  plan_name: string;
+  tier: string;
   status: string;
-  currentPeriodStart: Date;
-  currentPeriodEnd: Date;
-  autoRenew: boolean;
-  cancelAtPeriodEnd: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  price: number;
+  billing_interval: string;
+  current_period_start: Date;
+  current_period_end: Date;
+  auto_renew: boolean;
+  cancel_at_period_end: boolean;
+  canceled_at: Date | null;
+  cancellation_feedback: string | null;
+  default_payment_method_id: string | null;
+  created_at: Date;
+  updated_at: Date;
 }
 
-/**
- * Get user's subscription
- */
-export async function getSubscription(userId: string): Promise<Subscription | null> {
+interface PlanRow {
+  id: number;
+  name: string;
+  tier: string;
+  description: string;
+  price: number;
+  billing_interval: string;
+  features: string[];
+  limits: Record<string, number>;
+  is_active: boolean;
+  display_order: number;
+}
+
+export async function getSubscription(userId: string): Promise<SubscriptionRow | null> {
+  const cacheKey = `subscription:user:${userId}`;
+  const cached = await cacheGet<SubscriptionRow>(cacheKey);
+  if (cached) return cached;
+
+  const row = await queryOne<SubscriptionRow>(
+    `SELECT * FROM subscriptions
+     WHERE user_id = $1 AND status IN ('active', 'past_due', 'grace_period')
+     ORDER BY created_at DESC LIMIT 1`,
+    [userId]
+  );
+
+  if (!row) return null;
+
   try {
-    // First check database
-    const dbSubscription = await db.subscriptions.findOne({
-      userId,
-      status: { $in: ['active', 'past_due', 'grace_period'] }
-    });
-
-    if (!dbSubscription) {
-      return null;
+    const onChainData = await contractRead('subscription-manager', 'get-user-subscription', [userId]);
+    if (onChainData) {
+      const newStatus = getStatusString(onChainData.status);
+      await query(
+        `UPDATE subscriptions SET status = $2, auto_renew = $3 WHERE id = $1`,
+        [row.id, newStatus, onChainData.autoRenew]
+      );
+      row.status = newStatus;
+      row.auto_renew = onChainData.autoRenew;
     }
-
-    // Sync with blockchain
-    const onChainData = await contractRead('subscription-manager', 'get-user-subscription', [
-      userId
-    ]);
-
-    if (!onChainData) {
-      return dbSubscription;
-    }
-
-    // Update database with on-chain data
-    await db.subscriptions.updateOne(
-      { id: dbSubscription.id },
-      {
-        $set: {
-          status: getStatusString(onChainData.status),
-          currentPeriodEnd: new Date(onChainData.currentPeriodEnd * 1000),
-          autoRenew: onChainData.autoRenew,
-          updatedAt: new Date()
-        }
-      }
-    );
-
-    return { ...dbSubscription, ...onChainData };
-  } catch (error) {
-    console.error('Error getting subscription:', error);
-    throw error;
+  } catch (err) {
+    logger.warn('Failed to sync subscription with blockchain, using DB state', err);
   }
+
+  await cacheSet(cacheKey, row, 300);
+  return row;
 }
 
-/**
- * Get subscription by ID
- */
-export async function getSubscriptionById(id: string): Promise<Subscription | null> {
-  try {
-    return await db.subscriptions.findOne({ id });
-  } catch (error) {
-    console.error('Error getting subscription by ID:', error);
-    throw error;
+export async function getSubscriptionById(id: string): Promise<SubscriptionRow | null> {
+  return queryOne<SubscriptionRow>('SELECT * FROM subscriptions WHERE id = $1', [id]);
+}
+
+export async function createSubscription(input: CreateSubscriptionInput): Promise<SubscriptionRow> {
+  const { userId, planId, paymentMethodId, billingInterval } = input;
+
+  const plan = await queryOne<PlanRow>(
+    'SELECT * FROM subscription_plans WHERE id = $1 AND is_active = true',
+    [planId]
+  );
+
+  if (!plan) {
+    throw new Error('Invalid or inactive plan');
   }
-}
 
-/**
- * Create new subscription
- */
-export async function createSubscription(
-  input: CreateSubscriptionInput
-): Promise<Subscription> {
+  if (paymentMethodId && plan.price > 0) {
+    await processInitialPayment(userId, plan.price, paymentMethodId, plan.name);
+  }
+
+  let subscriptionId = Date.now();
   try {
-    const { userId, planId, paymentMethodId, billingInterval } = input;
-
-    // Get plan details
-    const plan = await contractRead('subscription-manager', 'get-plan', [planId]);
-
-    if (!plan || !plan.isActive) {
-      throw new Error('Invalid or inactive plan');
-    }
-
-    // Process initial payment
-    if (paymentMethodId) {
-      await processPayment({
-        userId,
-        amount: plan.price,
-        paymentMethodId,
-        description: `Initial payment for ${plan.name} subscription`
-      });
-    }
-
-    // Create subscription on blockchain
     const txId = await contractCall('subscription-manager', 'subscribe', [planId]);
-
-    // Wait for transaction confirmation
-    await waitForTransaction(txId);
-
-    // Get subscription ID from transaction result
-    const subscriptionId = await getSubscriptionIdFromTx(txId);
-
-    // Create in database
-    const subscription = await db.subscriptions.create({
-      userId,
-      subscriptionId,
-      planId,
-      status: 'active',
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: calculateNextBillingDate(billingInterval),
-      autoRenew: true,
-      cancelAtPeriodEnd: false,
-      billingInterval
-    });
-
-    // Send confirmation email
-    await sendEmail({
-      to: userId,
-      template: 'subscription-created',
-      data: {
-        planName: plan.name,
-        amount: plan.price,
-        nextBillingDate: subscription.currentPeriodEnd
-      }
-    });
-
-    return subscription;
-  } catch (error) {
-    console.error('Error creating subscription:', error);
-    throw error;
+    const txResult = await waitForTransaction(txId);
+    if (txResult) {
+      subscriptionId = typeof txResult === 'number' ? txResult : subscriptionId;
+    }
+  } catch (err) {
+    logger.warn('Blockchain subscription creation failed, continuing with DB-only', err);
   }
+
+  const periodEnd = calculateNextBillingDate(billingInterval);
+
+  const row = await queryOne<SubscriptionRow>(
+    `INSERT INTO subscriptions (
+      user_id, subscription_id, plan_id, plan_name, tier, status, price,
+      billing_interval, current_period_start, current_period_end,
+      auto_renew, cancel_at_period_end, default_payment_method_id
+    ) VALUES ($1, $2, $3, $4, $5, 'active', $6, $7, NOW(), $8, true, false, $9)
+    RETURNING *`,
+    [userId, subscriptionId, plan.id, plan.name, plan.tier, plan.price,
+     billingInterval, periodEnd, paymentMethodId || null]
+  );
+
+  if (!row) throw new Error('Failed to create subscription record');
+
+  initializeUsageLimits(row.id, userId, plan.limits, periodEnd).catch((err) =>
+    logger.error('Failed to initialize usage limits:', err)
+  );
+
+  await sendEmail({
+    to: userId,
+    template: 'subscription-created',
+    data: {
+      planName: plan.name,
+      amount: plan.price.toFixed(2),
+      nextBillingDate: periodEnd.toISOString(),
+    },
+  });
+
+  await cacheDelete(`subscription:user:${userId}`);
+  return row;
 }
 
-/**
- * Cancel subscription
- */
 export async function cancelSubscription(
   id: string,
   immediate: boolean,
   feedback?: string
 ): Promise<boolean> {
+  const subscription = await getSubscriptionById(id);
+  if (!subscription) throw new Error('Subscription not found');
+
   try {
-    const subscription = await getSubscriptionById(id);
-
-    if (!subscription) {
-      throw new Error('Subscription not found');
-    }
-
-    // Cancel on blockchain
-    const txId = await contractCall('subscription-manager', 'cancel-subscription', [
-      immediate
-    ]);
-
+    const txId = await contractCall('subscription-manager', 'cancel-subscription', [immediate]);
     await waitForTransaction(txId);
-
-    // Update database
-    await db.subscriptions.updateOne(
-      { id },
-      {
-        $set: {
-          status: immediate ? 'canceled' : subscription.status,
-          cancelAtPeriodEnd: !immediate,
-          canceledAt: new Date(),
-          cancellationFeedback: feedback,
-          updatedAt: new Date()
-        }
-      }
-    );
-
-    // Send cancellation email
-    await sendEmail({
-      to: subscription.userId,
-      template: immediate ? 'subscription-canceled' : 'subscription-cancel-scheduled',
-      data: {
-        effectiveDate: immediate ? new Date() : subscription.currentPeriodEnd
-      }
-    });
-
-    return true;
-  } catch (error) {
-    console.error('Error canceling subscription:', error);
-    throw error;
+  } catch (err) {
+    logger.warn('Blockchain cancellation failed, updating DB only', err);
   }
+
+  if (immediate) {
+    await query(
+      `UPDATE subscriptions
+       SET status = 'canceled', canceled_at = NOW(), cancellation_feedback = $2
+       WHERE id = $1`,
+      [id, feedback || null]
+    );
+  } else {
+    await query(
+      `UPDATE subscriptions
+       SET cancel_at_period_end = true, canceled_at = NOW(), cancellation_feedback = $2
+       WHERE id = $1`,
+      [id, feedback || null]
+    );
+  }
+
+  const effectiveDate = immediate
+    ? new Date().toISOString()
+    : subscription.current_period_end.toString();
+
+  await sendEmail({
+    to: subscription.user_id,
+    template: immediate ? 'subscription-canceled' : 'subscription-cancel-scheduled',
+    data: { effectiveDate },
+  });
+
+  await cacheDelete(`subscription:user:${subscription.user_id}`);
+  return true;
 }
 
-/**
- * Change subscription plan
- */
 export async function changePlan(
   id: string,
   newPlanId: number,
   immediate: boolean
 ): Promise<{ success: boolean; prorationAmount?: number }> {
+  const subscription = await getSubscriptionById(id);
+  if (!subscription) throw new Error('Subscription not found');
+
+  const [oldPlan, newPlan] = await Promise.all([
+    queryOne<PlanRow>('SELECT * FROM subscription_plans WHERE id = $1', [subscription.plan_id]),
+    queryOne<PlanRow>('SELECT * FROM subscription_plans WHERE id = $1 AND is_active = true', [newPlanId]),
+  ]);
+
+  if (!newPlan) throw new Error('Invalid or inactive plan');
+
+  let prorationAmount = 0;
+  if (oldPlan && immediate) {
+    const now = Date.now();
+    const periodStart = new Date(subscription.current_period_start).getTime();
+    const periodEnd = new Date(subscription.current_period_end).getTime();
+    const totalPeriod = periodEnd - periodStart;
+    const remaining = periodEnd - now;
+
+    if (totalPeriod > 0 && remaining > 0) {
+      const ratio = remaining / totalPeriod;
+      const oldCredit = Number(oldPlan.price) * ratio;
+      const newCharge = Number(newPlan.price) * ratio;
+      prorationAmount = Math.max(0, newCharge - oldCredit);
+      prorationAmount = Math.round(prorationAmount * 100) / 100;
+    }
+  }
+
   try {
-    const subscription = await getSubscriptionById(id);
-
-    if (!subscription) {
-      throw new Error('Subscription not found');
-    }
-
-    // Get both plans
-    const oldPlan = await contractRead('subscription-manager', 'get-plan', [
-      subscription.planId
-    ]);
-    const newPlan = await contractRead('subscription-manager', 'get-plan', [newPlanId]);
-
-    if (!newPlan || !newPlan.isActive) {
-      throw new Error('Invalid or inactive plan');
-    }
-
-    // Calculate proration
-    const proration = calculateProration(
-      oldPlan.price,
-      newPlan.price,
-      subscription.currentPeriodStart,
-      subscription.currentPeriodEnd
-    );
-
-    // Process proration charge/credit if needed
-    if (proration.amountDue > 0) {
-      await processPayment({
-        userId: subscription.userId,
-        amount: proration.amountDue,
-        paymentMethodId: subscription.defaultPaymentMethodId,
-        description: `Proration for plan change from ${oldPlan.name} to ${newPlan.name}`
-      });
-    }
-
-    // Change plan on blockchain
     const txId = await contractCall('subscription-manager', 'change-plan', [newPlanId]);
-
     await waitForTransaction(txId);
+  } catch (err) {
+    logger.warn('Blockchain plan change failed, updating DB only', err);
+  }
 
-    // Update database
-    await db.subscriptions.updateOne(
-      { id },
-      {
-        $set: {
-          planId: newPlanId,
-          updatedAt: new Date()
-        }
-      }
+  await query(
+    `UPDATE subscriptions SET plan_id = $2, plan_name = $3, tier = $4, price = $5 WHERE id = $1`,
+    [id, newPlan.id, newPlan.name, newPlan.tier, newPlan.price]
+  );
+
+  if (prorationAmount > 0) {
+    await query(
+      `INSERT INTO proration_records (
+        subscription_id, user_id, old_plan_id, new_plan_id,
+        old_price, new_price, credit_amount, charge_amount, net_amount, effective_date
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())`,
+      [
+        id, subscription.user_id, subscription.plan_id, newPlan.id,
+        oldPlan!.price, newPlan.price,
+        Math.round(Number(oldPlan!.price) * 100) / 100,
+        Math.round(Number(newPlan.price) * 100) / 100,
+        prorationAmount,
+      ]
     );
-
-    // Send confirmation email
-    await sendEmail({
-      to: subscription.userId,
-      template: 'plan-changed',
-      data: {
-        oldPlanName: oldPlan.name,
-        newPlanName: newPlan.name,
-        prorationAmount: proration.amountDue,
-        effectiveDate: immediate ? new Date() : subscription.currentPeriodEnd
-      }
-    });
-
-    return {
-      success: true,
-      prorationAmount: proration.amountDue
-    };
-  } catch (error) {
-    console.error('Error changing plan:', error);
-    throw error;
   }
+
+  await sendEmail({
+    to: subscription.user_id,
+    template: 'plan-changed',
+    data: {
+      oldPlanName: oldPlan?.name || 'Previous Plan',
+      newPlanName: newPlan.name,
+      prorationAmount: prorationAmount.toFixed(2),
+      effectiveDate: immediate ? new Date().toISOString() : subscription.current_period_end.toString(),
+    },
+  });
+
+  await cacheDelete(`subscription:user:${subscription.user_id}`);
+  return { success: true, prorationAmount };
 }
 
-/**
- * Get subscription usage
- */
-export async function getUsage(subscriptionId: string): Promise<any> {
-  try {
-    // Get from blockchain
-    const onChainUsage = await contractRead('subscription-benefits', 'get-user-usage', [
-      subscriptionId
-    ]);
-
-    // Get from database for caching
-    const dbUsage = await db.usage.findOne({ subscriptionId });
-
-    return {
-      ...dbUsage,
-      ...onChainUsage
-    };
-  } catch (error) {
-    console.error('Error getting usage:', error);
-    throw error;
-  }
+export async function getUsage(subscriptionId: string): Promise<any[]> {
+  const rows = await queryMany(
+    'SELECT * FROM usage WHERE subscription_id = $1',
+    [subscriptionId]
+  );
+  return rows;
 }
 
-/**
- * Track usage event
- */
 export async function trackUsage(
   subscriptionId: string,
-  usageType: number,
+  usageType: string,
   amount: number
 ): Promise<{ success: boolean; limitExceeded?: boolean; limit?: number; currentUsage?: number }> {
-  try {
-    // Check limit on blockchain
-    const canUse = await contractRead('subscription-benefits', 'check-usage-limit', [
-      subscriptionId,
-      usageType,
-      amount
-    ]);
+  const usage = await queryOne<{
+    id: string;
+    amount: number;
+    limit_amount: number;
+  }>(
+    'SELECT id, amount, limit_amount FROM usage WHERE subscription_id = $1 AND usage_type = $2',
+    [subscriptionId, usageType]
+  );
 
-    if (!canUse) {
-      const usage = await getUsage(subscriptionId);
-      return {
-        success: false,
-        limitExceeded: true,
-        limit: usage[usageType]?.limit,
-        currentUsage: usage[usageType]?.used
-      };
-    }
-
-    // Track on blockchain
-    const txId = await contractCall('subscription-benefits', 'track-usage', [
-      subscriptionId,
-      usageType,
-      amount
-    ]);
-
-    await waitForTransaction(txId);
-
-    // Update database cache
-    await db.usage.updateOne(
-      { subscriptionId },
-      {
-        $inc: { [`${usageType}.used`]: amount },
-        $set: { updatedAt: new Date() }
-      },
-      { upsert: true }
-    );
-
-    return { success: true };
-  } catch (error) {
-    console.error('Error tracking usage:', error);
-    throw error;
+  if (!usage) {
+    return { success: false, limitExceeded: false };
   }
+
+  const newAmount = Number(usage.amount) + amount;
+  if (Number(usage.limit_amount) > 0 && newAmount > Number(usage.limit_amount)) {
+    return {
+      success: false,
+      limitExceeded: true,
+      limit: Number(usage.limit_amount),
+      currentUsage: Number(usage.amount),
+    };
+  }
+
+  await query('UPDATE usage SET amount = $2 WHERE id = $1', [usage.id, newAmount]);
+
+  await query(
+    `INSERT INTO usage_events (subscription_id, user_id, usage_type, amount)
+     SELECT $1, user_id, $2, $3 FROM subscriptions WHERE id = $1`,
+    [subscriptionId, usageType, amount]
+  );
+
+  return { success: true };
 }
 
-/**
- * Get all subscription plans
- */
-export async function getPlans(): Promise<any[]> {
-  try {
-    // Get from cache
-    const cached = await db.cache.findOne({ key: 'subscription-plans' });
+export async function getPlans(): Promise<PlanRow[]> {
+  const cacheKey = 'subscription-plans';
+  const cached = await cacheGet<PlanRow[]>(cacheKey);
+  if (cached) return cached;
 
-    if (cached && cached.expiresAt > new Date()) {
-      return cached.value;
-    }
+  const plans = await queryMany<PlanRow>(
+    'SELECT * FROM subscription_plans WHERE is_active = true ORDER BY display_order ASC',
+    []
+  );
 
-    // Fetch from blockchain
-    const plans = [];
-    for (let i = 1; i <= 10; i++) {
-      const plan = await contractRead('subscription-manager', 'get-plan', [i]);
-      if (plan && plan.isActive) {
-        plans.push(plan);
-      }
-    }
-
-    // Cache for 1 hour
-    await db.cache.updateOne(
-      { key: 'subscription-plans' },
-      {
-        $set: {
-          value: plans,
-          expiresAt: new Date(Date.now() + 3600000)
-        }
-      },
-      { upsert: true }
-    );
-
-    return plans;
-  } catch (error) {
-    console.error('Error getting plans:', error);
-    throw error;
-  }
+  await cacheSet(cacheKey, plans, 3600);
+  return plans;
 }
 
-/**
- * Get subscription invoices
- */
 export async function getInvoices(
   subscriptionId: string,
   page: number,
   limit: number
 ): Promise<{ invoices: any[]; total: number; page: number; pages: number }> {
-  try {
-    const skip = (page - 1) * limit;
+  const offset = (page - 1) * limit;
 
-    const [invoices, total] = await Promise.all([
-      db.invoices.find({ subscriptionId }).skip(skip).limit(limit).sort({ createdAt: -1 }),
-      db.invoices.countDocuments({ subscriptionId })
-    ]);
+  const [invoices, countResult] = await Promise.all([
+    queryMany(
+      'SELECT * FROM invoices WHERE subscription_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3',
+      [subscriptionId, limit, offset]
+    ),
+    queryOne<{ count: string }>('SELECT COUNT(*) as count FROM invoices WHERE subscription_id = $1', [subscriptionId]),
+  ]);
 
-    return {
-      invoices,
-      total,
-      page,
-      pages: Math.ceil(total / limit)
-    };
-  } catch (error) {
-    console.error('Error getting invoices:', error);
-    throw error;
-  }
+  const total = parseInt(countResult?.count || '0', 10);
+
+  return {
+    invoices,
+    total,
+    page,
+    pages: Math.ceil(total / limit),
+  };
 }
 
-/**
- * Add payment method
- */
 export async function addPaymentMethod(
   subscriptionId: string,
   paymentMethodId: string,
   setAsDefault: boolean
 ): Promise<boolean> {
+  const subscription = await getSubscriptionById(subscriptionId);
+  if (!subscription) throw new Error('Subscription not found');
+
   try {
-    const subscription = await getSubscriptionById(subscriptionId);
-
-    if (!subscription) {
-      throw new Error('Subscription not found');
-    }
-
-    // Add to blockchain
     const txId = await contractCall('recurring-payment', 'add-payment-method', [
       paymentMethodId,
-      setAsDefault
+      setAsDefault,
     ]);
-
     await waitForTransaction(txId);
-
-    // Update database
-    if (setAsDefault) {
-      await db.subscriptions.updateOne(
-        { id: subscriptionId },
-        {
-          $set: {
-            defaultPaymentMethodId: paymentMethodId,
-            updatedAt: new Date()
-          }
-        }
-      );
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error adding payment method:', error);
-    throw error;
+  } catch (err) {
+    logger.warn('Blockchain payment method addition failed, updating DB only', err);
   }
+
+  if (setAsDefault) {
+    await query(
+      'UPDATE subscriptions SET default_payment_method_id = $2 WHERE id = $1',
+      [subscriptionId, paymentMethodId]
+    );
+    await cacheDelete(`subscription:user:${subscription.user_id}`);
+  }
+
+  return true;
 }
 
-// Helper functions
-
 function getStatusString(statusCode: number): string {
-  const statuses = {
+  const statuses: Record<number, string> = {
     1: 'active',
     2: 'past_due',
     3: 'canceled',
     4: 'expired',
-    5: 'grace_period'
+    5: 'grace_period',
   };
   return statuses[statusCode] || 'unknown';
 }
 
 function calculateNextBillingDate(interval: 'monthly' | 'yearly'): Date {
-  const now = new Date();
+  const date = new Date();
   if (interval === 'monthly') {
-    return new Date(now.setMonth(now.getMonth() + 1));
+    date.setMonth(date.getMonth() + 1);
   } else {
-    return new Date(now.setFullYear(now.getFullYear() + 1));
+    date.setFullYear(date.getFullYear() + 1);
   }
+  return date;
 }
 
-async function processPayment(input: {
-  userId: string;
-  amount: number;
-  paymentMethodId: string;
-  description: string;
-}): Promise<void> {
-  // Implementation would integrate with payment processor (Stripe, etc.)
-  console.log('Processing payment:', input);
+async function processInitialPayment(
+  userId: string,
+  amount: number,
+  paymentMethodId: string,
+  planName: string
+): Promise<void> {
+  if (config.development.mockPaymentProcessor) {
+    logger.info(`Mock payment processed: ${amount} for ${planName}`);
+    return;
+  }
+
+  const Stripe = require('stripe');
+  const stripe = new Stripe(config.payment.stripe.secretKey);
+
+  await stripe.paymentIntents.create({
+    amount: Math.round(amount * 100),
+    currency: 'usd',
+    payment_method: paymentMethodId,
+    confirm: true,
+    metadata: { userId, planName },
+  });
 }
 
-async function waitForTransaction(txId: string): Promise<void> {
-  // Implementation would wait for transaction confirmation
-  console.log('Waiting for transaction:', txId);
-}
-
-async function getSubscriptionIdFromTx(txId: string): Promise<number> {
-  // Implementation would extract subscription ID from transaction result
-  return 1;
+async function initializeUsageLimits(
+  subscriptionId: string,
+  userId: string,
+  limits: Record<string, number>,
+  periodEnd: Date
+): Promise<void> {
+  const usageTypes = Object.entries(limits);
+  for (const [usageType, limitAmount] of usageTypes) {
+    await query(
+      `INSERT INTO usage (subscription_id, user_id, usage_type, amount, limit_amount, period_start, period_end, last_reset)
+       VALUES ($1, $2, $3, 0, $4, NOW(), $5, NOW())
+       ON CONFLICT (subscription_id, usage_type) DO UPDATE SET limit_amount = $4, period_end = $5`,
+      [subscriptionId, userId, usageType, limitAmount, periodEnd]
+    );
+  }
 }
