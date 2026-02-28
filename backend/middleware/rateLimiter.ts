@@ -1,37 +1,32 @@
-/**
- * Rate Limiting Middleware
- *
- * Implements rate limiting based on subscription tier
- */
-
 import { Request, Response, NextFunction } from 'express';
 import { RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible';
+import { config } from '../config/config';
+import { logger } from '../lib/logger';
 import * as subscriptionService from '../services/subscription';
 
-// Rate limiter configurations by tier
-const rateLimiters = {
+const rateLimiters: Record<string, RateLimiterMemory> = {
   free: new RateLimiterMemory({
-    points: 100, // Number of requests
-    duration: 3600, // Per hour
+    points: config.rateLimit.free,
+    duration: config.rateLimit.window,
   }),
   basic: new RateLimiterMemory({
-    points: 1000,
-    duration: 3600,
+    points: config.rateLimit.basic,
+    duration: config.rateLimit.window,
   }),
   pro: new RateLimiterMemory({
-    points: 10000,
-    duration: 3600,
+    points: config.rateLimit.pro,
+    duration: config.rateLimit.window,
   }),
   enterprise: new RateLimiterMemory({
-    points: 100000,
-    duration: 3600,
+    points: config.rateLimit.enterprise,
+    duration: config.rateLimit.window,
   }),
 };
 
 // Default rate limiter for unauthenticated requests
 const defaultLimiter = new RateLimiterMemory({
   points: 50,
-  duration: 3600,
+  duration: config.rateLimit.window,
 });
 
 interface RateLimitInfo {
@@ -40,9 +35,6 @@ interface RateLimitInfo {
   reset: Date;
 }
 
-/**
- * Rate limiting middleware based on subscription tier
- */
 export async function rateLimitByTier(
   req: Request,
   res: Response,
@@ -98,15 +90,11 @@ export async function rateLimitByTier(
       }) as any;
     }
   } catch (error) {
-    console.error('Rate limiter error:', error);
-    // In case of error, allow the request to proceed
+    logger.error('Rate limiter error:', error);
     next();
   }
 }
 
-/**
- * Strict rate limiter for sensitive endpoints (e.g., authentication)
- */
 export const strictRateLimiter = new RateLimiterMemory({
   points: 5, // 5 requests
   duration: 900, // Per 15 minutes
@@ -135,9 +123,6 @@ export async function strictRateLimit(
   }
 }
 
-/**
- * Custom rate limiter factory
- */
 export function createRateLimiter(
   points: number,
   duration: number
@@ -145,9 +130,6 @@ export function createRateLimiter(
   return new RateLimiterMemory({ points, duration });
 }
 
-/**
- * Get rate limit info for a user
- */
 export async function getRateLimitInfo(
   userId: string
 ): Promise<RateLimitInfo | null> {
@@ -171,14 +153,11 @@ export async function getRateLimitInfo(
       reset: new Date(Date.now() + (res?.msBeforeNext || 3600000)),
     };
   } catch (error) {
-    console.error('Error getting rate limit info:', error);
+    logger.error('Error getting rate limit info:', error);
     return null;
   }
 }
 
-/**
- * Reset rate limit for a user (admin function)
- */
 export async function resetRateLimit(userId: string): Promise<boolean> {
   try {
     const subscription = await subscriptionService.getSubscription(userId);
@@ -192,7 +171,7 @@ export async function resetRateLimit(userId: string): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error('Error resetting rate limit:', error);
+    logger.error('Error resetting rate limit:', error);
     return false;
   }
 }

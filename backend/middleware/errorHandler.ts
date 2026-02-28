@@ -1,10 +1,6 @@
-/**
- * Error Handler Middleware
- *
- * Centralized error handling for the API
- */
-
 import { Request, Response, NextFunction } from 'express';
+import { config } from '../config/config';
+import { logger } from '../lib/logger';
 
 export class AppError extends Error {
   statusCode: number;
@@ -78,20 +74,15 @@ export class ContractError extends AppError {
   }
 }
 
-/**
- * Global error handler middleware
- */
 export function errorHandler(
   error: Error | AppError,
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
-  // Log error
-  console.error('Error:', {
+  logger.error('Request error:', {
     name: error.name,
     message: error.message,
-    stack: error.stack,
     url: req.url,
     method: req.method,
     user: req.user?.id,
@@ -145,7 +136,7 @@ export function errorHandler(
     return;
   }
 
-  if (error.name === 'SequelizeUniqueConstraintError') {
+  if (error.name === 'SequelizeUniqueConstraintError' || (error as any).code === '23505') {
     res.status(409).json({
       error: 'Conflict',
       message: 'Resource already exists',
@@ -153,7 +144,7 @@ export function errorHandler(
     return;
   }
 
-  if (error.name === 'SequelizeForeignKeyConstraintError') {
+  if (error.name === 'SequelizeForeignKeyConstraintError' || (error as any).code === '23503') {
     res.status(400).json({
       error: 'Bad Request',
       message: 'Invalid reference to related resource',
@@ -161,19 +152,15 @@ export function errorHandler(
     return;
   }
 
-  // Handle unknown errors
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDev = config.app.env === 'development';
 
   res.status(500).json({
     error: 'Internal Server Error',
-    message: isDevelopment ? error.message : 'An unexpected error occurred',
-    ...(isDevelopment && { stack: error.stack }),
+    message: isDev ? error.message : 'An unexpected error occurred',
+    ...(isDev && { stack: error.stack }),
   });
 }
 
-/**
- * 404 Not Found handler
- */
 export function notFoundHandler(req: Request, res: Response): void {
   res.status(404).json({
     error: 'Not Found',
@@ -181,9 +168,6 @@ export function notFoundHandler(req: Request, res: Response): void {
   });
 }
 
-/**
- * Async handler wrapper to catch errors in async route handlers
- */
 export function asyncHandler(
   fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) {
@@ -192,30 +176,24 @@ export function asyncHandler(
   };
 }
 
-/**
- * Handle uncaught exceptions and unhandled rejections
- */
 export function setupGlobalErrorHandlers(): void {
   process.on('uncaughtException', (error: Error) => {
-    console.error('UNCAUGHT EXCEPTION! Shutting down...');
-    console.error(error.name, error.message);
-    console.error(error.stack);
+    logger.error('Uncaught exception:', error);
     process.exit(1);
   });
 
   process.on('unhandledRejection', (reason: any) => {
-    console.error('UNHANDLED REJECTION! Shutting down...');
-    console.error(reason);
+    logger.error('Unhandled rejection:', reason);
     process.exit(1);
   });
 
   process.on('SIGTERM', () => {
-    console.log('SIGTERM received. Shutting down gracefully...');
+    logger.info('SIGTERM received');
     process.exit(0);
   });
 
   process.on('SIGINT', () => {
-    console.log('SIGINT received. Shutting down gracefully...');
+    logger.info('SIGINT received');
     process.exit(0);
   });
 }

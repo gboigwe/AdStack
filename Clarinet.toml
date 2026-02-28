@@ -228,6 +228,37 @@ epoch = 'latest'
 path = 'contracts/subscription-benefits.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.audience-segments]
+path = 'contracts/audience-segments.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.privacy-layer]
+path = 'contracts/privacy-layer.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.dispute-manager]
+path = 'contracts/dispute-manager.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.arbitrator-registry]
+path = 'contracts/arbitrator-registry.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.evidence-vault]
+path = 'contracts/evidence-vault.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.judgment-executor]
+path = 'contracts/judgment-executor.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 

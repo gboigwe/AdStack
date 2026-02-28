@@ -1,15 +1,6 @@
-/**
- * Validation Middleware
- *
- * Input validation for API requests
- */
-
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 
-/**
- * Validate request using Joi schema
- */
 export function validateRequest(schema: {
   body?: Joi.ObjectSchema;
   query?: Joi.ObjectSchema;
@@ -87,6 +78,55 @@ export const subscriptionSchemas = {
   }),
 };
 
+export const authSchemas = {
+  walletAuth: Joi.object({
+    walletAddress: Joi.string().required(),
+    signature: Joi.string().optional(),
+    message: Joi.string().optional(),
+  }),
+
+  updateProfile: Joi.object({
+    displayName: Joi.string().max(100).optional(),
+    email: Joi.string().email().optional(),
+    avatarUrl: Joi.string().uri().optional(),
+  }),
+};
+
+export const campaignSchemas = {
+  createCampaign: Joi.object({
+    name: Joi.string().min(1).max(255).required(),
+    description: Joi.string().max(2000).optional(),
+    budget: Joi.number().positive().required(),
+    dailyBudget: Joi.number().positive().optional(),
+    startDate: Joi.date().iso().optional(),
+    endDate: Joi.date().iso().optional(),
+    targetingRules: Joi.object().optional(),
+    adContent: Joi.object().optional(),
+  }),
+
+  updateCampaign: Joi.object({
+    name: Joi.string().min(1).max(255).optional(),
+    description: Joi.string().max(2000).optional(),
+    budget: Joi.number().positive().optional(),
+    dailyBudget: Joi.number().positive().optional(),
+    startDate: Joi.date().iso().optional(),
+    endDate: Joi.date().iso().optional(),
+    targetingRules: Joi.object().optional(),
+    adContent: Joi.object().optional(),
+  }),
+
+  updateStatus: Joi.object({
+    status: Joi.string().valid('active', 'paused', 'completed', 'cancelled').required(),
+  }),
+};
+
+export const webhookSchemas = {
+  registerWebhook: Joi.object({
+    url: Joi.string().uri().required(),
+    events: Joi.array().items(Joi.string()).min(1).required(),
+  }),
+};
+
 export const paginationSchema = {
   query: Joi.object({
     page: Joi.number().integer().min(1).default(1),
@@ -100,9 +140,6 @@ export const idSchema = {
   }),
 };
 
-/**
- * Sanitize user input
- */
 export function sanitizeInput(req: Request, res: Response, next: NextFunction): void {
   // Remove any potentially dangerous characters from string inputs
   const sanitize = (obj: any): any => {
@@ -129,34 +166,22 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction): 
   next();
 }
 
-/**
- * Validate UUID
- */
 export function isValidUUID(uuid: string): boolean {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 }
 
-/**
- * Validate wallet address (Stacks address)
- */
 export function isValidStacksAddress(address: string): boolean {
   // Stacks addresses start with SP or SM for mainnet, ST for testnet
   const stacksRegex = /^(SP|SM|ST)[0-9A-Z]{38,41}$/;
   return stacksRegex.test(address);
 }
 
-/**
- * Validate email
- */
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-/**
- * Validate amount (must be positive number with max 2 decimal places)
- */
 export function isValidAmount(amount: number): boolean {
   return amount > 0 && Number.isFinite(amount) && /^\d+(\.\d{1,2})?$/.test(amount.toString());
 }
