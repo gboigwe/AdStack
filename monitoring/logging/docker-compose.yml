@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: adstack-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - adstack-network
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: adstack-promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+      - promtail-positions:/tmp/positions
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - adstack-network
+
+volumes:
+  loki-data:
+    driver: local
+  promtail-positions:
+    driver: local
+
+networks:
+  adstack-network:
+    external: true
+    name: adstack_adstack-network
