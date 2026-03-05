@@ -1,0 +1,2 @@
+[    1175ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.vercel.com/v9/projects/prj_XU487gFmxkGKJdwdb7As4bWRfxGI?teamId=team_VvXeZS8pgAoDO7ifRUxgKBeq:0
+[    1589ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://api.vercel.com/favicon.ico:0

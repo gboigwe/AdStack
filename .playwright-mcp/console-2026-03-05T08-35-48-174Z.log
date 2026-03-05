@@ -1,0 +1,15 @@
+[    1580ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://adstacktrack.vercel.app/:0
+[    2257ms] Error: Module 35318 was instantiated because it was required from module 93006, but the module factory is not available.
+    at q (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:563)
+    at B (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:480)
+    at o.m [as i] (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:1:2356)
+    at module evaluation (https://adstacktrack.vercel.app/_next/static/chunks/34d898585b06b864.js:8:1567)
+    at q (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:939)
+    at B (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:480)
+    at o.m [as i] (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:1:2356)
+    at module evaluation (https://adstacktrack.vercel.app/_next/static/chunks/34d898585b06b864.js:9:114573)
+    at q (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:939)
+    at B (https://adstacktrack.vercel.app/_next/static/chunks/turbopack-5f611e056dab1b71.js:4:480)
+[    5394ms] [WARNING] The resource https://adstacktrack.vercel.app/_next/static/media/caa3a2e1cccd8315-s.p.853070df.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://adstacktrack.vercel.app/:0
+[    5394ms] [WARNING] The resource https://adstacktrack.vercel.app/_next/static/chunks/5982ab48afee1451.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://adstacktrack.vercel.app/:0
+[    5394ms] [WARNING] The resource https://adstacktrack.vercel.app/_next/static/media/797e433ab948586e-s.p.dbea232f.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://adstacktrack.vercel.app/:0

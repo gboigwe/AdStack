@@ -2,8 +2,6 @@
 
 import { createContext, useContext, useEffect, ReactNode } from 'react';
 import { useWalletStore } from '@/store/wallet-store';
-import { userSession } from '@/lib/wallet';
-import { CURRENT_NETWORK } from '@/lib/stacks-config';
 
 interface AppKitContextValue {
   isInitialized: boolean;
@@ -15,17 +13,21 @@ export function AppKitProvider({ children }: { children: ReactNode }) {
   const { setAddress, setConnected } = useWalletStore();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    const init = async () => {
+      const { userSession } = await import('@/lib/wallet');
+      const { CURRENT_NETWORK } = await import('@/lib/stacks-config');
 
-    if (userSession.isUserSignedIn()) {
-      const userData = userSession.loadUserData();
-      const address =
-        CURRENT_NETWORK === 'mainnet'
-          ? userData.profile.stxAddress.mainnet
-          : userData.profile.stxAddress.testnet;
-      setAddress(address);
-      setConnected(true);
-    }
+      if (userSession.isUserSignedIn()) {
+        const userData = userSession.loadUserData();
+        const address =
+          CURRENT_NETWORK === 'mainnet'
+            ? userData.profile.stxAddress.mainnet
+            : userData.profile.stxAddress.testnet;
+        setAddress(address);
+        setConnected(true);
+      }
+    };
+    init();
   }, [setAddress, setConnected]);
 
   return (
