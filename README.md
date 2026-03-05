@@ -1,264 +1,213 @@
-# AdStack - Decentralized Advertising Protocol
+# AdStack Frontend
 
-## Overview
-AdStack is a decentralized advertising protocol built on the Stacks blockchain that creates a transparent, efficient, and user-centric advertising ecosystem. The protocol enables direct interactions between advertisers, publishers, and users while ensuring fair compensation and verifiable ad delivery.
+A decentralized advertising platform built on Stacks blockchain with **Stacks.js v7+** and **Clarity v4**.
 
-## 🌟 Features
+## Features
 
-### For Advertisers
-- Create and manage advertising campaigns using STX tokens
-- Real-time campaign performance metrics with WebSocket updates
-- Verifiable ad delivery and engagement statistics
-- Smart contract-based payment automation
-- Flexible subscription plans (Free, Basic, Pro, Enterprise)
-- Usage-based pricing with soft and hard limits
-- Advanced analytics and custom targeting (Pro+)
+- **Stacks.js v7+ Integration**: Full support for latest Stacks SDK
+- **Reown AppKit (WalletConnect v2)**: Multi-wallet support with 5+ Stacks wallets
+- **Clarity v4 Contracts**: Leveraging `stacks-block-time` for Unix timestamps
+- **Type-Safe**: Complete TypeScript definitions for all contract interactions
+- **React Query**: Automatic caching and state management
+- **Multi-Wallet Support**: Leather, Xverse, Hiro, BOOM, OKX wallets
+- **Mobile-Responsive**: Touch-optimized UI with wallet deep linking
+- **Session Persistence**: Auto-reconnect on page reload
+- **Transaction History**: View all wallet transactions with filtering
+- **NFT Gallery**: Portfolio viewer with grid and list views
+- **Wallet Analytics**: Track connections and user behavior
+- **Error Handling**: User-friendly error messages
+- **Post-Conditions**: Transaction safety guarantees
 
-### For Publishers
-- Easy platform integration
-- Automated, instant payments
-- Transparent revenue sharing
-- Fraud-resistant view verification
-- Tiered subscription benefits
-- White-label options (Pro+)
-- Priority support (Pro+)
+## Tech Stack
 
-### For Users
-- Opt-in ad viewing
-- Token rewards for engagement
-- Data privacy controls
-- Transparent reward distribution
-- Participation in platform governance through DAO
-- Voting rights on platform decisions
+- **Framework**: Next.js 16.1.1 with App Router
+- **Blockchain**: Stacks.js v7+
+- **State Management**: Zustand + React Query
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Language**: TypeScript 5+
 
-### Subscription & Billing
-- 4 Subscription Tiers: Free, Basic ($29/mo), Pro ($99/mo), Enterprise ($299/mo)
-- Automated recurring payments with STX or fiat
-- Payment retry logic (max 3 attempts) with grace periods
-- Proration for mid-cycle plan changes
-- Usage tracking across 8 metrics (campaigns, impressions, clicks, conversions, API calls, team members, storage, reports)
-- Feature gating based on subscription tier
-- Invoice generation and billing history
-- Email notifications for payments, renewals, and usage limits
-
-### Governance & DAO
-- Decentralized governance with on-chain voting
-- Proposal creation and voting mechanisms
-- Multi-signature treasury management
-- Execution queue with timelock security
-- Token-weighted voting with delegation support
-- Emergency actions and cancellation capabilities
-
-## 🏗️ Technical Architecture
-
-### Smart Contracts
-
-**Core Advertising System:**
-- `campaign-manager.clar`: Handles campaign creation and management
-- `view-verifier.clar`: Implements proof-of-view mechanism
-- `payment-distributor.clar`: Manages reward distribution
-- `user-registry.clar`: Handles user registration and preferences
-
-**Subscription & Payments:**
-- `subscription-manager.clar`: Subscription lifecycle management (plans, enrollments, renewals, cancellations)
-- `recurring-payment.clar`: Automated payment processing with retry logic and refund handling
-- `subscription-benefits.clar`: Feature gating, usage limits, and tier management
-
-**Governance:**
-- `governance-token.clar`: DAO governance token with voting capabilities
-- `dao-core.clar`: Core DAO functionality with multi-sig support
-- `proposal-voting.clar`: Proposal creation and voting mechanism
-- `treasury-manager.clar`: DAO treasury management
-
-### Frontend Components
-
-**Campaign Management:**
-- Campaign Dashboard
-- Publisher Interface
-- User Wallet Integration
-- Real-Time Analytics Dashboard (WebSocket-powered)
-
-**Subscription System:**
-- Subscription Plans & Pricing
-- Checkout Flow with Payment Integration
-- Usage Tracking & Limits Dashboard
-- Billing History & Invoice Management
-- Payment Methods Management
-- Plan Upgrade/Downgrade Flows
-
-**Governance:**
-- DAO Governance Dashboard
-- Proposal Creation & Voting Interface
-- Treasury Management
-- Multi-Signature Transaction Builder
-
-## 📦 Repository Structure
-```
-adstack/
-├── contracts/                          # Clarity smart contracts
-│   ├── campaign-manager.clar           # Campaign management
-│   ├── view-verifier.clar              # Proof-of-view mechanism
-│   ├── payment-distributor.clar        # Reward distribution
-│   ├── user-registry.clar              # User registration
-│   ├── subscription-manager.clar       # Subscription lifecycle
-│   ├── recurring-payment.clar          # Payment automation
-│   ├── subscription-benefits.clar      # Feature gating & usage limits
-│   ├── governance-token.clar           # DAO governance token
-│   ├── dao-core.clar                   # DAO core functionality
-│   ├── proposal-voting.clar            # Proposal & voting
-│   └── treasury-manager.clar           # Treasury management
-├── tests/                              # Contract test files
-│   ├── campaign-manager_test.ts
-│   ├── subscription-manager_test.ts    # 90+ test cases
-│   ├── recurring-payment_test.ts       # 74+ test cases
-│   ├── subscription-benefits_test.ts   # 101+ test cases
-│   └── ...
-├── frontend/                           # Web interface
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── subscription/           # Subscription UI components
-│   │   │   └── governance/             # Governance UI components
-│   │   ├── hooks/
-│   │   │   ├── useSubscription.ts      # Subscription hooks
-│   │   │   └── useUsage.ts             # Usage tracking hooks
-│   │   └── lib/
-│   │       └── subscription.ts         # Subscription utilities
-│   ├── public/
-│   └── ...
-├── backend/                            # Backend services
-│   ├── api/
-│   │   └── subscription.ts             # RESTful subscription API
-│   ├── services/
-│   │   └── subscription.ts             # Business logic
-│   ├── middleware/
-│   │   ├── auth.ts                     # Authentication
-│   │   ├── rateLimiter.ts              # Tier-based rate limiting
-│   │   ├── validation.ts               # Input validation
-│   │   └── errorHandler.ts             # Error handling
-│   ├── db/
-│   │   ├── schema.sql                  # Database schema
-│   │   └── migrations/                 # Database migrations
-│   ├── templates/
-│   │   └── emails/                     # Email templates
-│   └── config/
-│       └── config.ts                   # Application configuration
-├── examples/                           # Integration examples
-│   ├── subscription/
-│   │   ├── subscription-integration.tsx
-│   │   └── README.md
-│   └── governance/
-│       └── README.md
-├── scripts/                            # Deployment and utility scripts
-│   └── ...
-└── docs/                               # Additional documentation
-    ├── SUBSCRIPTION_SYSTEM.md          # Subscription system docs
-    ├── GOVERNANCE_SYSTEM.md            # Governance system docs
-    └── ...
-```
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Stacks CLI
-- Node.js (v14 or higher)
-- Clarity VSCode Extension (recommended)
+
+- Node.js 18+ or Bun
+- A Stacks wallet (Leather, Xverse, etc.)
 
 ### Installation
-1. Clone the repository:
-```bash
-git clone https://github.com/gboigwe/adstack.git
-cd adstack
-```
 
-2. Install dependencies:
 ```bash
+# Install dependencies
 npm install
+# or
+bun install
 ```
 
-3. Run local test environment:
+### Development
+
 ```bash
-npm run test-chain
+# Run development server
+npm run dev
+# or
+bun dev
 ```
 
-### Running Tests
-```bash
-# Run all contract tests
-npm run test
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-# Run specific test suite
-npm run test -- subscription-manager_test.ts
-npm run test -- recurring-payment_test.ts
-npm run test -- subscription-benefits_test.ts
+### Configuration
+
+Create a `.env.local` file from the example:
+
+```bash
+cp .env.example .env.local
 ```
 
-### Environment Setup
-1. Copy the example environment file:
+Get a WalletConnect Project ID:
+1. Visit [Reown Cloud](https://cloud.reown.com/)
+2. Create a new project
+3. Add your Project ID to `.env.local`:
+
 ```bash
-cp .env.example .env
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id_here
 ```
 
-2. Update the `.env` file with your configuration:
-   - Database connection string
-   - Stacks network settings
-   - JWT secret for authentication
-   - Email service API keys
-   - Stripe keys for payment processing
+### Build
 
-3. Run database migrations:
 ```bash
-npm run migrate
-```
-<!-- 
-## 💻 Development
+# Production build
+npm run build
 
-### Local Development
-1. Start local Stacks blockchain:
-```bash
-npm run start-chain
-```
-
-2. Deploy contracts:
-```bash
-npm run deploy-contracts
-```
-
-3. Start frontend:
-```bash
-cd frontend
+# Start production server
 npm start
-``` -->
+```
 
-## 🤝 Contributing
-We welcome contributions to AdStack! Please read our contributing guidelines before submitting pull requests.
+## Project Structure
 
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+```
+src/
+├── app/              # Next.js App Router pages
+├── components/       # React components
+├── hooks/           # Custom React hooks (useContract, etc.)
+├── lib/             # Core utilities
+│   ├── stacks-config.ts        # Network configuration
+│   ├── transaction-builder.ts  # Contract calls
+│   ├── read-only-calls.ts     # Read-only queries
+│   ├── error-handler.ts       # Error parsing
+│   ├── response-parsers.ts    # Clarity response parsing
+│   ├── post-conditions.ts     # Transaction safety
+│   ├── clarity-converters.ts  # Type conversions
+│   ├── display-utils.ts       # Formatting helpers
+│   └── wallet.ts              # Wallet integration
+├── store/           # Zustand state stores
+└── types/           # TypeScript definitions
+    ├── clarity-v4.ts   # Clarity type definitions
+    └── contracts.ts    # Contract interfaces
+```
 
-## 📚 Documentation
+## Wallet Integration
 
-- **[Subscription System Guide](docs/SUBSCRIPTION_SYSTEM.md)** - Complete guide to the subscription and payment system
-- **[Governance System Guide](docs/GOVERNANCE_SYSTEM.md)** - DAO governance documentation
-- **[Integration Examples](examples/)** - Code examples for integrating subscription and governance features
-- **[API Documentation](backend/api/)** - RESTful API reference
-- **[Smart Contract Reference](contracts/)** - Detailed contract documentation
+This project uses **Reown AppKit** (formerly WalletConnect) for multi-wallet support on Stacks. See [REOWN_APPKIT_INTEGRATION.md](./REOWN_APPKIT_INTEGRATION.md) for:
 
-## 🔗 Resources
-- [Stacks Documentation](https://docs.stacks.co)
-- [Clarity Language Reference](https://docs.stacks.co/clarity/introduction)
-- [React Query Documentation](https://tanstack.com/query/latest)
+- Multi-wallet setup (Leather, Xverse, Hiro, BOOM, OKX)
+- Mobile wallet deep linking
+- Session persistence
+- Transaction history
+- NFT gallery
+- Analytics tracking
+- Best practices and troubleshooting
 
-## 🧪 Test Coverage
+### Supported Wallets
 
-- **265+ Total Test Cases** across all smart contracts
-- **subscription-manager_test.ts**: 90+ tests for subscription lifecycle
-- **recurring-payment_test.ts**: 74+ tests for payment processing
-- **subscription-benefits_test.ts**: 101+ tests for feature gating and usage limits
-- **Comprehensive coverage** of edge cases, error conditions, and access control
+| Wallet | Desktop | Mobile |
+|--------|---------|--------|
+| Leather | ✅ | ✅ |
+| Xverse | ✅ | ✅ |
+| Hiro | ✅ | ❌ |
+| BOOM | ❌ | ✅ |
+| OKX | ✅ | ✅ |
 
-## 📞 Contact
-<!-- - Discord: [Join our community](discord-link)
-- Twitter: [@AdStackProtocol](twitter-link) -->
-- Email: contact@adstack.com
+## Stacks.js v7+ Migration
+
+This project uses **Stacks.js v7+** with full **Clarity v4** support. See [STACKS_V7_MIGRATION.md](./STACKS_V7_MIGRATION.md) for:
+
+- Migration guide from v6 to v7
+- Clarity v4 features (`stacks-block-time`, etc.)
+- Type-safe contract interactions
+- Transaction patterns
+- Error handling
+- React hooks usage
+
+### Key Changes from v6
+
+```typescript
+// OLD (v6)
+import { StacksMainnet } from '@stacks/network';
+const network = new StacksMainnet();
+
+// NEW (v7+)
+import { STACKS_MAINNET } from '@stacks/network';
+const network = STACKS_MAINNET;
+```
+
+## Contract Interaction
+
+### Reading Contract Data
+
+```typescript
+import { useCampaign } from '@/hooks/useContract';
+
+function CampaignView({ campaignId }: { campaignId: number }) {
+  const { data, isLoading, error } = useCampaign(campaignId);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return <div>{data?.data?.name}</div>;
+}
+```
+
+### Writing to Contracts
+
+```typescript
+import { useCreateCampaign } from '@/hooks/useContract';
+
+function CreateCampaign() {
+  const { createCampaign, isPending } = useCreateCampaign();
+
+  const handleCreate = () => {
+    createCampaign({
+      name: 'My Campaign',
+      budget: 1000000n, // 1 STX in micro-STX
+      dailyBudget: 100000n,
+      duration: 30,
+    });
+  };
+
+  return <button onClick={handleCreate}>Create Campaign</button>;
+}
+```
+
+## Environment Variables
+
+Create a `.env.local` file:
+
+```bash
+# Network (mainnet, testnet, devnet)
+NEXT_PUBLIC_NETWORK=testnet
+
+# Contract deployer address
+NEXT_PUBLIC_CONTRACT_ADDRESS=ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+```
+
+## Resources
+
+- [Reown AppKit Docs](https://docs.reown.com/appkit)
+- [Stacks.js v7 Docs](https://docs.hiro.so/stacks.js)
+- [Clarity v4 Reference](https://docs.stacks.co/clarity)
+- [Stacks Wallets](https://www.stacks.co/explore/wallets)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Query Docs](https://tanstack.com/query)
+
+## License
+
+MIT
