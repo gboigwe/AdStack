@@ -228,6 +228,17 @@ epoch = 'latest'
 path = 'contracts/subscription-benefits.clar'
 clarity_version = 4
 epoch = 'latest'
+
+[contracts.audience-segmentation-engine]
+path = 'contracts/audience-segments.clar'
+clarity_version = 4
+epoch = 'latest'
+
+[contracts.privacy-layer]
+path = 'contracts/privacy-layer.clar'
+clarity_version = 4
+epoch = 'latest'
+
 [repl.analysis]
 passes = ['check_checker']
 
