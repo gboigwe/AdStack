@@ -3,8 +3,7 @@
  * Integrates Stacks.js with Reown AppKit for multi-wallet support
  */
 
-import { UniversalProvider } from '@reown/appkit-universal-connector';
-import { CURRENT_NETWORK, STACKS_MAINNET, STACKS_TESTNET, APP_DETAILS } from './stacks-config';
+import { CURRENT_NETWORK, APP_DETAILS } from './stacks-config';
 
 /**
  * WalletConnect Project ID
@@ -150,7 +149,7 @@ export const SUPPORTED_WALLETS = [
  */
 export const APPKIT_METADATA = {
   name: APP_DETAILS.name,
-  description: APP_DETAILS.description || 'Decentralized Advertising on Stacks',
+  description: 'Decentralized Advertising on Stacks',
   url: typeof window !== 'undefined' ? window.location.origin : 'https://adstack.app',
   icons: APP_DETAILS.icon ? [APP_DETAILS.icon] : [],
 };

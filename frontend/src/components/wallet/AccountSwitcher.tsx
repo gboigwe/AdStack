@@ -10,7 +10,7 @@ import { ChevronDown, Check, Globe, Copy, ExternalLink, LogOut } from 'lucide-re
 import { useWalletStore } from '@/store/wallet-store';
 import { disconnectWallet, getWalletAddress } from '@/lib/wallet';
 import { truncateAddress, formatSTXWithSymbol } from '@/lib/display-utils';
-import { CURRENT_NETWORK } from '@/lib/stacks-config';
+import { CURRENT_NETWORK, NetworkType } from '@/lib/stacks-config';
 import { copyToClipboard } from '@/lib/display-utils';
 
 interface AccountSwitcherProps {
@@ -20,7 +20,7 @@ interface AccountSwitcherProps {
 export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
   const { address, isConnected, disconnect } = useWalletStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentNetwork, setCurrentNetwork] = useState<'mainnet' | 'testnet'>(CURRENT_NETWORK);
+  const [currentNetwork, setCurrentNetwork] = useState<NetworkType>(CURRENT_NETWORK);
   const [balance, setBalance] = useState<bigint>(0n);
   const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -63,7 +63,7 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
     setIsOpen(false);
   };
 
-  const handleNetworkSwitch = (network: 'mainnet' | 'testnet') => {
+  const handleNetworkSwitch = (network: NetworkType) => {
     setCurrentNetwork(network);
     // TODO: Implement actual network switching
     console.log(`Switching to ${network}`);
