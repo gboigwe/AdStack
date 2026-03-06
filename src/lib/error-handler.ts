@@ -141,6 +141,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.INSUFFICIENT_BALANCE,
       message: 'Insufficient balance for this operation',
       originalError: error,
+      severity: ErrorSeverity.MEDIUM,
     };
   }
 
