@@ -99,15 +99,11 @@ export function isMainnet(): boolean {
 }
 
 export function getExplorerTxUrl(txId: string): string {
-  const baseUrl = isMainnet()
-    ? 'https://explorer.hiro.so/txid'
-    : 'https://explorer.hiro.so/txid?chain=testnet';
-  return `${baseUrl}/${txId}`;
+  const chain = isMainnet() ? '' : '?chain=testnet';
+  return `https://explorer.hiro.so/txid/${txId}${chain}`;
 }
 
 export function getExplorerAddressUrl(address: string): string {
-  const baseUrl = isMainnet()
-    ? 'https://explorer.hiro.so/address'
-    : 'https://explorer.hiro.so/address?chain=testnet';
-  return `${baseUrl}/${address}`;
+  const chain = isMainnet() ? '' : '?chain=testnet';
+  return `https://explorer.hiro.so/address/${address}${chain}`;
 }
