@@ -174,3 +174,51 @@ export function useRegisterUser() {
 
   return { registerUser, ...rest };
 }
+
+/**
+ * Hook to access current wallet connection state
+ * @returns Object with address, isConnected boolean, and isLoading state
+ */
+export function useWallet() {
+  const { address, isConnected } = useWalletStore();
+  return { address, isConnected, isLoading: false };
+}
+
+/**
+ * Hook to fetch publisher earnings for a campaign
+ * @param publisherAddress - The publisher's Stacks address
+ * @param campaignId - The campaign ID
+ * @param enabled - Whether to execute the query
+ */
+export function usePublisherEarnings(
+  publisherAddress: string,
+  campaignId: number,
+  enabled: boolean = true
+) {
+  return useContractRead<bigint>(
+    {
+      contractName: 'cash-distributor',
+      functionName: 'get-publisher-earnings',
+      functionArgs: [principalCV(publisherAddress), uintCV(BigInt(campaignId))],
+    },
+    enabled && !!publisherAddress
+  );
+}
+
+/**
+ * Hook to fund an existing campaign with STX
+ * @returns Object with fundCampaign function and mutation state
+ */
+export function useFundCampaign() {
+  const { mutate, ...rest } = useContractCall();
+
+  const fundCampaign = (params: { campaignId: number; amount: bigint }) => {
+    mutate({
+      contractName: 'promo-manager',
+      functionName: 'fund-campaign',
+      functionArgs: [uintCV(BigInt(params.campaignId)), uintCV(params.amount)],
+    });
+  };
+
+  return { fundCampaign, ...rest };
+}
