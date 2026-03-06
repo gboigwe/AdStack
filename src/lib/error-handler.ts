@@ -261,7 +261,9 @@ export function formatErrorForLogging(error: StacksError): string {
 }
 
 /**
- * Log error to console (development) or service (production)
+ * Log error to console in development or to tracking service in production
+ * @param error - The StacksError to log
+ * @param context - Optional context string identifying where the error occurred
  */
 export function logError(error: StacksError, context?: string): void {
   if (process.env.NODE_ENV === 'development') {
