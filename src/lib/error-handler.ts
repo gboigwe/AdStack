@@ -113,6 +113,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.TX_REJECTED,
       message: 'Transaction was rejected by the contract',
       originalError: error,
+      severity: ErrorSeverity.HIGH,
     };
   }
 
