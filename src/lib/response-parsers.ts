@@ -260,3 +260,76 @@ export function parsePayoutRecord(cv: ClarityValue): PayoutRecord | null {
     return null;
   }
 }
+
+/**
+ * Parse a list of Clarity values using a provided parser function
+ * @param cv - The ClarityValue containing a Clarity list
+ * @param parser - Function to parse each individual item
+ * @returns Array of parsed items, filtering out null results
+ */
+export function parseList<T>(
+  cv: ClarityValue,
+  parser: (item: ClarityValue) => T | null
+): T[] {
+  try {
+    const value = cvToValue(cv);
+    if (!Array.isArray(value)) return [];
+
+    return value
+      .map((item) => parser(item as ClarityValue))
+      .filter((item): item is T => item !== null);
+  } catch (error) {
+    console.error('Error parsing list:', error);
+    return [];
+  }
+}
+
+/**
+ * Parse an optional Clarity value that may be none
+ * @param cv - The ClarityValue that may contain none
+ * @param parser - Function to parse the inner value if present
+ * @returns Parsed value or null if the optional is none
+ */
+export function parseOptional<T>(
+  cv: ClarityValue,
+  parser: (item: ClarityValue) => T | null
+): T | null {
+  try {
+    const value = cvToValue(cv);
+    if (value === null || value === undefined) return null;
+    return parser(value as ClarityValue);
+  } catch (error) {
+    console.error('Error parsing optional:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse a Clarity response type containing ok/err variants
+ * @param cv - The ClarityValue containing a response type
+ * @param parser - Function to parse the ok value
+ * @returns Object with success boolean, parsed value, and optional error message
+ */
+export function parseResponse<T>(
+  cv: ClarityValue,
+  parser: (item: ClarityValue) => T | null
+): { success: boolean; value: T | null; error?: string } {
+  try {
+    const response = cvToValue(cv) as ClarityRecord & { value?: ClarityValue; success?: boolean };
+
+    if (typeof response === 'object' && 'value' in response) {
+      if (response.success !== false) {
+        return { success: true, value: parser(response.value as ClarityValue) };
+      }
+      return { success: false, value: null, error: String(response.value) };
+    }
+
+    return { success: true, value: parser(response as ClarityValue) };
+  } catch (error) {
+    return {
+      success: false,
+      value: null,
+      error: error instanceof Error ? error.message : 'Parse error',
+    };
+  }
+}
