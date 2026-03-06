@@ -45,6 +45,7 @@ export interface StacksError {
   message: string;
   originalError?: unknown;
   details?: Record<string, unknown>;
+  severity?: ErrorSeverity;
 }
 
 /**
