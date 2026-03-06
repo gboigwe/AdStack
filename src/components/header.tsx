@@ -49,6 +49,7 @@ export function Header() {
               <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Advertiser</Link>
               <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Publisher</Link>
               <Link href="/transactions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Transactions</Link>
+              <Link href="/governance" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Governance</Link>
             </nav>
           </div>
 
@@ -74,6 +75,7 @@ export function Header() {
               <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Advertiser</Link>
               <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Publisher</Link>
               <Link href="/transactions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Transactions</Link>
+              <Link href="/governance" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Governance</Link>
               <div className="pt-4 border-t border-gray-200">
                 {isConnected && address ? <AccountSwitcher className="w-full" /> : <WalletConnectButton />}
               </div>
