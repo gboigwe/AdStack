@@ -36,7 +36,7 @@ export enum ErrorCode {
 export interface StacksError {
   code: ErrorCode;
   message: string;
-  originalError?: any;
+  originalError?: unknown;
   details?: Record<string, any>;
 }
 
