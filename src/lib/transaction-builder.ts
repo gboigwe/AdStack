@@ -55,3 +55,58 @@ export interface TransactionResult {
   success: boolean;
   error?: string;
 }
+
+/**
+ * Build and broadcast a contract call transaction to the Stacks network
+ * @param options - Transaction configuration including contract name, function, and arguments
+ * @returns Promise resolving to TransactionResult with txId and success status
+ * @throws Error if wallet is not connected or inputs are invalid
+ */
+export async function callContract(options: TransactionOptions): Promise<TransactionResult> {
+  try {
+    if (!userSession.isUserSignedIn()) {
+      throw new Error('User not signed in');
+    }
+
+    if (!options.contractName || options.contractName.trim() === '') {
+      throw new Error('Contract name is required');
+    }
+
+    if (!options.functionName || options.functionName.trim() === '') {
+      throw new Error('Function name is required');
+    }
+
+    const userData = userSession.loadUserData();
+
+    const txOptions = {
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: options.contractName,
+      functionName: options.functionName,
+      functionArgs: options.functionArgs,
+      senderKey: userData.appPrivateKey,
+      network: options.network || NETWORK,
+      anchorMode: options.anchorMode || AnchorMode.Any,
+      postConditionMode: options.postConditionMode || PostConditionMode.Deny,
+      postConditions: options.postConditions || [],
+      fee: options.fee || TX_OPTIONS.DEFAULT_FEE,
+    };
+
+    const transaction = await makeContractCall(txOptions);
+    const broadcastResponse = await broadcastTransaction({
+      transaction,
+      network: txOptions.network,
+    });
+
+    if ('error' in broadcastResponse) {
+      return { txId: '', success: false, error: `Broadcast failed: ${broadcastResponse.error}` };
+    }
+
+    return { txId: broadcastResponse.txid, success: true };
+  } catch (error) {
+    return {
+      txId: '',
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
