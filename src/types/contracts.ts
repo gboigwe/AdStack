@@ -224,7 +224,7 @@ export interface ContractReadResult<T = unknown> {
 export interface TransactionOptions {
   fee?: bigint;
   nonce?: bigint;
-  postConditions?: any[];
+  postConditions?: unknown[];
 }
 
 /**
