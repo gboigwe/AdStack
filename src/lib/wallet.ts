@@ -100,7 +100,8 @@ export const isWalletConnected = (): boolean => {
 };
 
 /**
- * Get full wallet data including network info
+ * Get full wallet data including connection status and network
+ * @returns WalletData object with address, connection state, and network
  */
 export const getWalletData = (): WalletData => {
   return {
