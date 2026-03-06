@@ -172,7 +172,7 @@ export function parseStacksError(error: unknown): StacksError {
 /**
  * Get user-friendly error message
  */
-export function getErrorMessage(error: any): string {
+export function getErrorMessage(error: unknown): string {
   const parsedError = parseStacksError(error);
   return parsedError.message;
 }
