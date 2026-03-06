@@ -84,6 +84,11 @@ export const BLOCK_TIME = {
  */
 export const MICRO_STX = 1_000_000;
 
+/**
+ * Convert micro-STX to STX
+ * @param microStx - Amount in micro-STX (1 STX = 1,000,000 micro-STX)
+ * @returns Amount in STX as a floating point number
+ */
 export function microStxToStx(microStx: number | bigint): number {
   return Number(microStx) / MICRO_STX;
 }
