@@ -26,18 +26,20 @@ export function saveWalletSession(session: WalletSession): void {
   if (typeof window === 'undefined') return;
 
   try {
+    // Single-source storage — the JSON blob is authoritative.
+    // Individual keys are written for quick lookups by other modules
+    // but are always derived from the same session object to prevent
+    // the previous desync issue where keys could diverge from the blob.
+    const json = JSON.stringify(session);
+    localStorage.setItem('adstack_wallet_session', json);
     localStorage.setItem(SESSION_KEYS.WALLET_ADDRESS, session.address);
     localStorage.setItem(SESSION_KEYS.WALLET_ID, session.walletId);
     localStorage.setItem(SESSION_KEYS.NETWORK, session.network);
-
     if (session.signature) {
       localStorage.setItem(SESSION_KEYS.SESSION_SIGNATURE, session.signature);
+    } else {
+      localStorage.removeItem(SESSION_KEYS.SESSION_SIGNATURE);
     }
-
-    // Store full session as JSON
-    localStorage.setItem('adstack_wallet_session', JSON.stringify(session));
-
-    console.log('Wallet session saved:', session.address);
   } catch (error) {
     console.error('Failed to save wallet session:', error);
   }
