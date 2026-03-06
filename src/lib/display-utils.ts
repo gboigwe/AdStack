@@ -21,11 +21,23 @@ export function truncateAddress(address: string, startChars: number = 6, endChar
  * @returns Formatted STX amount
  */
 export function formatSTX(microStx: bigint | number, decimals: number = 6): string {
-  const MICRO_STX = 1_000_000;
-  const amount = typeof microStx === 'bigint' ? Number(microStx) : microStx;
-  const stx = amount / MICRO_STX;
+  const MICRO_STX = 1_000_000n;
 
-  return stx.toFixed(decimals);
+  // Use BigInt arithmetic to avoid floating-point precision loss
+  // on large balances (> Number.MAX_SAFE_INTEGER).
+  const micro = typeof microStx === 'number' ? BigInt(Math.round(microStx)) : microStx;
+  const isNegative = micro < 0n;
+  const absMicro = isNegative ? -micro : micro;
+
+  const whole = absMicro / MICRO_STX;
+  const remainder = absMicro % MICRO_STX;
+
+  // Pad the remainder to 6 digits then truncate to requested decimals
+  const fracStr = remainder.toString().padStart(6, '0').slice(0, decimals);
+  const sign = isNegative ? '-' : '';
+
+  if (decimals === 0) return `${sign}${whole}`;
+  return `${sign}${whole}.${fracStr}`;
 }
 
 /**
