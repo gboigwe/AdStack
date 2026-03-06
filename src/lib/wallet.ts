@@ -17,8 +17,10 @@ export interface WalletData {
 }
 
 /**
- * Connect wallet using Stacks Connect v7+
- * Handles errors gracefully with user-friendly messages
+ * Connect wallet using Stacks Connect v7+ API
+ * Handles errors gracefully and returns structured error on failure
+ * @returns Promise that resolves when wallet is connected
+ * @throws StacksError if user cancels or connection fails
  */
 export const connectWallet = (): Promise<void> => {
   return new Promise((resolve, reject) => {
