@@ -216,7 +216,9 @@ export function isRetryableError(error: StacksError): boolean {
 }
 
 /**
- * Check if error requires wallet connection
+ * Check if resolving the error requires reconnecting the wallet
+ * @param error - The StacksError to evaluate
+ * @returns True if the user needs to reconnect their wallet
  */
 export function requiresWalletConnection(error: StacksError): boolean {
   return [ErrorCode.WALLET_NOT_CONNECTED, ErrorCode.WALLET_LOCKED].includes(
