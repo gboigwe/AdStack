@@ -45,3 +45,22 @@ export function useContractCall() {
     },
   });
 }
+
+/**
+ * Hook for contract read-only queries with automatic caching and refetching
+ * @param options - Read-only call configuration with contract name, function, and args
+ * @param enabled - Whether the query should execute
+ * @returns React Query result with typed data, loading, and error states
+ */
+export function useContractRead<T = unknown>(
+  options: ReadOnlyOptions,
+  enabled: boolean = true
+) {
+  return useQuery<ReadOnlyResult<T>, Error>({
+    queryKey: ['contract', options.contractName, options.functionName, options.functionArgs] as ContractQueryKey,
+    queryFn: () => callReadOnly<T>(options),
+    enabled,
+    staleTime: QUERY_STALE_TIME,
+    refetchInterval: QUERY_REFETCH_INTERVAL,
+  });
+}
