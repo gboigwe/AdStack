@@ -1,0 +1,211 @@
+/**
+ * Contract Call Builders for AdStack
+ * Type-safe helpers for constructing Clarity contract calls.
+ * Each function returns the arguments needed by openContractCall().
+ */
+
+import {
+  CONTRACT_ADDRESS,
+  CONTRACTS,
+  getContractId,
+  stxToMicroStx,
+  BLOCK_TIME,
+} from './stacks-config';
+import { toUIntCV, toStringAsciiCV, toPrincipalCV, toBoolCV } from './clarity-converters';
+import {
+  createCampaignFundingPostConditions,
+  createPublisherPayoutPostConditions,
+  PC_MODE,
+} from './post-conditions';
+import type { CreateCampaignParams, RegisterUserParams, CreateProposalParams } from '@/types/contracts';
+
+/**
+ * Build contract call options for creating a new campaign.
+ * Calls promo-manager.create-campaign with budget, daily-budget, duration.
+ */
+export function buildCreateCampaign(
+  senderAddress: string,
+  params: CreateCampaignParams,
+) {
+  const budgetMicro = stxToMicroStx(Number(params.budget));
+  const dailyMicro = stxToMicroStx(Number(params.dailyBudget));
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'create-campaign',
+    functionArgs: [
+      toStringAsciiCV(params.name),
+      toUIntCV(budgetMicro),
+      toUIntCV(dailyMicro),
+      toUIntCV(params.duration),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: createCampaignFundingPostConditions(
+      senderAddress,
+      Number(params.budget),
+    ),
+  };
+}
+
+/**
+ * Build contract call options for pausing a campaign.
+ */
+export function buildPauseCampaign(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'pause-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call options for resuming a paused campaign.
+ */
+export function buildResumeCampaign(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'resume-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call options for registering a user profile.
+ * Calls user-profiles.register with role and display name.
+ */
+export function buildRegisterUser(params: RegisterUserParams) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'register',
+    functionArgs: [
+      toStringAsciiCV(params.role),
+      toStringAsciiCV(params.displayName),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for claiming publisher payout.
+ * Calls cash-distributor.claim-payout with campaign ID.
+ */
+export function buildClaimPayout(
+  campaignId: number,
+  maxPayoutSTX: number,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'claim-payout',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: createPublisherPayoutPostConditions(
+      CONTRACTS.FUNDS_KEEPER,
+      maxPayoutSTX,
+    ),
+  };
+}
+
+/**
+ * Build contract call for submitting an ad view (by publisher).
+ * Calls stats-tracker.submit-view with campaign ID and viewer.
+ */
+export function buildSubmitView(
+  campaignId: number,
+  viewerAddress: string,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.STATS_TRACKER,
+    functionName: 'submit-view',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toPrincipalCV(viewerAddress),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for creating a governance proposal.
+ * Calls vote-handler.create-proposal with title, description, duration.
+ */
+export function buildCreateProposal(params: CreateProposalParams) {
+  const durationBlocks = Math.ceil(
+    params.duration / BLOCK_TIME.SECONDS_PER_BLOCK,
+  );
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'create-proposal',
+    functionArgs: [
+      toStringAsciiCV(params.title),
+      toStringAsciiCV(params.description),
+      toUIntCV(durationBlocks),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for casting a governance vote.
+ */
+export function buildCastVote(proposalId: number, inFavor: boolean) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'cast-vote',
+    functionArgs: [
+      toUIntCV(proposalId),
+      toBoolCV(inFavor),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call arguments for fetching a campaign.
+ * Calls promo-manager.get-campaign.
+ */
+export function buildReadCampaign(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call arguments for fetching analytics.
+ */
+export function buildReadAnalytics(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.STATS_TRACKER),
+    functionName: 'get-analytics',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call arguments for fetching a user profile.
+ */
+export function buildReadUserProfile(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.USER_PROFILES),
+    functionName: 'get-profile',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}
