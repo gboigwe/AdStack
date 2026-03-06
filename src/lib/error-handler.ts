@@ -104,6 +104,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.TX_BROADCAST_FAILED,
       message: 'Failed to broadcast transaction to network',
       originalError: error,
+      severity: ErrorSeverity.HIGH,
     };
   }
 
