@@ -115,6 +115,11 @@ export function isMainnet(): boolean {
   return CURRENT_NETWORK === 'mainnet';
 }
 
+/**
+ * Get Hiro Explorer URL for a transaction
+ * @param txId - The transaction ID to link to
+ * @returns Full explorer URL for the transaction
+ */
 export function getExplorerTxUrl(txId: string): string {
   const baseUrl = isMainnet()
     ? 'https://explorer.hiro.so/txid'
