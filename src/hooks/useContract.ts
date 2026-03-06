@@ -222,3 +222,39 @@ export function useFundCampaign() {
 
   return { fundCampaign, ...rest };
 }
+
+/**
+ * Hook to pause an active campaign
+ * @returns Object with pauseCampaign function and mutation state
+ */
+export function usePauseCampaign() {
+  const { mutate, ...rest } = useContractCall();
+
+  const pauseCampaign = (campaignId: number) => {
+    mutate({
+      contractName: 'promo-manager',
+      functionName: 'pause-campaign',
+      functionArgs: [uintCV(BigInt(campaignId))],
+    });
+  };
+
+  return { pauseCampaign, ...rest };
+}
+
+/**
+ * Hook to resume a paused campaign
+ * @returns Object with resumeCampaign function and mutation state
+ */
+export function useResumeCampaign() {
+  const { mutate, ...rest } = useContractCall();
+
+  const resumeCampaign = (campaignId: number) => {
+    mutate({
+      contractName: 'promo-manager',
+      functionName: 'resume-campaign',
+      functionArgs: [uintCV(BigInt(campaignId))],
+    });
+  };
+
+  return { resumeCampaign, ...rest };
+}
