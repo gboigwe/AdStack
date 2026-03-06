@@ -289,6 +289,31 @@ export function createStacksError(
 }
 
 /**
+ * Get suggested recovery action for an error
+ * @param error - The StacksError to get recovery for
+ * @returns ErrorRecoveryAction with label, action type, and description
+ */
+export function getRecoveryAction(error: StacksError): ErrorRecoveryAction {
+  switch (error.code) {
+    case ErrorCode.NETWORK_ERROR:
+    case ErrorCode.TIMEOUT:
+    case ErrorCode.TX_BROADCAST_FAILED:
+      return { label: 'Retry', action: 'retry', description: 'Try the operation again' };
+    case ErrorCode.WALLET_NOT_CONNECTED:
+    case ErrorCode.WALLET_LOCKED:
+      return { label: 'Connect Wallet', action: 'connect_wallet', description: 'Connect your wallet to continue' };
+    case ErrorCode.INSUFFICIENT_FUNDS:
+    case ErrorCode.INSUFFICIENT_BALANCE:
+      return { label: 'Add Funds', action: 'increase_funds', description: 'Add more STX to your wallet' };
+    case ErrorCode.UNAUTHORIZED:
+    case ErrorCode.CONTRACT_ERROR:
+      return { label: 'Contact Support', action: 'contact_support', description: 'This error requires assistance' };
+    default:
+      return { label: 'Dismiss', action: 'dismiss', description: 'Close this error message' };
+  }
+}
+
+/**
  * Handle async errors with try-catch wrapper
  */
 export async function handleAsync<T>(
