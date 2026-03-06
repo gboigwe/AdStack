@@ -219,6 +219,22 @@ export function requiresWalletConnection(error: StacksError): boolean {
 }
 
 /**
+ * Get the severity level of an error for prioritization
+ * @param error - The StacksError to evaluate
+ * @returns The ErrorSeverity level
+ */
+export function getErrorSeverity(error: StacksError): ErrorSeverity {
+  if (error.severity) return error.severity;
+  const criticalCodes = [ErrorCode.UNAUTHORIZED, ErrorCode.CONTRACT_ERROR];
+  const highCodes = [ErrorCode.NETWORK_ERROR, ErrorCode.TX_BROADCAST_FAILED, ErrorCode.POST_CONDITION_FAILED];
+  const mediumCodes = [ErrorCode.TIMEOUT, ErrorCode.WALLET_NOT_CONNECTED, ErrorCode.INSUFFICIENT_FUNDS];
+  if (criticalCodes.includes(error.code)) return ErrorSeverity.CRITICAL;
+  if (highCodes.includes(error.code)) return ErrorSeverity.HIGH;
+  if (mediumCodes.includes(error.code)) return ErrorSeverity.MEDIUM;
+  return ErrorSeverity.LOW;
+}
+
+/**
  * Format error for logging
  */
 export function formatErrorForLogging(error: StacksError): string {
