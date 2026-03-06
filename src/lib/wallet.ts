@@ -47,7 +47,8 @@ export const connectWallet = (): Promise<void> => {
 };
 
 /**
- * Disconnect wallet and clear session
+ * Disconnect wallet, clear session data, and reset state
+ * Catches and logs any errors during sign-out to prevent crashes
  */
 export const disconnectWallet = (): void => {
   try {
