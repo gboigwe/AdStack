@@ -110,3 +110,29 @@ export async function callContract(options: TransactionOptions): Promise<Transac
     };
   }
 }
+
+/**
+ * Create an STX post-condition to protect users from unexpected transfers
+ * @param address - The contract address to apply the post-condition to
+ * @param amount - Maximum STX amount in microstacks
+ * @param code - Fungible condition code specifying the comparison type
+ * @returns A contract STX post-condition for transaction safety
+ */
+export function createSTXPostCondition(
+  address: string,
+  amount: bigint,
+  code: FungibleConditionCode = FungibleConditionCode.LessEqual
+) {
+  return makeContractSTXPostCondition(CONTRACT_ADDRESS, address, code, amount);
+}
+
+/**
+ * Estimate the transaction fee based on a baseline with configured multiplier
+ * @param baselineFee - The baseline fee amount in microstacks
+ * @returns Estimated fee capped at the configured maximum fee
+ */
+export function estimateFee(baselineFee: bigint): bigint {
+  const multiplier = BigInt(Math.floor(TX_OPTIONS.FEE_MULTIPLIER * 100));
+  const estimatedFee = (baselineFee * multiplier) / 100n;
+  return estimatedFee > TX_OPTIONS.MAX_FEE ? TX_OPTIONS.MAX_FEE : estimatedFee;
+}
