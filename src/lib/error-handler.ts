@@ -330,7 +330,10 @@ export function getRecoveryAction(error: StacksError): ErrorRecoveryAction {
 }
 
 /**
- * Handle async errors with try-catch wrapper
+ * Handle async errors with try-catch wrapper returning a tuple
+ * @param promise - The promise to execute safely
+ * @param context - Optional context for error logging
+ * @returns Tuple of [data, null] on success or [null, error] on failure
  */
 export async function handleAsync<T>(
   promise: Promise<T>,
