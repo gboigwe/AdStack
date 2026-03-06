@@ -167,6 +167,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.NETWORK_ERROR,
       message: 'Network error. Please check your connection.',
       originalError: error,
+      severity: ErrorSeverity.HIGH,
     };
   }
 
