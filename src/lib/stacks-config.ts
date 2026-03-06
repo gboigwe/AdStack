@@ -127,6 +127,11 @@ export function getExplorerTxUrl(txId: string): string {
   return `${baseUrl}/${txId}`;
 }
 
+/**
+ * Get Hiro Explorer URL for a Stacks address
+ * @param address - The Stacks address to link to
+ * @returns Full explorer URL for the address
+ */
 export function getExplorerAddressUrl(address: string): string {
   const baseUrl = isMainnet()
     ? 'https://explorer.hiro.so/address'
