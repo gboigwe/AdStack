@@ -12,6 +12,13 @@ import { connectWallet } from '@/lib/wallet';
 import { useWalletStore } from '@/store/wallet-store';
 import { parseStacksError } from '@/lib/error-handler';
 
+/** Extend Window with known Stacks wallet provider globals. */
+interface StacksWalletWindow extends Window {
+  LeatherProvider?: unknown;
+  HiroWalletProvider?: unknown;
+  XverseProviders?: unknown;
+}
+
 interface WalletModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -57,17 +64,17 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
     }
   };
 
-  const isWalletInstalled = (walletId: string) => {
+  const isWalletInstalled = (walletId: string): boolean => {
     if (typeof window === 'undefined') return false;
 
-    // Check for wallet-specific objects
+    const w = window as StacksWalletWindow;
     switch (walletId) {
       case 'leather':
-        return !!(window as any).LeatherProvider || !!(window as any).HiroWalletProvider;
+        return !!w.LeatherProvider || !!w.HiroWalletProvider;
       case 'xverse':
-        return !!(window as any).XverseProviders;
+        return !!w.XverseProviders;
       case 'hiro':
-        return !!(window as any).HiroWalletProvider;
+        return !!w.HiroWalletProvider;
       default:
         return false;
     }
