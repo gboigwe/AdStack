@@ -62,6 +62,7 @@ export const APP_DETAILS = {
 
 /**
  * Transaction Configuration
+ * Fee settings for contract call transactions
  */
 export const TX_OPTIONS = {
   FEE_MULTIPLIER: 1.5,
