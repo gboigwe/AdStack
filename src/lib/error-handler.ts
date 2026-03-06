@@ -193,7 +193,9 @@ export function parseStacksError(error: unknown): StacksError {
 }
 
 /**
- * Get user-friendly error message
+ * Get a user-friendly error message string from any error type
+ * @param error - The raw error to extract a message from
+ * @returns Human-readable error message
  */
 export function getErrorMessage(error: unknown): string {
   const parsedError = parseStacksError(error);
