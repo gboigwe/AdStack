@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { WalletConnectButton } from './wallet/WalletModal';
@@ -36,17 +37,17 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-8">
-            <a href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900">AdStack</h1>
-            </a>
+            </Link>
 
             <nav className="hidden md:flex items-center space-x-6">
-              <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</a>
-              <a href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Advertiser</a>
-              <a href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Publisher</a>
+              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</Link>
+              <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Advertiser</Link>
+              <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Publisher</Link>
             </nav>
           </div>
 
@@ -68,9 +69,9 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
             <nav className="flex flex-col space-y-4">
-              <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</a>
-              <a href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Advertiser</a>
-              <a href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Publisher</a>
+              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+              <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Advertiser</Link>
+              <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Publisher</Link>
               <div className="pt-4 border-t border-gray-200">
                 {isConnected && address ? <AccountSwitcher className="w-full" /> : <WalletConnectButton />}
               </div>
