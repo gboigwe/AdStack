@@ -176,6 +176,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.TIMEOUT,
       message: 'Request timed out. Please try again.',
       originalError: error,
+      severity: ErrorSeverity.MEDIUM,
     };
   }
 
