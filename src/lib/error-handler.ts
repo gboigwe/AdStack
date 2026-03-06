@@ -203,7 +203,9 @@ export function getErrorMessage(error: unknown): string {
 }
 
 /**
- * Check if error is retryable
+ * Determine if an error can be resolved by retrying the operation
+ * @param error - The StacksError to evaluate
+ * @returns True if the error is transient and should be retried
  */
 export function isRetryableError(error: StacksError): boolean {
   return [
