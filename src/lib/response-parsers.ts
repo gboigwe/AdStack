@@ -105,3 +105,51 @@ export function parseAnalyticsMetrics(cv: ClarityValue): AnalyticsMetrics | null
     return null;
   }
 }
+
+/**
+ * Parse Escrow Details from Clarity response
+ * @param cv - The ClarityValue containing escrow data
+ * @returns Parsed EscrowDetails object or null if parsing fails
+ */
+export function parseEscrowDetails(cv: ClarityValue): EscrowDetails | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      campaignId: Number(value.campaignId || value['campaign-id']),
+      balance: BigInt(value.balance || 0),
+      locked: BigInt(value.locked || 0),
+      released: BigInt(value.released || 0),
+      createdAt: Number(value.createdAt || value['created-at']),
+      expiresAt: Number(value.expiresAt || value['expires-at']),
+      status: (value.status as EscrowDetails['status']) || 'active',
+    };
+  } catch (error) {
+    console.error('Error parsing escrow details:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse Auction Bid from Clarity response
+ * @param cv - The ClarityValue containing bid data
+ * @returns Parsed AuctionBid object or null if data is invalid
+ */
+export function parseAuctionBid(cv: ClarityValue): AuctionBid | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      auctionId: Number(value.auctionId || value['auction-id']),
+      bidder: String(value.bidder),
+      amount: BigInt(value.amount ?? 0),
+      timestamp: Number(value.timestamp),
+      status: (value.status as AuctionBid['status']) || 'active',
+    };
+  } catch (error) {
+    console.error('Error parsing auction bid:', error);
+    return null;
+  }
+}
