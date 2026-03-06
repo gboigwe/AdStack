@@ -85,6 +85,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.INSUFFICIENT_FUNDS,
       message: 'Insufficient STX balance for this transaction',
       originalError: error,
+      severity: ErrorSeverity.MEDIUM,
     };
   }
 
