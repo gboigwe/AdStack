@@ -67,6 +67,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.WALLET_NOT_CONNECTED,
       message: 'Please connect your wallet to continue',
       originalError: error,
+      severity: ErrorSeverity.MEDIUM,
     };
   }
 
