@@ -235,7 +235,7 @@ export function logError(error: StacksError, context?: string): void {
 export function createStacksError(
   code: ErrorCode,
   message: string,
-  details?: Record<string, any>
+  details?: Record<string, unknown>
 ): StacksError {
   return {
     code,
