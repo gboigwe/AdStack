@@ -150,6 +150,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.CAMPAIGN_EXPIRED,
       message: 'Campaign has expired',
       originalError: error,
+      severity: ErrorSeverity.LOW,
     };
   }
 
