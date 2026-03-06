@@ -28,6 +28,7 @@ export const API_URL =
 
 /**
  * Deployed Clarity v4 Contract Names
+ * Maps logical names to on-chain contract identifiers
  */
 export const CONTRACTS = {
   ASSET_LIBRARY: 'asset-library',
