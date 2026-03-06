@@ -51,3 +51,32 @@ export function parseCampaign(cv: ClarityValue): Campaign | null {
     return null;
   }
 }
+
+/**
+ * Parse User Profile from Clarity response
+ * @param cv - The ClarityValue containing user profile data
+ * @returns Parsed UserProfile object or null if parsing fails
+ */
+export function parseUserProfile(cv: ClarityValue): UserProfile | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      address: String(value.address || value.user),
+      status: (value.status as UserProfile['status']) || 'inactive',
+      roles: Array.isArray(value.roles) ? value.roles as UserRole[] : [],
+      joinHeight: Number(value.joinHeight || value['join-height']),
+      lastActive: Number(value.lastActive || value['last-active']),
+      verificationStatus:
+        (value.verificationStatus || value['verification-status']) as VerificationStatus ||
+        VerificationStatus.UNVERIFIED,
+      verificationExpires: Number(value.verificationExpires || value['verification-expires']),
+      profilesCount: Number(value.profilesCount || value['profiles-count'] || 0),
+      metadata: value.metadata as string | undefined,
+    };
+  } catch (error) {
+    console.error('Error parsing user profile:', error);
+    return null;
+  }
+}
