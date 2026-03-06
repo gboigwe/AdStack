@@ -10,7 +10,7 @@ import { ChevronDown, Check, Globe, Copy, ExternalLink, LogOut } from 'lucide-re
 import { useWalletStore } from '@/store/wallet-store';
 import { disconnectWallet, getWalletAddress } from '@/lib/wallet';
 import { truncateAddress, formatSTXWithSymbol } from '@/lib/display-utils';
-import { CURRENT_NETWORK, NetworkType } from '@/lib/stacks-config';
+import { CURRENT_NETWORK, NetworkType, API_URL } from '@/lib/stacks-config';
 import { copyToClipboard } from '@/lib/display-utils';
 
 interface AccountSwitcherProps {
@@ -37,12 +37,29 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch balance (placeholder - implement with actual API call)
+  // Fetch STX balance from Hiro API
   useEffect(() => {
-    if (address && isConnected) {
-      // TODO: Fetch actual balance from Stacks API
-      setBalance(1500000n); // Placeholder: 1.5 STX
+    if (!address || !isConnected) return;
+
+    let cancelled = false;
+
+    async function fetchBalance() {
+      try {
+        const res = await fetch(
+          `${API_URL}/extended/v1/address/${address}/stx`,
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && typeof data.balance === 'string') {
+          setBalance(BigInt(data.balance));
+        }
+      } catch {
+        // Silently fall back to 0 — the UI already shows 0 STX by default
+      }
     }
+
+    fetchBalance();
+    return () => { cancelled = true; };
   }, [address, isConnected]);
 
   if (!isConnected || !address) {
