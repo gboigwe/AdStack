@@ -49,7 +49,9 @@ export interface StacksError {
 }
 
 /**
- * Parse Stacks SDK error to user-friendly message
+ * Parse any error into a structured StacksError with code, message, and severity
+ * @param error - The raw error from Stacks SDK, network, or wallet operations
+ * @returns Structured StacksError with categorized code and user-friendly message
  */
 export function parseStacksError(error: unknown): StacksError {
   if (!error) {
