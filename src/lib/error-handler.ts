@@ -43,7 +43,7 @@ export interface StacksError {
 /**
  * Parse Stacks SDK error to user-friendly message
  */
-export function parseStacksError(error: any): StacksError {
+export function parseStacksError(error: unknown): StacksError {
   if (!error) {
     return {
       code: ErrorCode.UNKNOWN_ERROR,
