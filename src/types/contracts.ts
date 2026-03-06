@@ -212,7 +212,7 @@ export interface ContractCallResult<T = unknown> {
 /**
  * Contract Read Result Generic
  */
-export interface ContractReadResult<T = any> {
+export interface ContractReadResult<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
