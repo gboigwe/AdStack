@@ -123,6 +123,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.CAMPAIGN_NOT_FOUND,
       message: 'Campaign not found',
       originalError: error,
+      severity: ErrorSeverity.LOW,
     };
   }
 
