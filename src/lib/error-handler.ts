@@ -76,6 +76,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.USER_REJECTED,
       message: 'Transaction was rejected by user',
       originalError: error,
+      severity: ErrorSeverity.LOW,
     };
   }
 
