@@ -64,3 +64,35 @@ export function useContractRead<T = unknown>(
     refetchInterval: QUERY_REFETCH_INTERVAL,
   });
 }
+
+/**
+ * Hook to fetch campaign details from the promo-manager contract
+ * @param campaignId - The numeric ID of the campaign to fetch
+ * @param enabled - Whether to execute the query
+ */
+export function useCampaign(campaignId: number, enabled: boolean = true) {
+  return useContractRead(
+    {
+      contractName: 'promo-manager',
+      functionName: 'get-campaign-details',
+      functionArgs: [uintCV(BigInt(campaignId))],
+    },
+    enabled
+  );
+}
+
+/**
+ * Hook to fetch user profile from the user-profiles contract
+ * @param userAddress - The Stacks address of the user
+ * @param enabled - Whether to execute the query
+ */
+export function useUserProfile(userAddress: string, enabled: boolean = true) {
+  return useContractRead(
+    {
+      contractName: 'user-profiles',
+      functionName: 'get-user-details',
+      functionArgs: [principalCV(userAddress)],
+    },
+    enabled && !!userAddress
+  );
+}
