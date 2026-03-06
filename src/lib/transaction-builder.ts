@@ -136,3 +136,46 @@ export function estimateFee(baselineFee: bigint): bigint {
   const estimatedFee = (baselineFee * multiplier) / 100n;
   return estimatedFee > TX_OPTIONS.MAX_FEE ? TX_OPTIONS.MAX_FEE : estimatedFee;
 }
+
+/**
+ * Poll the Stacks API until a transaction is confirmed or rejected
+ * @param txId - The transaction ID to monitor (0x-prefixed 64-char hex)
+ * @param network - The Stacks network to query
+ * @param maxAttempts - Maximum polling attempts before timeout
+ * @param delayMs - Milliseconds between polling attempts
+ * @returns Promise resolving to true if confirmed, false if rejected or timed out
+ */
+export async function waitForTransactionConfirmation(
+  txId: string,
+  network: StacksNetwork = NETWORK,
+  maxAttempts: number = DEFAULT_MAX_ATTEMPTS,
+  delayMs: number = DEFAULT_DELAY_MS
+): Promise<boolean> {
+  if (!txId || !TX_ID_PATTERN.test(txId)) {
+    throw new Error('Invalid transaction ID format');
+  }
+
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+      const response = await fetch(
+        `${network.client.baseUrl}/extended/v1/tx/${txId}`,
+        { signal: controller.signal }
+      );
+      clearTimeout(timeoutId);
+      const data = await response.json();
+
+      if (data.tx_status === 'success') return true;
+      if (data.tx_status === 'abort_by_response' || data.tx_status === 'abort_by_post_condition') {
+        return false;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  return false;
+}
