@@ -80,3 +80,28 @@ export function parseUserProfile(cv: ClarityValue): UserProfile | null {
     return null;
   }
 }
+
+/**
+ * Parse Analytics Metrics from Clarity response
+ * @param cv - The ClarityValue containing analytics data
+ * @returns Parsed AnalyticsMetrics object or null if parsing fails
+ */
+export function parseAnalyticsMetrics(cv: ClarityValue): AnalyticsMetrics | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      totalViews: BigInt(value.totalViews || value['total-views'] || 0),
+      validViews: BigInt(value.validViews || value['valid-views'] || 0),
+      clicks: BigInt(value.clicks || 0),
+      conversions: BigInt(value.conversions || 0),
+      spent: BigInt(value.spent || 0),
+      revenue: BigInt(value.revenue || 0),
+      lastUpdated: Number(value.lastUpdated || value['last-updated']),
+    };
+  } catch (error) {
+    console.error('Error parsing analytics metrics:', error);
+    return null;
+  }
+}
