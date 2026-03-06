@@ -167,7 +167,18 @@ export interface FraudScore {
 }
 
 /**
- * Governance Proposal Interface (from vote-handler contract)
+ * Proposal Status Enum
+ */
+export enum ProposalStatus {
+  ACTIVE = 'active',
+  PASSED = 'passed',
+  REJECTED = 'rejected',
+  EXECUTED = 'executed',
+  EXPIRED = 'expired',
+}
+
+/**
+ * Proposal Status Enum (from vote-handler contract)
  */
 export interface GovernanceProposal {
   proposalId: number;
