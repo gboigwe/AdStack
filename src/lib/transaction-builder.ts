@@ -179,3 +179,54 @@ export async function waitForTransactionConfirmation(
 
   return false;
 }
+
+/**
+ * Fetch full transaction details from the Stacks API
+ * @param txId - The transaction ID to look up (0x-prefixed 64-char hex)
+ * @param network - The Stacks network to query
+ * @returns Promise resolving to typed TransactionDetailsResponse
+ */
+export async function getTransactionDetails(
+  txId: string,
+  network: StacksNetwork = NETWORK
+): Promise<TransactionDetailsResponse> {
+  if (!txId || !TX_ID_PATTERN.test(txId)) {
+    throw new Error('Invalid transaction ID format');
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(
+      `${network.client.baseUrl}/extended/v1/tx/${txId}`,
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
+    return await response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw new Error(`Failed to fetch transaction: ${error}`);
+  }
+}
+
+/**
+ * Get the result of a completed transaction including success status
+ * @param txId - The transaction ID to check
+ * @param network - The Stacks network to query
+ * @returns Promise with success boolean, optional result value, and optional error
+ */
+export async function getTransactionResult(
+  txId: string,
+  network: StacksNetwork = NETWORK
+): Promise<{ success: boolean; value?: TransactionDetailsResponse['tx_result']; error?: string }> {
+  try {
+    const tx = await getTransactionDetails(txId, network);
+    if (tx.tx_status === 'success') {
+      return { success: true, value: tx.tx_result };
+    }
+    return { success: false, error: tx.tx_status };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
