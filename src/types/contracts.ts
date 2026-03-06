@@ -163,6 +163,16 @@ export interface GovernanceProposal {
 }
 
 /**
+ * Subscription Status Enum
+ */
+export enum SubscriptionStatus {
+  ACTIVE = 'active',
+  EXPIRED = 'expired',
+  CANCELLED = 'cancelled',
+  SUSPENDED = 'suspended',
+}
+
+/**
  * Subscription Plan Interface (from subscription-hub contract)
  */
 export interface SubscriptionPlan {
