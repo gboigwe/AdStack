@@ -7,6 +7,12 @@ import { userSession } from './wallet';
 import { SESSION_KEYS } from './appkit-config';
 import { CURRENT_NETWORK } from './stacks-config';
 
+/** Maximum session age before automatic expiry (30 days in ms). */
+const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** Interval between background session expiry checks (5 minutes in ms). */
+const SESSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
+
 /**
  * Session Data Interface
  */
@@ -75,15 +81,7 @@ export function loadWalletSession(): WalletSession | null {
  * Check if session is valid
  */
 export function isSessionValid(session: WalletSession): boolean {
-  // Session expires after 30 days
-  const SESSION_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
-  const now = Date.now();
-
-  if (now - session.lastActiveAt > SESSION_EXPIRY) {
-    return false;
-  }
-
-  return true;
+  return Date.now() - session.lastActiveAt < SESSION_MAX_AGE_MS;
 }
 
 /**
@@ -305,8 +303,7 @@ export function onSessionExpired(callback: () => void): () => void {
     }
   };
 
-  // Check every 5 minutes
-  const interval = setInterval(checkSession, 5 * 60 * 1000);
+  const interval = setInterval(checkSession, SESSION_CHECK_INTERVAL_MS);
 
   // Return cleanup function
   return () => clearInterval(interval);
