@@ -286,7 +286,11 @@ export type ErrorRecoveryAction = {
 };
 
 /**
- * Create custom error
+ * Create a custom StacksError with specified code, message, and details
+ * @param code - The ErrorCode categorizing this error
+ * @param message - Human-readable error message
+ * @param details - Optional additional details about the error
+ * @returns A new StacksError object
  */
 export function createStacksError(
   code: ErrorCode,
