@@ -36,14 +36,14 @@ export enum ErrorCode {
 export interface StacksError {
   code: ErrorCode;
   message: string;
-  originalError?: any;
-  details?: Record<string, any>;
+  originalError?: unknown;
+  details?: Record<string, unknown>;
 }
 
 /**
  * Parse Stacks SDK error to user-friendly message
  */
-export function parseStacksError(error: any): StacksError {
+export function parseStacksError(error: unknown): StacksError {
   if (!error) {
     return {
       code: ErrorCode.UNKNOWN_ERROR,
@@ -51,7 +51,12 @@ export function parseStacksError(error: any): StacksError {
     };
   }
 
-  const errorMessage = error.message || error.toString();
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : String(error);
 
   // Wallet errors
   if (errorMessage.includes('not signed in') || errorMessage.includes('User not signed in')) {
@@ -172,7 +177,7 @@ export function parseStacksError(error: any): StacksError {
 /**
  * Get user-friendly error message
  */
-export function getErrorMessage(error: any): string {
+export function getErrorMessage(error: unknown): string {
   const parsedError = parseStacksError(error);
   return parsedError.message;
 }
@@ -235,7 +240,7 @@ export function logError(error: StacksError, context?: string): void {
 export function createStacksError(
   code: ErrorCode,
   message: string,
-  details?: Record<string, any>
+  details?: Record<string, unknown>
 ): StacksError {
   return {
     code,
