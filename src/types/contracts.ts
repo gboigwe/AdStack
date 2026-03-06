@@ -302,7 +302,7 @@ export interface PayoutParams {
  */
 export interface ContractEvent {
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   txId: string;
   blockHeight: number;
   timestamp: number;
