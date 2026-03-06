@@ -132,6 +132,16 @@ export interface Dispute {
 }
 
 /**
+ * Dispute Resolution Outcome
+ */
+export enum DisputeResolution {
+  PLAINTIFF_WINS = 'plaintiff-wins',
+  DEFENDANT_WINS = 'defendant-wins',
+  SETTLED = 'settled',
+  DISMISSED = 'dismissed',
+}
+
+/**
  * Fraud Score Interface (from threat-detector contract)
  */
 export interface FraudScore {
