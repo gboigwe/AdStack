@@ -57,3 +57,42 @@ export async function callReadOnly<T = unknown>(
     };
   }
 }
+
+/**
+ * Read campaign details from the promo-manager contract
+ * @param campaignId - The campaign ID to look up
+ * @returns Promise with campaign data
+ */
+export async function readCampaignDetails(campaignId: number): Promise<ReadOnlyResult> {
+  return callReadOnly({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-campaign-details',
+    functionArgs: [uintCV(BigInt(campaignId))],
+  });
+}
+
+/**
+ * Read user profile from the user-profiles contract
+ * @param userAddress - The Stacks address to look up
+ * @returns Promise with user profile data
+ */
+export async function readUserProfile(userAddress: string): Promise<ReadOnlyResult> {
+  return callReadOnly({
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'get-user-details',
+    functionArgs: [principalCV(userAddress)],
+  });
+}
+
+/**
+ * Read analytics metrics for a campaign
+ * @param campaignId - The campaign ID to get metrics for
+ * @returns Promise with analytics data
+ */
+export async function readAnalyticsMetrics(campaignId: number): Promise<ReadOnlyResult> {
+  return callReadOnly({
+    contractName: CONTRACTS.STATS_TRACKER,
+    functionName: 'get-campaign-metrics',
+    functionArgs: [uintCV(BigInt(campaignId))],
+  });
+}
