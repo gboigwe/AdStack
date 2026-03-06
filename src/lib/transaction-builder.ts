@@ -28,3 +28,30 @@ const FETCH_TIMEOUT_MS = 15000;
 
 /** Transaction ID format regex */
 const TX_ID_PATTERN = /^0x[a-fA-F0-9]{64}$/;
+
+export interface TransactionOptions {
+  contractName: string;
+  functionName: string;
+  functionArgs: ClarityValue[];
+  network?: StacksNetwork;
+  postConditions?: PostCondition[];
+  fee?: bigint;
+  anchorMode?: AnchorMode;
+  postConditionMode?: PostConditionMode;
+}
+
+export interface TransactionDetailsResponse {
+  tx_id: string;
+  tx_status: 'success' | 'pending' | 'abort_by_response' | 'abort_by_post_condition';
+  tx_result?: { repr: string; hex: string };
+  sender_address: string;
+  fee_rate: string;
+  block_height?: number;
+  burn_block_time?: number;
+}
+
+export interface TransactionResult {
+  txId: string;
+  success: boolean;
+  error?: string;
+}
