@@ -159,6 +159,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.ALREADY_EXISTS,
       message: 'This item already exists',
       originalError: error,
+      severity: ErrorSeverity.LOW,
     };
   }
 
