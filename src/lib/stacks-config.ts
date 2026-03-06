@@ -102,6 +102,11 @@ export function stxToMicroStx(stx: number): bigint {
   return BigInt(Math.floor(stx * MICRO_STX));
 }
 
+/**
+ * Get fully qualified contract identifier
+ * @param contractName - The contract name from CONTRACTS map
+ * @returns Full contract ID in format 'address.name'
+ */
 export function getContractId(contractName: ContractName): string {
   return `${CONTRACT_ADDRESS}.${contractName}`;
 }
