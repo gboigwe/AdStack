@@ -3,6 +3,13 @@
  * Consistent error parsing and user-friendly messages
  */
 
+export enum ErrorSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}
+
 export enum ErrorCode {
   // Network errors
   NETWORK_ERROR = 'NETWORK_ERROR',
