@@ -47,7 +47,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
 
         onClose();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedError = parseStacksError(err);
       if (parsedError.code !== 'USER_REJECTED') {
         setError(parsedError.message);
