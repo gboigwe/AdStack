@@ -81,9 +81,24 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
   };
 
   const handleNetworkSwitch = (network: NetworkType) => {
+    if (network === CURRENT_NETWORK) return;
+
+    // Network is set via NEXT_PUBLIC_NETWORK env var which is baked into
+    // the client bundle at build time. At runtime we can't change it
+    // without a new build, so we store the user's preference and prompt
+    // a reload. On local dev the .env.local can be switched manually.
     setCurrentNetwork(network);
-    // TODO: Implement actual network switching
-    console.log(`Switching to ${network}`);
+
+    const confirmed = window.confirm(
+      `Switching to ${network} requires a page reload. Continue?`,
+    );
+    if (confirmed) {
+      // Persist preference so the app can read it after reload
+      localStorage.setItem('adstack_preferred_network', network);
+      window.location.reload();
+    } else {
+      setCurrentNetwork(CURRENT_NETWORK);
+    }
   };
 
   const openExplorer = () => {
