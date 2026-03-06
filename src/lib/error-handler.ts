@@ -51,7 +51,7 @@ export function parseStacksError(error: unknown): StacksError {
     };
   }
 
-  const errorMessage = error.message || error.toString();
+  const errorMessage = error instanceof Error ? error.message : String(error);
 
   // Wallet errors
   if (errorMessage.includes('not signed in') || errorMessage.includes('User not signed in')) {
