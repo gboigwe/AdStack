@@ -106,6 +106,16 @@ export interface EscrowDetails {
 }
 
 /**
+ * Auction Status Enum
+ */
+export enum AuctionStatus {
+  OPEN = 'open',
+  CLOSED = 'closed',
+  CANCELLED = 'cancelled',
+  SETTLED = 'settled',
+}
+
+/**
  * Auction Bid Interface (from offer-exchange contract)
  */
 export interface AuctionBid {
