@@ -266,6 +266,13 @@ export function logError(error: StacksError, context?: string): void {
   }
 }
 
+/** Recovery action suggested to the user for a specific error */
+export type ErrorRecoveryAction = {
+  label: string;
+  action: 'retry' | 'connect_wallet' | 'increase_funds' | 'contact_support' | 'dismiss';
+  description: string;
+};
+
 /**
  * Create custom error
  */
