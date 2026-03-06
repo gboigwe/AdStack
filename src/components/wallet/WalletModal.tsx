@@ -11,6 +11,7 @@ import { SUPPORTED_WALLETS } from '@/lib/appkit-config';
 import { connectWallet } from '@/lib/wallet';
 import { useWalletStore } from '@/store/wallet-store';
 import { parseStacksError } from '@/lib/error-handler';
+import { useToastStore } from '@/store/toast-store';
 
 /** Extend Window with known Stacks wallet provider globals. */
 interface StacksWalletWindow extends Window {
@@ -28,6 +29,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { setAddress, setConnected } = useWalletStore();
+  const addToast = useToastStore((s) => s.addToast);
 
   // Close on Escape key
   const handleKeyDown = useCallback(
@@ -66,12 +68,23 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
           localStorage.setItem('adstack_wallet_id', walletId);
         }
 
+        addToast({
+          type: 'success',
+          title: 'Wallet Connected',
+          message: `Connected to ${address.slice(0, 8)}...${address.slice(-4)}`,
+        });
+
         onClose();
       }
     } catch (err: unknown) {
       const parsedError = parseStacksError(err);
       if (parsedError.code !== 'USER_REJECTED') {
         setError(parsedError.message);
+        addToast({
+          type: 'error',
+          title: 'Connection Failed',
+          message: parsedError.message,
+        });
       }
     } finally {
       setConnecting(null);
