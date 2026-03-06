@@ -207,3 +207,56 @@ export function parseFraudScore(cv: ClarityValue): FraudScore | null {
     return null;
   }
 }
+
+/**
+ * Parse Governance Proposal from Clarity response
+ * @param cv - The ClarityValue containing proposal data
+ * @returns Parsed GovernanceProposal object or null if parsing fails
+ */
+export function parseGovernanceProposal(cv: ClarityValue): GovernanceProposal | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      proposalId: Number(value.proposalId || value['proposal-id']),
+      proposer: String(value.proposer),
+      title: String(value.title),
+      description: String(value.description),
+      votesFor: BigInt(value.votesFor || value['votes-for'] || 0),
+      votesAgainst: BigInt(value.votesAgainst || value['votes-against'] || 0),
+      status: (value.status as GovernanceProposal['status']) || 'active',
+      createdAt: Number(value.createdAt || value['created-at']),
+      expiresAt: Number(value.expiresAt || value['expires-at']),
+      executedAt: value.executedAt ? Number(value.executedAt) : undefined,
+    };
+  } catch (error) {
+    console.error('Error parsing governance proposal:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse Payout Record from Clarity response
+ * @param cv - The ClarityValue containing payout data
+ * @returns Parsed PayoutRecord object or null if data is invalid
+ */
+export function parsePayoutRecord(cv: ClarityValue): PayoutRecord | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      payoutId: Number(value.payoutId || value['payout-id']),
+      recipient: String(value.recipient),
+      amount: BigInt(value.amount ?? 0),
+      campaignId: Number(value.campaignId || value['campaign-id']),
+      timestamp: Number(value.timestamp),
+      txId: String(value.txId || value['tx-id'] || ''),
+      status: (value.status as PayoutRecord['status']) || 'pending',
+    };
+  } catch (error) {
+    console.error('Error parsing payout record:', error);
+    return null;
+  }
+}
