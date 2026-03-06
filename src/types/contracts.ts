@@ -202,7 +202,7 @@ export interface PayoutRecord {
 /**
  * Contract Call Result Generic
  */
-export interface ContractCallResult<T = any> {
+export interface ContractCallResult<T = unknown> {
   success: boolean;
   txId?: string;
   data?: T;
