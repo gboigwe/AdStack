@@ -5,6 +5,7 @@
 
 import { userSession } from './wallet';
 import { SESSION_KEYS } from './appkit-config';
+import { CURRENT_NETWORK } from './stacks-config';
 
 /**
  * Session Data Interface
@@ -133,7 +134,9 @@ export async function autoReconnectWallet(): Promise<{
     // First check if Stacks Connect has an active session
     if (userSession.isUserSignedIn()) {
       const userData = userSession.loadUserData();
-      const address = userData.profile.stxAddress.mainnet;
+      const address = CURRENT_NETWORK === 'mainnet'
+        ? userData.profile.stxAddress.mainnet
+        : userData.profile.stxAddress.testnet;
 
       // Update session activity
       updateSessionActivity();
