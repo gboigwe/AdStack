@@ -228,6 +228,16 @@ export interface UserSubscription {
 }
 
 /**
+ * Payout Status Enum
+ */
+export enum PayoutStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}
+
+/**
  * Payout Record Interface (from cash-distributor contract)
  */
 export interface PayoutRecord {
