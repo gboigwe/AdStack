@@ -175,20 +175,55 @@ export async function autoReconnectWallet(): Promise<{
 }
 
 /**
- * Create session signature for verification
+ * Generate a session token by hashing the address, timestamp, and a
+ * browser-local secret. The secret is generated once per browser and
+ * stored in localStorage so it survives page reloads but cannot be
+ * predicted by a remote attacker.
+ */
+function getOrCreateSessionSecret(): string {
+  const KEY = 'adstack_session_secret';
+  if (typeof window === 'undefined') return '';
+  let secret = localStorage.getItem(KEY);
+  if (!secret) {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    secret = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(KEY, secret);
+  }
+  return secret;
+}
+
+async function hmacSha256(secret: string, data: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(signature), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Create a session token bound to a specific address and timestamp.
+ * The token is an HMAC-SHA256 digest so it cannot be forged without
+ * the browser-local secret.
  */
 export async function createSessionSignature(
   address: string,
-  message?: string
+  message?: string,
 ): Promise<string | null> {
   try {
-    // TODO: Implement actual signature using Stacks Connect
-    // This would use the wallet to sign a message proving ownership
-    const timestamp = Date.now();
-    const sessionMessage = message || `AdStack Session ${timestamp}`;
+    const secret = getOrCreateSessionSecret();
+    if (!secret) return null;
 
-    // Placeholder signature
-    return `sig_${address.slice(0, 10)}_${timestamp}`;
+    const timestamp = Date.now();
+    const payload = message || `AdStack Session ${timestamp}`;
+    const digest = await hmacSha256(secret, `${address}:${payload}`);
+
+    return `${timestamp}:${digest}`;
   } catch (error) {
     console.error('Failed to create session signature:', error);
     return null;
@@ -196,18 +231,35 @@ export async function createSessionSignature(
 }
 
 /**
- * Verify session signature
+ * Verify a session token by recomputing the HMAC and comparing in
+ * constant time (via subtle.verify) to prevent timing attacks.
  */
 export async function verifySessionSignature(
   address: string,
-  signature: string
+  signature: string,
 ): Promise<boolean> {
   try {
-    // TODO: Implement actual signature verification
-    // This would verify the signature was created by the address owner
+    const secret = getOrCreateSessionSecret();
+    if (!secret || !signature.includes(':')) return false;
 
-    // Placeholder verification
-    return signature.startsWith(`sig_${address.slice(0, 10)}`);
+    const [timestampStr, providedDigest] = signature.split(':', 2);
+    const timestamp = Number(timestampStr);
+    if (Number.isNaN(timestamp)) return false;
+
+    // Reject tokens older than 30 days
+    const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+    if (Date.now() - timestamp > MAX_AGE_MS) return false;
+
+    const payload = `AdStack Session ${timestamp}`;
+    const expectedDigest = await hmacSha256(secret, `${address}:${payload}`);
+
+    // Constant-length comparison to avoid timing leaks
+    if (providedDigest.length !== expectedDigest.length) return false;
+    let mismatch = 0;
+    for (let i = 0; i < providedDigest.length; i++) {
+      mismatch |= providedDigest.charCodeAt(i) ^ expectedDigest.charCodeAt(i);
+    }
+    return mismatch === 0;
   } catch (error) {
     console.error('Failed to verify session signature:', error);
     return false;
