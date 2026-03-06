@@ -59,8 +59,8 @@ export const disconnectWallet = (): void => {
 };
 
 /**
- * Get current wallet address
- * Returns mainnet or testnet address based on network config
+ * Get current wallet address for the active network
+ * @returns The user's Stacks address for the current network, or null if not connected
  */
 export const getWalletAddress = (): string | null => {
   if (typeof window === 'undefined') return null;
