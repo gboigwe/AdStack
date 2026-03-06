@@ -96,3 +96,35 @@ export function useUserProfile(userAddress: string, enabled: boolean = true) {
     enabled && !!userAddress
   );
 }
+
+/**
+ * Hook to fetch analytics metrics for a campaign
+ * @param campaignId - The campaign to get metrics for
+ * @param enabled - Whether to execute the query
+ */
+export function useAnalytics(campaignId: number, enabled: boolean = true) {
+  return useContractRead(
+    {
+      contractName: 'stats-tracker',
+      functionName: 'get-campaign-metrics',
+      functionArgs: [uintCV(BigInt(campaignId))],
+    },
+    enabled
+  );
+}
+
+/**
+ * Hook to fetch escrow balance for a campaign
+ * @param campaignId - The campaign to check escrow for
+ * @param enabled - Whether to execute the query
+ */
+export function useEscrowBalance(campaignId: number, enabled: boolean = true) {
+  return useContractRead<bigint>(
+    {
+      contractName: 'funds-keeper',
+      functionName: 'get-escrow-balance',
+      functionArgs: [uintCV(BigInt(campaignId))],
+    },
+    enabled
+  );
+}
