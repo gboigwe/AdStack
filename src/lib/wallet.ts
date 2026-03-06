@@ -53,6 +53,21 @@ export const disconnectWallet = (): void => {
   } catch (error) {
     console.error('Error disconnecting wallet:', parseStacksError(error));
   }
+
+  // Clear persisted session data. We do this inline instead of importing
+  // clearWalletSession to avoid a circular dependency (wallet-session
+  // imports userSession from this module).
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('adstack_wallet_session');
+      localStorage.removeItem('adstack_wallet_id');
+      localStorage.removeItem('adstack_wallet_address');
+      localStorage.removeItem('adstack_network');
+      localStorage.removeItem('adstack_session_sig');
+    }
+  } catch {
+    // localStorage may be unavailable in SSR or incognito mode
+  }
 };
 
 /**
