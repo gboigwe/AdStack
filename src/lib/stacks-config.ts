@@ -93,6 +93,11 @@ export function microStxToStx(microStx: number | bigint): number {
   return Number(microStx) / MICRO_STX;
 }
 
+/**
+ * Convert STX to micro-STX
+ * @param stx - Amount in STX
+ * @returns Amount in micro-STX as bigint
+ */
 export function stxToMicroStx(stx: number): bigint {
   return BigInt(Math.floor(stx * MICRO_STX));
 }
