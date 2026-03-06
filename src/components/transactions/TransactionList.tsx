@@ -1,0 +1,106 @@
+'use client';
+
+import { RefreshCw, ExternalLink } from 'lucide-react';
+import { type ApiTransaction } from '@/lib/stacks-api';
+import { formatTxId, formatTimestamp } from '@/lib/display-utils';
+import { getExplorerTxUrl } from '@/lib/stacks-config';
+
+interface TransactionListProps {
+  transactions: ApiTransaction[];
+  isLoading?: boolean;
+  emptyMessage?: string;
+}
+
+function statusBadge(status: string) {
+  switch (status) {
+    case 'success':
+      return 'bg-green-100 text-green-700';
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-700';
+    case 'abort_by_response':
+    case 'abort_by_post_condition':
+      return 'bg-red-100 text-red-700';
+    default:
+      return 'bg-gray-100 text-gray-700';
+  }
+}
+
+function txTypeLabel(txType: string): string {
+  const labels: Record<string, string> = {
+    token_transfer: 'Transfer',
+    contract_call: 'Contract Call',
+    smart_contract: 'Deploy',
+    coinbase: 'Coinbase',
+    poison_microblock: 'Poison',
+  };
+  return labels[txType] || txType;
+}
+
+export function TransactionList({
+  transactions,
+  isLoading = false,
+  emptyMessage = 'No transactions found',
+}: TransactionListProps) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (transactions.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600">{emptyMessage}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="divide-y divide-gray-100">
+      {transactions.map((tx) => (
+        <div
+          key={tx.tx_id}
+          className="flex items-center justify-between py-3 px-1 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-mono text-gray-700 truncate">
+                {formatTxId(tx.tx_id)}
+              </span>
+              <a
+                href={getExplorerTxUrl(tx.tx_id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+              >
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs text-gray-500">{txTypeLabel(tx.tx_type)}</span>
+              <span className="text-xs text-gray-400">&middot;</span>
+              <span className="text-xs text-gray-500">
+                Block {tx.block_height.toLocaleString()}
+              </span>
+              {tx.burn_block_time > 0 && (
+                <>
+                  <span className="text-xs text-gray-400">&middot;</span>
+                  <span className="text-xs text-gray-500">
+                    {formatTimestamp(tx.burn_block_time)}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+          <span
+            className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${statusBadge(tx.tx_status)}`}
+          >
+            {tx.tx_status === 'abort_by_response' ? 'Failed' : tx.tx_status}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
