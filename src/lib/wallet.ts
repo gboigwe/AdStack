@@ -85,7 +85,8 @@ export const getWalletAddress = (): string | null => {
 };
 
 /**
- * Check if wallet is connected
+ * Check if the user currently has an active wallet session
+ * @returns True if the user is signed in with a Stacks wallet
  */
 export const isWalletConnected = (): boolean => {
   if (typeof window === 'undefined') return false;
