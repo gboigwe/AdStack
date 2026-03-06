@@ -128,3 +128,49 @@ export function useEscrowBalance(campaignId: number, enabled: boolean = true) {
     enabled
   );
 }
+
+/**
+ * Hook to create a new advertising campaign
+ * @returns Object with createCampaign function and mutation state
+ */
+export function useCreateCampaign() {
+  const { mutate, ...rest } = useContractCall();
+
+  const createCampaign = (params: {
+    name: string;
+    budget: bigint;
+    dailyBudget: bigint;
+    duration: number;
+  }) => {
+    mutate({
+      contractName: 'promo-manager',
+      functionName: 'create-campaign',
+      functionArgs: [
+        stringAsciiCV(params.name),
+        uintCV(params.budget),
+        uintCV(params.dailyBudget),
+        uintCV(BigInt(params.duration)),
+      ],
+    });
+  };
+
+  return { createCampaign, ...rest };
+}
+
+/**
+ * Hook to register a new user on the platform
+ * @returns Object with registerUser function and mutation state
+ */
+export function useRegisterUser() {
+  const { mutate, ...rest } = useContractCall();
+
+  const registerUser = (params: { role: string; displayName: string }) => {
+    mutate({
+      contractName: 'user-profiles',
+      functionName: 'register-user',
+      functionArgs: [stringAsciiCV(params.role), stringAsciiCV(params.displayName)],
+    });
+  };
+
+  return { registerUser, ...rest };
+}
