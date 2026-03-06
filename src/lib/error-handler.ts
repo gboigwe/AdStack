@@ -95,6 +95,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.POST_CONDITION_FAILED,
       message: 'Transaction safety check failed. Your funds are safe.',
       originalError: error,
+      severity: ErrorSeverity.HIGH,
     };
   }
 
