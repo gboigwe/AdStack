@@ -37,7 +37,7 @@ export interface StacksError {
   code: ErrorCode;
   message: string;
   originalError?: unknown;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 /**
