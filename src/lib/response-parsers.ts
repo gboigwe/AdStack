@@ -153,3 +153,57 @@ export function parseAuctionBid(cv: ClarityValue): AuctionBid | null {
     return null;
   }
 }
+
+/**
+ * Parse Dispute from Clarity response
+ * @param cv - The ClarityValue containing dispute data
+ * @returns Parsed Dispute object or null if parsing fails
+ */
+export function parseDispute(cv: ClarityValue): Dispute | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      disputeId: Number(value.disputeId || value['dispute-id']),
+      plaintiff: String(value.plaintiff),
+      defendant: String(value.defendant),
+      campaignId: Number(value.campaignId || value['campaign-id']),
+      reason: String(value.reason),
+      status: (value.status as Dispute['status']) || 'open',
+      createdAt: Number(value.createdAt || value['created-at']),
+      resolvedAt: value.resolvedAt ? Number(value.resolvedAt) : undefined,
+      resolution: value.resolution as string | undefined,
+    };
+  } catch (error) {
+    console.error('Error parsing dispute:', error);
+    return null;
+  }
+}
+
+/**
+ * Parse Fraud Score from Clarity response
+ * @param cv - The ClarityValue containing fraud scoring data
+ * @returns Parsed FraudScore object with nested details or null
+ */
+export function parseFraudScore(cv: ClarityValue): FraudScore | null {
+  try {
+    const value = cvToValue(cv) as ClarityRecord;
+    if (!value || typeof value !== 'object') return null;
+
+    return {
+      campaignId: Number(value.campaignId || value['campaign-id']),
+      score: Number(value.score || 0),
+      flagCount: Number(value.flagCount || value['flag-count'] || 0),
+      lastChecked: Number(value.lastChecked || value['last-checked']),
+      details: {
+        suspiciousViews: BigInt(value.suspiciousViews || value['suspicious-views'] || 0),
+        totalViews: BigInt(value.totalViews || value['total-views'] || 0),
+        fraudPercentage: Number(value.fraudPercentage || value['fraud-percentage'] || 0),
+      },
+    };
+  } catch (error) {
+    console.error('Error parsing fraud score:', error);
+    return null;
+  }
+}
