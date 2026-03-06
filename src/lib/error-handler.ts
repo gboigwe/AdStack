@@ -243,7 +243,9 @@ export function getErrorSeverity(error: StacksError): ErrorSeverity {
 }
 
 /**
- * Format error for logging
+ * Format a StacksError as a JSON string suitable for logging
+ * @param error - The StacksError to format
+ * @returns JSON string with code, message, details, and timestamp
  */
 export function formatErrorForLogging(error: StacksError): string {
   return JSON.stringify(
