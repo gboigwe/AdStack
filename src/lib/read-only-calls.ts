@@ -139,3 +139,27 @@ export async function readFraudScore(campaignId: number): Promise<ReadOnlyResult
     functionArgs: [uintCV(BigInt(campaignId))],
   });
 }
+
+/**
+ * Read governance proposal details
+ * @param proposalId - The proposal ID to look up
+ * @returns Promise with proposal data
+ */
+export async function readGovernanceProposal(proposalId: number): Promise<ReadOnlyResult> {
+  return callReadOnly({
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'get-proposal',
+    functionArgs: [uintCV(BigInt(proposalId))],
+  });
+}
+
+/**
+ * Execute multiple read-only calls in parallel
+ * @param calls - Array of read-only options to execute
+ * @returns Promise with array of results in the same order
+ */
+export async function batchReadOnly(
+  calls: ReadOnlyOptions[]
+): Promise<ReadOnlyResult[]> {
+  return Promise.all(calls.map((options) => callReadOnly(options)));
+}
