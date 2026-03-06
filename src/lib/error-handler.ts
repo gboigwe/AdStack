@@ -132,6 +132,7 @@ export function parseStacksError(error: unknown): StacksError {
       code: ErrorCode.UNAUTHORIZED,
       message: 'You are not authorized to perform this action',
       originalError: error,
+      severity: ErrorSeverity.CRITICAL,
     };
   }
 
