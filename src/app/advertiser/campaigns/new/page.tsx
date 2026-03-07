@@ -152,12 +152,14 @@ export default function NewCampaignPage() {
               value={form.name}
               onChange={handleChange}
               placeholder="e.g. Q2 Brand Awareness"
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'name-error' : undefined}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.name ? 'border-red-300' : 'border-gray-300'
               }`}
             />
             {errors.name && (
-              <p className="text-sm text-red-600 mt-1">{errors.name}</p>
+              <p id="name-error" role="alert" className="text-sm text-red-600 mt-1">{errors.name}</p>
             )}
           </div>
 
@@ -176,12 +178,14 @@ export default function NewCampaignPage() {
                 value={form.budget}
                 onChange={handleChange}
                 placeholder="100"
+                aria-invalid={!!errors.budget}
+                aria-describedby={errors.budget ? 'budget-error' : undefined}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.budget ? 'border-red-300' : 'border-gray-300'
                 }`}
               />
               {errors.budget && (
-                <p className="text-sm text-red-600 mt-1">{errors.budget}</p>
+                <p id="budget-error" role="alert" className="text-sm text-red-600 mt-1">{errors.budget}</p>
               )}
             </div>
 
@@ -198,12 +202,14 @@ export default function NewCampaignPage() {
                 value={form.dailyBudget}
                 onChange={handleChange}
                 placeholder="10"
+                aria-invalid={!!errors.dailyBudget}
+                aria-describedby={errors.dailyBudget ? 'daily-budget-error' : undefined}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.dailyBudget ? 'border-red-300' : 'border-gray-300'
                 }`}
               />
               {errors.dailyBudget && (
-                <p className="text-sm text-red-600 mt-1">{errors.dailyBudget}</p>
+                <p id="daily-budget-error" role="alert" className="text-sm text-red-600 mt-1">{errors.dailyBudget}</p>
               )}
             </div>
           </div>
@@ -221,12 +227,14 @@ export default function NewCampaignPage() {
               max="365"
               value={form.durationDays}
               onChange={handleChange}
+              aria-invalid={!!errors.durationDays}
+              aria-describedby={errors.durationDays ? 'duration-error' : undefined}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 errors.durationDays ? 'border-red-300' : 'border-gray-300'
               }`}
             />
             {errors.durationDays && (
-              <p className="text-sm text-red-600 mt-1">{errors.durationDays}</p>
+              <p id="duration-error" role="alert" className="text-sm text-red-600 mt-1">{errors.durationDays}</p>
             )}
           </div>
 
