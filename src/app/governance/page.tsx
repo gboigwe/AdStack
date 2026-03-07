@@ -140,9 +140,25 @@ export default function GovernancePage() {
     },
   });
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
   const handleCreateProposal = () => {
-    if (!proposalTitle.trim() || !proposalDesc.trim()) return;
-    const durationSeconds = parseInt(proposalDays, 10) * BLOCK_TIME.SECONDS_PER_DAY;
+    const errs: Record<string, string> = {};
+    if (!proposalTitle.trim()) errs.title = 'Title is required';
+    else if (proposalTitle.trim().length < 5) errs.title = 'Title must be at least 5 characters';
+    else if (proposalTitle.trim().length > 100) errs.title = 'Title cannot exceed 100 characters';
+
+    if (!proposalDesc.trim()) errs.desc = 'Description is required';
+    else if (proposalDesc.trim().length < 20) errs.desc = 'Description must be at least 20 characters';
+
+    const days = parseInt(proposalDays, 10);
+    if (isNaN(days) || days < 1) errs.duration = 'Duration must be at least 1 day';
+    else if (days > 30) errs.duration = 'Duration cannot exceed 30 days';
+
+    setFormErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    const durationSeconds = days * BLOCK_TIME.SECONDS_PER_DAY;
     submitProposal(
       buildCreateProposal({
         title: proposalTitle.trim(),
@@ -191,10 +207,18 @@ export default function GovernancePage() {
                     id="proposal-title"
                     type="text"
                     value={proposalTitle}
-                    onChange={(e) => setProposalTitle(e.target.value)}
+                    onChange={(e) => { setProposalTitle(e.target.value); setFormErrors((p) => { const { title: _, ...r } = p; return r; }); }}
+                    maxLength={100}
                     placeholder="Proposal title"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    aria-invalid={!!formErrors.title}
+                    aria-describedby={formErrors.title ? 'proposal-title-error' : 'proposal-title-hint'}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.title ? 'border-red-400' : 'border-gray-300'}`}
                   />
+                  {formErrors.title ? (
+                    <p id="proposal-title-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.title}</p>
+                  ) : (
+                    <p id="proposal-title-hint" className="text-xs text-gray-400 mt-1">{proposalTitle.length}/100</p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="proposal-desc" className="block text-sm font-medium text-gray-700 mb-1">
@@ -204,10 +228,15 @@ export default function GovernancePage() {
                     id="proposal-desc"
                     rows={3}
                     value={proposalDesc}
-                    onChange={(e) => setProposalDesc(e.target.value)}
-                    placeholder="Describe your proposal..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                    onChange={(e) => { setProposalDesc(e.target.value); setFormErrors((p) => { const { desc: _, ...r } = p; return r; }); }}
+                    placeholder="Describe your proposal (at least 20 characters)..."
+                    aria-invalid={!!formErrors.desc}
+                    aria-describedby={formErrors.desc ? 'proposal-desc-error' : undefined}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${formErrors.desc ? 'border-red-400' : 'border-gray-300'}`}
                   />
+                  {formErrors.desc && (
+                    <p id="proposal-desc-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.desc}</p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="proposal-duration" className="block text-sm font-medium text-gray-700 mb-1">
@@ -219,9 +248,14 @@ export default function GovernancePage() {
                     min="1"
                     max="30"
                     value={proposalDays}
-                    onChange={(e) => setProposalDays(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    onChange={(e) => { setProposalDays(e.target.value); setFormErrors((p) => { const { duration: _, ...r } = p; return r; }); }}
+                    aria-invalid={!!formErrors.duration}
+                    aria-describedby={formErrors.duration ? 'proposal-duration-error' : undefined}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.duration ? 'border-red-400' : 'border-gray-300'}`}
                   />
+                  {formErrors.duration && (
+                    <p id="proposal-duration-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.duration}</p>
+                  )}
                 </div>
                 <div className="flex gap-3">
                   <button
