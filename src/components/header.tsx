@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { WalletConnectButton } from './wallet/WalletModal';
 import { AccountSwitcher } from './wallet/AccountSwitcher';
+import { ThemeToggle } from './ui/ThemeToggle';
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
@@ -67,8 +68,9 @@ export function Header() {
             </nav>
           </div>
 
-          {/* Desktop Wallet */}
+          {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             {isConnected && address ? <AccountSwitcher /> : <WalletConnectButton />}
           </div>
 
