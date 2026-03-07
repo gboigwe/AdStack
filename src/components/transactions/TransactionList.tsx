@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { type ApiTransaction } from '@/lib/stacks-api';
 import { formatTxId, formatTimestamp } from '@/lib/display-utils';
@@ -26,18 +27,20 @@ function statusBadge(status: string) {
   }
 }
 
+/** Static map — hoisted out of render to avoid re-creation. */
+const TX_TYPE_LABELS: Record<string, string> = {
+  token_transfer: 'Transfer',
+  contract_call: 'Contract Call',
+  smart_contract: 'Deploy',
+  coinbase: 'Coinbase',
+  poison_microblock: 'Poison',
+};
+
 function txTypeLabel(txType: string): string {
-  const labels: Record<string, string> = {
-    token_transfer: 'Transfer',
-    contract_call: 'Contract Call',
-    smart_contract: 'Deploy',
-    coinbase: 'Coinbase',
-    poison_microblock: 'Poison',
-  };
-  return labels[txType] || txType;
+  return TX_TYPE_LABELS[txType] || txType;
 }
 
-export function TransactionList({
+export const TransactionList = memo(function TransactionList({
   transactions,
   isLoading = false,
   emptyMessage = 'No transactions found',
@@ -112,4 +115,4 @@ export function TransactionList({
       ))}
     </div>
   );
-}
+});
