@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { Clock } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
-import { useTransactions } from '@/hooks';
+import { useTransactions, useMempoolTransactions } from '@/hooks';
 import { TransactionList } from '@/components/transactions';
-import { Pagination } from '@/components/ui';
+import { Pagination, Badge } from '@/components/ui';
 import { WalletGuard } from '@/components/wallet/WalletGuard';
 
 const PAGE_SIZE = 20;
@@ -15,7 +16,9 @@ function TransactionsContent() {
   const offset = page * PAGE_SIZE;
 
   const { data: txList, isLoading } = useTransactions(address, PAGE_SIZE, offset);
+  const { data: mempool, isLoading: mempoolLoading } = useMempoolTransactions(address);
   const totalPages = txList ? Math.ceil(txList.total / PAGE_SIZE) : 0;
+  const pendingCount = mempool?.total ?? 0;
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -29,6 +32,25 @@ function TransactionsContent() {
           </p>
         </div>
 
+        {/* Pending Mempool Transactions */}
+        {pendingCount > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl mb-6">
+            <div className="p-4 flex items-center gap-3 border-b border-yellow-200">
+              <Clock className="w-5 h-5 text-yellow-600" />
+              <h2 className="font-semibold text-yellow-900">Pending Transactions</h2>
+              <Badge variant="warning">{pendingCount}</Badge>
+            </div>
+            <div className="p-4">
+              <TransactionList
+                transactions={mempool?.results ?? []}
+                isLoading={mempoolLoading}
+                emptyMessage="No pending transactions"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Confirmed Transactions */}
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="p-6">
             <TransactionList
