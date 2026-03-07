@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Link from 'next/link';
 
 const FOOTER_LINKS = {
@@ -20,8 +21,10 @@ const FOOTER_LINKS = {
   ],
 } as const;
 
-export function Footer() {
-  const year = new Date().getFullYear();
+/** Computed once at module load — avoids Date creation on every render. */
+const CURRENT_YEAR = new Date().getFullYear();
+
+export const Footer = memo(function Footer() {
 
   return (
     <footer className="bg-gray-900 text-gray-400">
@@ -75,7 +78,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm">
-            &copy; {year} AdStack. All rights reserved.
+            &copy; {CURRENT_YEAR} AdStack. All rights reserved.
           </p>
           <p className="text-xs">
             Powered by{' '}
@@ -92,4 +95,4 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+});
