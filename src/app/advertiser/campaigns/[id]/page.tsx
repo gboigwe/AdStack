@@ -11,7 +11,6 @@ import {
   MousePointerClick,
   Pause,
   Play,
-  RefreshCw,
 } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useCampaign, useCampaignAnalytics } from '@/hooks';
@@ -19,7 +18,7 @@ import { useContractCall } from '@/hooks/use-contract-call';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
 import { buildPauseCampaign, buildResumeCampaign } from '@/lib/contract-calls';
 import { CONTRACTS } from '@/lib/stacks-config';
-import { StatCard } from '@/components/ui';
+import { StatCard, Skeleton } from '@/components/ui';
 
 export default function CampaignDetailPage() {
   const params = useParams();
@@ -175,8 +174,13 @@ export default function CampaignDetailPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Campaign Details</h2>
 
             {campaignLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex justify-between items-center">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                ))}
               </div>
             ) : (
               <dl className="space-y-4">
