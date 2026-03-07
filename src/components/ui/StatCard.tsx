@@ -1,5 +1,6 @@
-import { type ReactNode } from 'react';
-import { type LucideIcon, RefreshCw } from 'lucide-react';
+import { type ReactNode, memo } from 'react';
+import { type LucideIcon } from 'lucide-react';
+import { Skeleton } from './Skeleton';
 
 interface StatCardBaseProps {
   label: string;
@@ -32,7 +33,7 @@ function isIconComponent(
  * Accepts either a LucideIcon component or a pre-rendered ReactNode
  * as the icon prop, making it flexible for both usage patterns.
  */
-export function StatCard(props: StatCardProps) {
+export const StatCard = memo(function StatCard(props: StatCardProps) {
   const { label, value, isLoading = false, subtitle, className = '' } = props;
 
   const iconElement = isIconComponent(props) ? (
@@ -54,7 +55,7 @@ export function StatCard(props: StatCardProps) {
           <p className="text-sm text-gray-600">{label}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {isLoading ? (
-              <RefreshCw className="w-4 h-4 animate-spin text-gray-400" />
+              <Skeleton className="h-7 w-20" />
             ) : (
               value ?? '—'
             )}
@@ -67,4 +68,4 @@ export function StatCard(props: StatCardProps) {
       </div>
     </div>
   );
-}
+});
