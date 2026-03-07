@@ -1,9 +1,10 @@
 'use client';
 
-import { RefreshCw, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { type ApiTransaction } from '@/lib/stacks-api';
 import { formatTxId, formatTimestamp } from '@/lib/display-utils';
 import { getExplorerTxUrl } from '@/lib/stacks-config';
+import { Skeleton } from '@/components/ui';
 
 interface TransactionListProps {
   transactions: ApiTransaction[];
@@ -43,8 +44,16 @@ export function TransactionList({
 }: TransactionListProps) {
   if (isLoading) {
     return (
-      <div className="flex justify-center py-12">
-        <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+      <div className="divide-y divide-gray-100">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="flex items-center justify-between py-3 px-1">
+            <div className="flex-1 min-w-0">
+              <Skeleton className="h-4 w-44 mb-2" />
+              <Skeleton className="h-3 w-28" />
+            </div>
+            <Skeleton className="h-6 w-16 rounded" />
+          </div>
+        ))}
       </div>
     );
   }
