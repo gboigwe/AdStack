@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Rocket } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
-import { stxToMicroStx, CONTRACTS, CONTRACT_ADDRESS } from '@/lib/stacks-config';
+import { stxToMicroStx, CONTRACTS, CONTRACT_ADDRESS, BLOCK_TIME } from '@/lib/stacks-config';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
+import { buildCreateCampaign } from '@/lib/contract-calls';
+import { useContractCall } from '@/hooks/use-contract-call';
 
 interface CampaignFormData {
   name: string;
@@ -29,7 +31,14 @@ export default function NewCampaignPage() {
   const { isConnected, address } = useWalletStore();
   const [form, setForm] = useState<CampaignFormData>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<CampaignFormData>>({});
-  const [submitting, setSubmitting] = useState(false);
+
+  const { execute, isLoading: submitting } = useContractCall({
+    label: 'Create Campaign',
+    invalidateKeys: [['read-only', CONTRACTS.PROMO_MANAGER]],
+    onSuccess: () => {
+      router.push('/advertiser');
+    },
+  });
 
   if (!isConnected) {
     return (
@@ -89,37 +98,22 @@ export default function NewCampaignPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || !address) return;
 
-    setSubmitting(true);
+    const budget = parseFloat(form.budget);
+    const dailyBudget = parseFloat(form.dailyBudget);
+    const durationSeconds =
+      parseInt(form.durationDays, 10) * BLOCK_TIME.SECONDS_PER_DAY;
 
-    try {
-      // In a full implementation, this would call the promo-manager
-      // contract's create-campaign function via Stacks Connect.
-      // For now, we log the prepared transaction params.
-      const budgetMicro = stxToMicroStx(parseFloat(form.budget));
-      const dailyBudgetMicro = stxToMicroStx(parseFloat(form.dailyBudget));
-      const durationBlocks = parseInt(form.durationDays, 10) * 144; // ~144 blocks/day
+    const callArgs = buildCreateCampaign(address, {
+      name: form.name,
+      budget: BigInt(Math.floor(budget * 1_000_000)),
+      dailyBudget: BigInt(Math.floor(dailyBudget * 1_000_000)),
+      duration: durationSeconds,
+      metadata: form.description || undefined,
+    });
 
-      console.log('Campaign creation params:', {
-        contract: `${CONTRACT_ADDRESS}.${CONTRACTS.PROMO_MANAGER}`,
-        function: 'create-campaign',
-        args: {
-          name: form.name,
-          budget: budgetMicro.toString(),
-          dailyBudget: dailyBudgetMicro.toString(),
-          duration: durationBlocks,
-          description: form.description,
-        },
-      });
-
-      // Navigate back to dashboard after submission
-      router.push('/advertiser');
-    } catch (error) {
-      console.error('Failed to create campaign:', error);
-    } finally {
-      setSubmitting(false);
-    }
+    execute(callArgs);
   };
 
   const budgetPreview = form.budget && !isNaN(parseFloat(form.budget))
