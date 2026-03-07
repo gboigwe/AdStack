@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { type ApiTransaction } from '@/lib/stacks-api';
-import { formatTxId, formatTimestamp } from '@/lib/display-utils';
+import { formatTxId, formatTimestamp, formatFee } from '@/lib/display-utils';
 import { getExplorerTxUrl } from '@/lib/stacks-config';
 import { Skeleton } from '@/components/ui';
 
@@ -101,6 +101,14 @@ export const TransactionList = memo(function TransactionList({
                   <span className="text-xs text-gray-400">&middot;</span>
                   <span className="text-xs text-gray-500">
                     {formatTimestamp(tx.burn_block_time)}
+                  </span>
+                </>
+              )}
+              {tx.fee_rate && (
+                <>
+                  <span className="text-xs text-gray-400">&middot;</span>
+                  <span className="text-xs text-gray-500">
+                    Fee: {formatFee(tx.fee_rate)}
                   </span>
                 </>
               )}
