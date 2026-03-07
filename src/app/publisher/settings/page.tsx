@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Save, Globe, Bell, Shield } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { truncateAddress } from '@/lib/display-utils';
 import { CURRENT_NETWORK } from '@/lib/stacks-config';
 import { CopyButton } from '@/components/ui';
+import { useToastStore } from '@/store/toast-store';
 
 export default function PublisherSettingsPage() {
   const { isConnected, address } = useWalletStore();
@@ -14,6 +15,44 @@ export default function PublisherSettingsPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [minCPM, setMinCPM] = useState('0.001');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const addToast = useToastStore((s) => s.addToast);
+
+  const validate = useCallback((): Record<string, string> => {
+    const errs: Record<string, string> = {};
+    if (websiteUrl && !/^https?:\/\/.+\..+/.test(websiteUrl)) {
+      errs.websiteUrl = 'Enter a valid URL starting with http:// or https://';
+    }
+    const cpm = parseFloat(minCPM);
+    if (isNaN(cpm) || cpm < 0) {
+      errs.minCPM = 'Minimum CPM must be a positive number';
+    }
+    if (cpm > 1000) {
+      errs.minCPM = 'Minimum CPM cannot exceed 1,000 STX';
+    }
+    return errs;
+  }, [websiteUrl, minCPM]);
+
+  const handleSave = useCallback(() => {
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
+    setSaving(true);
+    // Store locally until on-chain storage is available
+    try {
+      localStorage.setItem(
+        `adstack_publisher_${address}`,
+        JSON.stringify({ websiteUrl, categories, notificationsEnabled, minCPM }),
+      );
+      addToast({ type: 'success', title: 'Settings Saved', message: 'Your preferences have been saved locally.' });
+    } catch {
+      addToast({ type: 'error', title: 'Save Failed', message: 'Could not persist settings.' });
+    } finally {
+      setSaving(false);
+    }
+  }, [validate, address, websiteUrl, categories, notificationsEnabled, minCPM, addToast]);
 
   if (!isConnected || !address) {
     return (
@@ -107,13 +146,17 @@ export default function PublisherSettingsPage() {
                 id="website-url"
                 type="url"
                 value={websiteUrl}
-                onChange={(e) => setWebsiteUrl(e.target.value)}
+                onChange={(e) => { setWebsiteUrl(e.target.value); setErrors((prev) => { const { websiteUrl: _, ...rest } = prev; return rest; }); }}
                 placeholder="https://your-website.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                aria-invalid={!!errors.websiteUrl}
+                aria-describedby={errors.websiteUrl ? 'website-url-error' : undefined}
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.websiteUrl ? 'border-red-400' : 'border-gray-300'}`}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Your website where ads will be displayed
-              </p>
+              {errors.websiteUrl ? (
+                <p id="website-url-error" className="text-xs text-red-600 mt-1" role="alert">{errors.websiteUrl}</p>
+              ) : (
+                <p className="text-xs text-gray-500 mt-1">Your website where ads will be displayed</p>
+              )}
             </div>
 
             <div>
@@ -150,12 +193,16 @@ export default function PublisherSettingsPage() {
                 step="0.001"
                 min="0"
                 value={minCPM}
-                onChange={(e) => setMinCPM(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => { setMinCPM(e.target.value); setErrors((prev) => { const { minCPM: _, ...rest } = prev; return rest; }); }}
+                aria-invalid={!!errors.minCPM}
+                aria-describedby={errors.minCPM ? 'min-cpm-error' : undefined}
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.minCPM ? 'border-red-400' : 'border-gray-300'}`}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Only show ads that pay at least this amount per 1,000 views
-              </p>
+              {errors.minCPM ? (
+                <p id="min-cpm-error" className="text-xs text-red-600 mt-1" role="alert">{errors.minCPM}</p>
+              ) : (
+                <p className="text-xs text-gray-500 mt-1">Only show ads that pay at least this amount per 1,000 views</p>
+              )}
             </div>
           </div>
         </section>
@@ -198,13 +245,15 @@ export default function PublisherSettingsPage() {
 
         {/* Save Button */}
         <button
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
         >
           <Save className="w-4 h-4" />
-          Save Settings
+          {saving ? 'Saving...' : 'Save Settings'}
         </button>
         <p className="text-xs text-gray-500 text-center mt-3">
-          Settings will be stored on-chain via the user-profiles contract once deployed
+          Settings are saved locally until on-chain storage is deployed
         </p>
       </div>
     </div>
