@@ -17,8 +17,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AdStack - Decentralized Advertising Platform",
-  description: "Blockchain-powered advertising platform on Stacks",
+  title: {
+    default: 'AdStack — Decentralized Advertising Platform',
+    template: '%s | AdStack',
+  },
+  description:
+    'Blockchain-powered advertising platform built on Stacks. Create, manage, and monetize ad campaigns with transparent, on-chain verification.',
+  metadataBase: new URL('https://adstack.app'),
+  manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    siteName: 'AdStack',
+    title: 'AdStack — Decentralized Advertising Platform',
+    description:
+      'Create, manage, and monetize ad campaigns with transparent, on-chain verification on Stacks.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AdStack — Decentralized Advertising Platform',
+    description:
+      'Blockchain-powered advertising on Stacks with on-chain campaign verification.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const dynamic = 'force-dynamic';
