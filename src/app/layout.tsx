@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ToastContainer } from "@/components/toast";
+import { OfflineBanner } from "@/components/ui";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,6 +58,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
         <Providers>
+          <OfflineBanner />
           <Header />
           <main id="main-content" className="min-h-screen">
             {children}
