@@ -12,3 +12,4 @@ export { useContractCall } from './use-contract-call';
 export { useFocusTrap } from './use-focus-trap';
 export { useApiQuery } from './use-api-query';
 export { useMempoolTransactions } from './use-mempool';
+export { useDebounce } from './use-debounce';

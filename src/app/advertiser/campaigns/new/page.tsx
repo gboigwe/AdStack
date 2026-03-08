@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Rocket } from 'lucide-react';
+import { Rocket } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { stxToMicroStx, CONTRACTS, CONTRACT_ADDRESS, BLOCK_TIME } from '@/lib/stacks-config';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
 import { buildCreateCampaign } from '@/lib/contract-calls';
 import { useContractCall } from '@/hooks/use-contract-call';
+import { Breadcrumb } from '@/components/ui';
 
 interface CampaignFormData {
   name: string;
@@ -133,13 +134,13 @@ export default function NewCampaignPage() {
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/advertiser"
-            className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
+          <Breadcrumb
+            items={[
+              { label: 'Dashboard', href: '/advertiser' },
+              { label: 'Create Campaign' },
+            ]}
+            className="mb-4"
+          />
           <h1 className="text-3xl font-bold text-gray-900">Create Campaign</h1>
           <p className="text-gray-600 mt-2">
             Set up a new advertising campaign on the Stacks blockchain.
