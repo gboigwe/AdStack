@@ -3,6 +3,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+const STORAGE_KEY = 'wallet-storage';
+
 interface WalletStore {
   address: string | null;
   isConnected: boolean;
@@ -21,7 +23,7 @@ export const useWalletStore = create<WalletStore>()(
       disconnect: () => set({ address: null, isConnected: false }),
     }),
     {
-      name: 'wallet-storage',
+      name: STORAGE_KEY,
       storage: createJSONStorage(() =>
         typeof window !== 'undefined'
           ? localStorage
@@ -34,3 +36,27 @@ export const useWalletStore = create<WalletStore>()(
     }
   )
 );
+
+/**
+ * Sync wallet state across browser tabs via the storage event.
+ * When another tab updates localStorage, this listener rehydrates
+ * the store so all tabs reflect the same connection state.
+ */
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
+    if (event.key !== STORAGE_KEY || !event.newValue) return;
+
+    try {
+      const parsed = JSON.parse(event.newValue);
+      const state = parsed?.state;
+      if (state) {
+        useWalletStore.setState({
+          address: state.address ?? null,
+          isConnected: state.isConnected ?? false,
+        });
+      }
+    } catch {
+      // Ignore malformed storage data
+    }
+  });
+}
