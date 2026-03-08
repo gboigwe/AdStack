@@ -4,7 +4,7 @@ import { Plus, TrendingUp, DollarSign, Eye } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useStxBalance, useCampaignCount } from '@/hooks';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
-import { StatCard, SkeletonLines } from '@/components/ui';
+import { StatCard, SkeletonLines, PageTransition } from '@/components/ui';
 import Link from 'next/link';
 
 export default function AdvertiserDashboard() {
@@ -31,7 +31,7 @@ export default function AdvertiserDashboard() {
   const currentBalance = balance ? BigInt(balance.balance) : 0n;
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <PageTransition className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Advertiser Dashboard</h1>
@@ -105,6 +105,6 @@ export default function AdvertiserDashboard() {
           </div>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }

@@ -6,7 +6,7 @@ import { useWalletStore } from '@/store/wallet-store';
 import { useTransactions, useMempoolTransactions, useDebounce } from '@/hooks';
 import { TransactionList } from '@/components/transactions';
 import { TransactionFilters, type TxStatusFilter, type TxTypeFilter } from '@/components/transactions/TransactionFilters';
-import { Pagination, Badge } from '@/components/ui';
+import { Pagination, Badge, PageTransition } from '@/components/ui';
 import { WalletGuard } from '@/components/wallet/WalletGuard';
 
 const PAGE_SIZE = 20;
@@ -44,7 +44,7 @@ function TransactionsContent() {
   }, [txList?.results, debouncedSearch, statusFilter, typeFilter]);
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <PageTransition className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
@@ -104,7 +104,7 @@ function TransactionsContent() {
           />
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
 
