@@ -4,7 +4,7 @@ import { Plus, TrendingUp, DollarSign, Eye } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useStxBalance, useCampaignCount } from '@/hooks';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
-import { StatCard, SkeletonLines, PageTransition } from '@/components/ui';
+import { StatCard, SkeletonLines, PageTransition, EmptyState } from '@/components/ui';
 import Link from 'next/link';
 
 export default function AdvertiserDashboard() {
@@ -88,19 +88,20 @@ export default function AdvertiserDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-gray-400" />
-                </div>
-                <p className="text-gray-600 mb-4">No campaigns yet</p>
-                <Link
-                  href="/advertiser/campaigns/new"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                >
-                  <Plus className="w-4 h-4" />
-                  Create your first campaign
-                </Link>
-              </div>
+              <EmptyState
+                icon={TrendingUp}
+                title="No campaigns yet"
+                description="Launch your first ad campaign to start reaching publishers on the Stacks network."
+                action={
+                  <Link
+                    href="/advertiser/campaigns/new"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create your first campaign
+                  </Link>
+                }
+              />
             )}
           </div>
         </div>
