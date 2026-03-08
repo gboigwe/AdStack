@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react';
 import { type ApiTransaction } from '@/lib/stacks-api';
 import { formatTxId, formatTimestamp, formatFee } from '@/lib/display-utils';
 import { getExplorerTxUrl } from '@/lib/stacks-config';
-import { Skeleton } from '@/components/ui';
+import { Skeleton, CopyButton } from '@/components/ui';
 
 interface TransactionListProps {
   transactions: ApiTransaction[];
@@ -81,6 +81,7 @@ export const TransactionList = memo(function TransactionList({
               <span className="text-sm font-mono text-gray-700 truncate">
                 {formatTxId(tx.tx_id)}
               </span>
+              <CopyButton text={tx.tx_id} label="tx hash" />
               <a
                 href={getExplorerTxUrl(tx.tx_id)}
                 target="_blank"
