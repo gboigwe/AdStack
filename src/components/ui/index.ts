@@ -10,3 +10,4 @@ export type { BreadcrumbItem } from './Breadcrumb';
 export { PageTransition } from './PageTransition';
 export { OfflineBanner } from './OfflineBanner';
 export { Tooltip } from './Tooltip';
+export { EmptyState } from './EmptyState';
