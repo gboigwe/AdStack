@@ -1,24 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Clock } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
-import { useTransactions, useMempoolTransactions } from '@/hooks';
+import { useTransactions, useMempoolTransactions, useDebounce } from '@/hooks';
 import { TransactionList } from '@/components/transactions';
+import { TransactionFilters, type TxStatusFilter, type TxTypeFilter } from '@/components/transactions/TransactionFilters';
 import { Pagination, Badge } from '@/components/ui';
 import { WalletGuard } from '@/components/wallet/WalletGuard';
 
 const PAGE_SIZE = 20;
 
+function matchesStatus(txStatus: string, filter: TxStatusFilter): boolean {
+  if (filter === 'all') return true;
+  if (filter === 'success') return txStatus === 'success';
+  if (filter === 'pending') return txStatus === 'pending';
+  if (filter === 'failed') return txStatus.startsWith('abort');
+  return true;
+}
+
 function TransactionsContent() {
   const { address } = useWalletStore();
   const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<TxStatusFilter>('all');
+  const [typeFilter, setTypeFilter] = useState<TxTypeFilter>('all');
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const offset = page * PAGE_SIZE;
 
   const { data: txList, isLoading } = useTransactions(address, PAGE_SIZE, offset);
   const { data: mempool, isLoading: mempoolLoading } = useMempoolTransactions(address);
   const totalPages = txList ? Math.ceil(txList.total / PAGE_SIZE) : 0;
   const pendingCount = mempool?.total ?? 0;
+
+  const filteredTxs = useMemo(() => {
+    if (!txList?.results) return [];
+    return txList.results.filter((tx) => {
+      if (debouncedSearch && !tx.tx_id.toLowerCase().includes(debouncedSearch.toLowerCase())) return false;
+      if (!matchesStatus(tx.tx_status, statusFilter)) return false;
+      if (typeFilter !== 'all' && tx.tx_type !== typeFilter) return false;
+      return true;
+    });
+  }, [txList?.results, debouncedSearch, statusFilter, typeFilter]);
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -50,13 +73,27 @@ function TransactionsContent() {
           </div>
         )}
 
+        {/* Filters */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+          <TransactionFilters
+            searchQuery={searchQuery}
+            onSearchChange={(q) => { setSearchQuery(q); setPage(0); }}
+            statusFilter={statusFilter}
+            onStatusChange={(s) => { setStatusFilter(s); setPage(0); }}
+            typeFilter={typeFilter}
+            onTypeChange={(t) => { setTypeFilter(t); setPage(0); }}
+          />
+        </div>
+
         {/* Confirmed Transactions */}
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="p-6">
             <TransactionList
-              transactions={txList?.results ?? []}
+              transactions={filteredTxs}
               isLoading={isLoading}
-              emptyMessage="No transactions found for this address"
+              emptyMessage={debouncedSearch || statusFilter !== 'all' || typeFilter !== 'all'
+                ? 'No transactions match your filters'
+                : 'No transactions found for this address'}
             />
           </div>
 
