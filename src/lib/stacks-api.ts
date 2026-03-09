@@ -57,6 +57,9 @@ const MAX_RETRIES = 3;
 /** Base delay in ms for exponential backoff (doubles on each retry). */
 const BASE_DELAY_MS = 500;
 
+/** Default request timeout in ms (10 seconds). */
+const REQUEST_TIMEOUT_MS = 10_000;
+
 /**
  * Wait for a specified number of milliseconds.
  */
@@ -86,13 +89,35 @@ async function parseErrorBody(res: Response): Promise<string> {
  * Low-level fetch wrapper that prepends the API_URL, handles errors,
  * and retries transient failures with exponential backoff.
  */
+/**
+ * Parse the Retry-After header from the response.
+ * Supports both delta-seconds and HTTP-date formats.
+ */
+function getRetryAfterMs(res: Response): number | null {
+  const header = res.headers.get('Retry-After');
+  if (!header) return null;
+
+  const seconds = parseInt(header, 10);
+  if (!isNaN(seconds)) return seconds * 1000;
+
+  // Try HTTP-date format
+  const date = Date.parse(header);
+  if (!isNaN(date)) return Math.max(0, date - Date.now());
+
+  return null;
+}
+
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
   const url = `${API_URL}${path}`;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
     try {
       const res = await fetch(url, {
         ...init,
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           ...init?.headers,
@@ -102,7 +127,8 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<
       if (!res.ok) {
         // Retry on transient server errors (429, 5xx)
         if (RETRYABLE_STATUS_CODES.has(res.status) && attempt < MAX_RETRIES) {
-          await delay(BASE_DELAY_MS * Math.pow(2, attempt));
+          const retryDelay = getRetryAfterMs(res) ?? BASE_DELAY_MS * Math.pow(2, attempt);
+          await delay(retryDelay);
           continue;
         }
 
@@ -113,6 +139,15 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<
       const data = (await res.json()) as T;
       return { ok: true, data };
     } catch (err) {
+      // Abort errors from timeout
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        if (attempt < MAX_RETRIES) {
+          await delay(BASE_DELAY_MS * Math.pow(2, attempt));
+          continue;
+        }
+        return { ok: false, error: `Request timeout after ${REQUEST_TIMEOUT_MS}ms` };
+      }
+
       // Network errors are retryable
       if (attempt < MAX_RETRIES) {
         await delay(BASE_DELAY_MS * Math.pow(2, attempt));
@@ -121,6 +156,8 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<
 
       const message = err instanceof Error ? err.message : String(err);
       return { ok: false, error: `Network error: ${message}` };
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
