@@ -109,3 +109,6 @@ export {
   getErrorMessage,
   createStacksError,
 } from './error-handler';
+
+// Request deduplication
+export { deduplicatedFetch } from './request-cache';
