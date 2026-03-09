@@ -16,3 +16,4 @@ export { useDebounce } from './use-debounce';
 export { useClipboard } from './use-clipboard';
 export { useNetworkStatus } from './use-network-status';
 export { useQueryParams } from './use-query-params';
+export { useLocalStorage } from './use-local-storage';
