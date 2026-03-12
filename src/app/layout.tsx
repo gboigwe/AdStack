@@ -22,6 +22,10 @@ const ScrollToTop = nextDynamic(
   () => import("@/components/ui/ScrollToTop").then((m) => ({ default: m.ScrollToTop })),
   { ssr: false },
 );
+const KeyboardShortcutHelp = nextDynamic(
+  () => import("@/components/ui/KeyboardShortcutHelp").then((m) => ({ default: m.KeyboardShortcutHelp })),
+  { ssr: false },
+);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +86,7 @@ export default function RootLayout({
           <Footer />
           <ToastContainer />
           <ScrollToTop />
+          <KeyboardShortcutHelp />
         </Providers>
       </body>
     </html>

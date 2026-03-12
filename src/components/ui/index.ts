@@ -18,3 +18,4 @@ export { ScrollToTop } from './ScrollToTop';
 export { ProgressBar } from './ProgressBar';
 export { ErrorBoundary } from './ErrorBoundary';
 export { PageLoader, InlineLoader } from './PageLoader';
+export { KeyboardShortcutHelp } from './KeyboardShortcutHelp';
