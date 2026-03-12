@@ -34,6 +34,44 @@ export enum VerificationStatus {
 }
 
 /**
+ * Proposal Status Enum
+ */
+export enum ProposalStatus {
+  ACTIVE = 'active',
+  PASSED = 'passed',
+  REJECTED = 'rejected',
+  EXECUTED = 'executed',
+}
+
+/**
+ * Escrow Status Enum
+ */
+export enum EscrowStatus {
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  REFUNDED = 'refunded',
+}
+
+/**
+ * Payout Status Enum
+ */
+export enum PayoutStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}
+
+/**
+ * Dispute Status Enum
+ */
+export enum DisputeStatus {
+  OPEN = 'open',
+  IN_PROGRESS = 'in-progress',
+  RESOLVED = 'resolved',
+  DISMISSED = 'dismissed',
+}
+
+/**
  * Campaign Interface (from promo-manager contract)
  */
 export interface Campaign {
@@ -102,7 +140,7 @@ export interface EscrowDetails {
   released: bigint;
   createdAt: number;
   expiresAt: number;
-  status: 'active' | 'completed' | 'refunded';
+  status: EscrowStatus;
 }
 
 /**
@@ -125,7 +163,7 @@ export interface Dispute {
   defendant: string;
   campaignId: number;
   reason: string;
-  status: 'open' | 'in-progress' | 'resolved' | 'dismissed';
+  status: DisputeStatus;
   createdAt: number;
   resolvedAt?: number;
   resolution?: string;
@@ -156,7 +194,7 @@ export interface GovernanceProposal {
   description: string;
   votesFor: bigint;
   votesAgainst: bigint;
-  status: 'active' | 'passed' | 'rejected' | 'executed';
+  status: ProposalStatus;
   createdAt: number;
   expiresAt: number;
   executedAt?: number;
@@ -196,7 +234,7 @@ export interface PayoutRecord {
   campaignId: number;
   timestamp: number;
   txId: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: PayoutStatus;
 }
 
 /**
