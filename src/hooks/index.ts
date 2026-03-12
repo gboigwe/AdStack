@@ -22,3 +22,4 @@ export { useIntersectionObserver } from './use-intersection-observer';
 export { useCountdown } from './use-countdown';
 export { usePrevious } from './use-previous';
 export { useWindowSize } from './use-window-size';
+export { useForm } from './use-form';
