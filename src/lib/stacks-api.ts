@@ -6,6 +6,7 @@
  */
 
 import { API_URL, CURRENT_NETWORK } from './stacks-config';
+import { deduplicatedFetch } from './request-cache';
 
 /** Base response shape returned by every API helper. */
 export interface ApiResult<T> {
@@ -167,40 +168,56 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<
 
 /**
  * Fetch STX balance for an address.
+ * Deduplicated so concurrent mounts don't fire parallel requests.
  */
-export async function fetchStxBalance(address: string): Promise<ApiResult<StxBalance>> {
-  return apiFetch<StxBalance>(`/extended/v1/address/${address}/stx`);
+export function fetchStxBalance(address: string): Promise<ApiResult<StxBalance>> {
+  return deduplicatedFetch(
+    `balance:${address}`,
+    () => apiFetch<StxBalance>(`/extended/v1/address/${address}/stx`),
+  );
 }
 
 /**
  * Fetch recent transactions for an address.
+ * Deduplicated by address + pagination params.
  */
-export async function fetchTransactions(
+export function fetchTransactions(
   address: string,
   limit = 20,
   offset = 0,
 ): Promise<ApiResult<TransactionList>> {
-  return apiFetch<TransactionList>(
-    `/extended/v1/address/${address}/transactions?limit=${limit}&offset=${offset}`,
+  return deduplicatedFetch(
+    `txs:${address}:${limit}:${offset}`,
+    () =>
+      apiFetch<TransactionList>(
+        `/extended/v1/address/${address}/transactions?limit=${limit}&offset=${offset}`,
+      ),
   );
 }
 
 /**
  * Fetch a single transaction by ID.
+ * Deduplicated by tx ID.
  */
-export async function fetchTransaction(txId: string): Promise<ApiResult<ApiTransaction>> {
-  return apiFetch<ApiTransaction>(`/extended/v1/tx/${txId}`);
+export function fetchTransaction(txId: string): Promise<ApiResult<ApiTransaction>> {
+  return deduplicatedFetch(
+    `tx:${txId}`,
+    () => apiFetch<ApiTransaction>(`/extended/v1/tx/${txId}`),
+  );
 }
 
 /**
  * Fetch the current block height of the network.
+ * Deduplicated since many components request this simultaneously.
  */
-export async function fetchBlockHeight(): Promise<ApiResult<number>> {
-  const result = await apiFetch<{ stacks_tip_height: number }>('/v2/info');
-  if (result.ok && result.data) {
-    return { ok: true, data: result.data.stacks_tip_height };
-  }
-  return { ok: false, error: result.error };
+export function fetchBlockHeight(): Promise<ApiResult<number>> {
+  return deduplicatedFetch('block-height', async () => {
+    const result = await apiFetch<{ stacks_tip_height: number }>('/v2/info');
+    if (result.ok && result.data) {
+      return { ok: true, data: result.data.stacks_tip_height };
+    }
+    return { ok: false, error: result.error };
+  });
 }
 
 /**
