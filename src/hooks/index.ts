@@ -25,3 +25,4 @@ export { useWindowSize } from './use-window-size';
 export { useForm } from './use-form';
 export { useRetry } from './use-retry';
 export { useClickOutside } from './use-click-outside';
+export { usePagination } from './use-pagination';
