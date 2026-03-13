@@ -17,10 +17,10 @@ export default function PublisherDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             Connect Your Wallet
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Please connect your Stacks wallet to access the publisher dashboard.
           </p>
         </div>
@@ -36,14 +36,14 @@ export default function PublisherDashboard() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Publisher Dashboard</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Publisher Dashboard</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
               Track your earnings and ad performance
             </p>
           </div>
           <Link
             href="/publisher/settings"
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Settings
           </Link>
@@ -87,13 +87,13 @@ export default function PublisherDashboard() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white rounded-xl border border-gray-200 mb-6">
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Transactions</h2>
             {txList && txList.total > 5 && (
               <Link
                 href="/transactions"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 View all
               </Link>
@@ -103,7 +103,7 @@ export default function PublisherDashboard() {
             {txLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                     <div className="flex-1">
                       <Skeleton className="h-4 w-48 mb-2" />
                       <Skeleton className="h-3 w-32" />
@@ -117,19 +117,19 @@ export default function PublisherDashboard() {
                 {txList.results.map((tx) => (
                   <div
                     key={tx.tx_id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
                   >
                     <div className="min-w-0">
                       <a
                         href={explorerTx(tx.tx_id)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-mono text-gray-700 hover:text-blue-600 inline-flex items-center gap-1"
+                        className="text-sm font-mono text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 inline-flex items-center gap-1"
                       >
                         {formatTxId(tx.tx_id)}
                         <ExternalLink className="w-3 h-3" />
                       </a>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {tx.tx_type} &middot; Block {tx.block_height}
                       </p>
                     </div>
@@ -143,20 +143,20 @@ export default function PublisherDashboard() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-600">No transactions yet</p>
+                <p className="text-gray-600 dark:text-gray-400">No transactions yet</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Earnings History */}
-        <div className="bg-white rounded-xl border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Earnings History</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Earnings History</h2>
           </div>
           <div className="p-6">
             <div className="text-center py-12">
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Earnings tracking will be available after contract deployment
               </p>
             </div>
