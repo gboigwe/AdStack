@@ -20,3 +20,5 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { PageLoader, InlineLoader } from './PageLoader';
 export { KeyboardShortcutHelp } from './KeyboardShortcutHelp';
 export { Alert } from './Alert';
+export { Tabs } from './Tabs';
+export type { TabItem } from './Tabs';
