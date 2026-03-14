@@ -22,3 +22,4 @@ export { KeyboardShortcutHelp } from './KeyboardShortcutHelp';
 export { Alert } from './Alert';
 export { Tabs } from './Tabs';
 export type { TabItem } from './Tabs';
+export { SearchInput } from './SearchInput';
