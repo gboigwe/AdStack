@@ -3,12 +3,36 @@
 import { Component, type ReactNode, type ErrorInfo } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
+type ErrorCategory = 'network' | 'render' | 'unknown';
+
+function categorizeError(error: Error): ErrorCategory {
+  const msg = error.message.toLowerCase();
+  if (
+    msg.includes('fetch') ||
+    msg.includes('network') ||
+    msg.includes('timeout') ||
+    msg.includes('failed to load') ||
+    error.name === 'TypeError' && msg.includes('failed')
+  ) {
+    return 'network';
+  }
+  return 'render';
+}
+
+const CATEGORY_HINTS: Record<ErrorCategory, string> = {
+  network: 'Check your internet connection and try again.',
+  render: 'An unexpected error occurred. You can try again or refresh the page.',
+  unknown: 'Something unexpected happened. Please try again.',
+};
+
 interface ErrorBoundaryProps {
   children: ReactNode;
   /** Shown as the heading when an error is caught */
   fallbackTitle?: string;
   /** Compact mode omits the description paragraph */
   compact?: boolean;
+  /** Called when an error is caught — use for external error reporting */
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface ErrorBoundaryState {
@@ -39,9 +63,8 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // Log to console in development; in production this would
-    // forward to an error reporting service.
     console.error('[ErrorBoundary]', error, info.componentStack);
+    this.props.onError?.(error, info);
   }
 
   private handleRetry = () => {
@@ -57,6 +80,11 @@ export class ErrorBoundary extends Component<
       fallbackTitle = 'Something went wrong',
       compact = false,
     } = this.props;
+
+    const category = this.state.error
+      ? categorizeError(this.state.error)
+      : 'unknown';
+    const hint = CATEGORY_HINTS[category];
 
     if (compact) {
       return (
@@ -83,7 +111,7 @@ export class ErrorBoundary extends Component<
           {fallbackTitle}
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-          An unexpected error occurred. You can try again or refresh the page.
+          {hint}
         </p>
         <button
           onClick={this.handleRetry}
