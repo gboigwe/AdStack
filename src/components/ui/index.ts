@@ -27,3 +27,4 @@ export { NotificationBell } from './NotificationBell';
 export { LoadingButton } from './LoadingButton';
 export { Avatar } from './Avatar';
 export { Card, CardHeader, CardBody } from './Card';
+export { DropdownMenu } from './DropdownMenu';
