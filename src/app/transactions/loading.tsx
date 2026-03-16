@@ -10,7 +10,7 @@ export default function TransactionsLoading() {
         </div>
 
         {/* Filter skeleton */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 mb-4">
           <Skeleton className="h-10 w-full mb-3" />
           <div className="flex gap-2">
             {Array.from({ length: 4 }, (_, i) => (
@@ -20,7 +20,7 @@ export default function TransactionsLoading() {
         </div>
 
         {/* Transaction list skeleton */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <SkeletonLines count={8} />
         </div>
       </div>
