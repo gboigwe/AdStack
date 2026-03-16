@@ -58,10 +58,10 @@ export default function PublisherSettingsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Connect Your Wallet
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Connect your Stacks wallet to manage publisher settings.
           </p>
         </div>
@@ -97,22 +97,22 @@ export default function PublisherSettingsPage() {
           className="mb-6"
         />
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Publisher Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Publisher Settings</h1>
 
         {/* Account Section */}
-        <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Shield className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Account</h2>
+            <Shield className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Account</h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Wallet Address
               </label>
-              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm font-mono text-gray-700 flex-1">
+              <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <span className="text-sm font-mono text-gray-700 dark:text-gray-300 flex-1">
                   {truncateAddress(address, 12, 8)}
                 </span>
                 <CopyButton text={address} label="Copy" />
@@ -120,26 +120,26 @@ export default function PublisherSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Network
               </label>
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-700 capitalize">{CURRENT_NETWORK}</span>
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">{CURRENT_NETWORK}</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Website Section */}
-        <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Globe className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Website</h2>
+            <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Website</h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="website-url" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="website-url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Website URL
               </label>
               <input
@@ -150,17 +150,17 @@ export default function PublisherSettingsPage() {
                 placeholder="https://your-website.com"
                 aria-invalid={!!errors.websiteUrl}
                 aria-describedby={errors.websiteUrl ? 'website-url-error' : undefined}
-                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.websiteUrl ? 'border-red-400' : 'border-gray-300'}`}
+                className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.websiteUrl ? 'border-red-400 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}`}
               />
               {errors.websiteUrl ? (
-                <p id="website-url-error" className="text-xs text-red-600 mt-1" role="alert">{errors.websiteUrl}</p>
+                <p id="website-url-error" className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">{errors.websiteUrl}</p>
               ) : (
-                <p className="text-xs text-gray-500 mt-1">Your website where ads will be displayed</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Your website where ads will be displayed</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Content Categories
               </label>
               <div className="flex flex-wrap gap-2">
@@ -170,21 +170,21 @@ export default function PublisherSettingsPage() {
                     onClick={() => toggleCategory(cat)}
                     className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
                       categories.includes(cat)
-                        ? 'bg-blue-50 border-blue-300 text-blue-700'
-                        : 'bg-white border-gray-300 text-gray-600 hover:border-gray-400'
+                        ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
+                        : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500'
                     }`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 Select categories relevant to your audience for better ad matching
               </p>
             </div>
 
             <div>
-              <label htmlFor="min-cpm" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="min-cpm" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Minimum CPM (STX)
               </label>
               <input
@@ -196,28 +196,28 @@ export default function PublisherSettingsPage() {
                 onChange={(e) => { setMinCPM(e.target.value); setErrors((prev) => { const { minCPM: _, ...rest } = prev; return rest; }); }}
                 aria-invalid={!!errors.minCPM}
                 aria-describedby={errors.minCPM ? 'min-cpm-error' : undefined}
-                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.minCPM ? 'border-red-400' : 'border-gray-300'}`}
+                className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.minCPM ? 'border-red-400 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}`}
               />
               {errors.minCPM ? (
-                <p id="min-cpm-error" className="text-xs text-red-600 mt-1" role="alert">{errors.minCPM}</p>
+                <p id="min-cpm-error" className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">{errors.minCPM}</p>
               ) : (
-                <p className="text-xs text-gray-500 mt-1">Only show ads that pay at least this amount per 1,000 views</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Only show ads that pay at least this amount per 1,000 views</p>
               )}
             </div>
           </div>
         </section>
 
         {/* Notifications Section */}
-        <section className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Bell className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+            <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Notifications</h2>
           </div>
 
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <p className="text-sm font-medium text-gray-700">Payout Notifications</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Payout Notifications</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Get notified when a payout is processed
               </p>
             </div>
@@ -230,7 +230,7 @@ export default function PublisherSettingsPage() {
               />
               <div
                 className={`w-10 h-6 rounded-full transition-colors ${
-                  notificationsEnabled ? 'bg-blue-600' : 'bg-gray-300'
+                  notificationsEnabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
                 }`}
               >
                 <div
@@ -252,7 +252,7 @@ export default function PublisherSettingsPage() {
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Settings'}
         </button>
-        <p className="text-xs text-gray-500 text-center mt-3">
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
           Settings are saved locally until on-chain storage is deployed
         </p>
       </div>
