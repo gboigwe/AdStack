@@ -29,3 +29,4 @@ export { usePagination } from './use-pagination';
 export { useToggle } from './use-toggle';
 export { useMounted } from './use-mounted';
 export { useThrottle } from './use-throttle';
+export { useEventListener } from './use-event-listener';
