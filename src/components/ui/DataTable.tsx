@@ -32,6 +32,8 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   /** Striped rows */
   striped?: boolean;
+  /** Accessible label for the table */
+  ariaLabel?: string;
 }
 
 const HIDE_CLASSES: Record<string, string> = {
@@ -49,10 +51,11 @@ export function DataTable<T>({
   emptyMessage = 'No data found',
   onRowClick,
   striped = false,
+  ariaLabel,
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm text-left">
+    <div className="overflow-x-auto" role="region" aria-label={ariaLabel} tabIndex={ariaLabel ? 0 : undefined}>
+      <table className="w-full text-sm text-left" aria-busy={isLoading}>
         <thead>
           <tr className="border-b border-gray-200 dark:border-gray-700">
             {columns.map((col) => (
@@ -68,7 +71,9 @@ export function DataTable<T>({
         </thead>
         <tbody>
           {isLoading
-            ? Array.from({ length: loadingRows }, (_, i) => (
+            ? <>
+                <tr className="sr-only"><td colSpan={columns.length}><span role="status">Loading data…</span></td></tr>
+                {Array.from({ length: loadingRows }, (_, i) => (
                 <tr key={`skeleton-${i}`} className="border-b border-gray-100 dark:border-gray-800">
                   {columns.map((col) => (
                     <td
@@ -79,7 +84,8 @@ export function DataTable<T>({
                     </td>
                   ))}
                 </tr>
-              ))
+              ))}
+              </>
             : data.length === 0
               ? (
                   <tr>
@@ -95,9 +101,12 @@ export function DataTable<T>({
                   <tr
                     key={getRowKey(row, idx)}
                     className={`border-b border-gray-100 dark:border-gray-800 transition-colors ${
-                      onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800' : ''
+                      onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 focus-within:bg-gray-50 dark:focus-within:bg-gray-800' : ''
                     } ${striped && idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-gray-800/50' : ''}`}
                     onClick={() => onRowClick?.(row)}
+                    onKeyDown={onRowClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onRowClick(row); } } : undefined}
+                    tabIndex={onRowClick ? 0 : undefined}
+                    role={onRowClick ? 'button' : undefined}
                   >
                     {columns.map((col) => (
                       <td
