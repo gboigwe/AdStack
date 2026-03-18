@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { Badge } from '@/components/ui';
+import { Badge, Card } from '@/components/ui';
 import { buildCastVote } from '@/lib/contract-calls';
 import { useContractCall } from '@/hooks/use-contract-call';
 import { CONTRACTS } from '@/lib/stacks-config';
@@ -73,7 +73,7 @@ export const ProposalCard = memo(function ProposalCard({
     totalVotes > 0 ? (proposal.votesFor / totalVotes) * 100 : 0;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+    <Card>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <StatusIcon status={proposal.status} />
@@ -128,6 +128,6 @@ export const ProposalCard = memo(function ProposalCard({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 });
