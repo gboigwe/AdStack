@@ -4,7 +4,7 @@ import { memo } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
-import { ProgressBar } from '@/components/ui';
+import { Card, ProgressBar } from '@/components/ui';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
 import type { CampaignStatus } from '@/types/contracts';
 
@@ -43,38 +43,40 @@ export const CampaignCard = memo(function CampaignCard({
         : 'default';
 
   return (
-    <Link
-      href={`/advertiser/campaigns/${campaign.id}`}
-      className="block bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:border-blue-300 dark:hover:border-blue-700 transition-colors group"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-            {campaign.name}
-          </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            Campaign #{campaign.id}
-          </p>
+    <Card hoverable noPadding className="group">
+      <Link
+        href={`/advertiser/campaigns/${campaign.id}`}
+        className="block p-5"
+      >
+        <div className="flex items-start justify-between mb-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {campaign.name}
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              Campaign #{campaign.id}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <StatusBadge status={campaign.status} />
+            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+          </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <StatusBadge status={campaign.status} />
-          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
-        </div>
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Budget</span>
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {formatSTXWithSymbol(campaign.spent, 2)} / {formatSTXWithSymbol(campaign.budget, 2)}
-          </span>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600 dark:text-gray-400">Budget</span>
+            <span className="font-medium text-gray-900 dark:text-gray-100">
+              {formatSTXWithSymbol(campaign.spent, 2)} / {formatSTXWithSymbol(campaign.budget, 2)}
+            </span>
+          </div>
+          <ProgressBar
+            value={budgetUsed}
+            variant={variant}
+            size="sm"
+          />
         </div>
-        <ProgressBar
-          value={budgetUsed}
-          variant={variant}
-          size="sm"
-        />
-      </div>
-    </Link>
+      </Link>
+    </Card>
   );
 });
