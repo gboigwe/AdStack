@@ -28,16 +28,16 @@ export function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
           return (
             <li key={item.label} className="flex items-center gap-1">
               {idx > 0 && (
-                <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 flex-shrink-0" aria-hidden="true" />
               )}
               {isLast || !item.href ? (
-                <span className="text-gray-500 font-medium" aria-current={isLast ? 'page' : undefined}>
+                <span className="text-gray-500 dark:text-gray-400 font-medium" aria-current={isLast ? 'page' : undefined}>
                   {item.label}
                 </span>
               ) : (
                 <Link
                   href={item.href}
-                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   {item.label}
                 </Link>
