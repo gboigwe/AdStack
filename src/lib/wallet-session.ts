@@ -242,7 +242,9 @@ export async function verifySessionSignature(
     const secret = getOrCreateSessionSecret();
     if (!secret || !signature.includes(':')) return false;
 
-    const [timestampStr, providedDigest] = signature.split(':', 2);
+    const parts = signature.split(':', 2);
+    const timestampStr = parts[0] ?? '';
+    const providedDigest = parts[1] ?? '';
     const timestamp = Number(timestampStr);
     if (Number.isNaN(timestamp)) return false;
 
