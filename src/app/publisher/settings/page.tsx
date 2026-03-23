@@ -2,11 +2,11 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Save, Globe, Bell, Shield } from 'lucide-react';
+import { Save, Globe, Bell, Shield } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { truncateAddress } from '@/lib/display-utils';
 import { CURRENT_NETWORK } from '@/lib/stacks-config';
-import { CopyButton } from '@/components/ui';
+import { CopyButton, Breadcrumb } from '@/components/ui';
 import { useToastStore } from '@/store/toast-store';
 
 export default function PublisherSettingsPage() {
@@ -89,13 +89,13 @@ export default function PublisherSettingsPage() {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
-        <Link
-          href="/publisher"
-          className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
-        </Link>
+        <Breadcrumb
+          items={[
+            { label: 'Publisher', href: '/publisher' },
+            { label: 'Settings' },
+          ]}
+          className="mb-6"
+        />
 
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Publisher Settings</h1>
 

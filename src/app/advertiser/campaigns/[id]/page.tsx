@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowLeft,
   BarChart3,
   Clock,
   DollarSign,
@@ -18,7 +17,7 @@ import { useContractCall } from '@/hooks/use-contract-call';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
 import { buildPauseCampaign, buildResumeCampaign } from '@/lib/contract-calls';
 import { CONTRACTS } from '@/lib/stacks-config';
-import { StatCard, Skeleton } from '@/components/ui';
+import { StatCard, Skeleton, Breadcrumb } from '@/components/ui';
 
 export default function CampaignDetailPage() {
   const params = useParams();
@@ -89,13 +88,14 @@ export default function CampaignDetailPage() {
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/advertiser"
-            className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
+          <Breadcrumb
+            items={[
+              { label: 'Dashboard', href: '/advertiser' },
+              { label: 'Campaigns', href: '/advertiser' },
+              { label: `Campaign #${campaignId}` },
+            ]}
+            className="mb-4"
+          />
 
           <div className="flex items-center justify-between">
             <div>
