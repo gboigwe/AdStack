@@ -10,3 +10,4 @@ export { useMediaQuery, BREAKPOINTS } from './use-media-query';
 export { useProposalCount, useProposal, useHasVoted } from './use-governance';
 export { useContractCall } from './use-contract-call';
 export { useFocusTrap } from './use-focus-trap';
+export { useApiQuery } from './use-api-query';

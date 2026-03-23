@@ -1,23 +1,22 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { fetchStxBalance, type StxBalance } from '@/lib/stacks-api';
+import { fetchStxBalance } from '@/lib/stacks-api';
+import { useApiQuery } from './use-api-query';
 
 /**
  * React Query hook to fetch and cache an STX balance.
  * Refetches every 30 seconds while the component is mounted.
+ * Pauses refetching when the document is hidden (tab not visible).
  */
-export function useStxBalance(address: string | null) {
-  return useQuery<StxBalance | null>({
-    queryKey: ['stx-balance', address],
-    queryFn: async () => {
-      if (!address) return null;
-      const result = await fetchStxBalance(address);
-      if (result.ok && result.data) return result.data;
-      throw new Error(result.error || 'Failed to fetch balance');
+export function useStxBalance(address: string | undefined | null) {
+  return useApiQuery(
+    ['stx-balance', address],
+    () => fetchStxBalance(address!),
+    {
+      enabled: !!address,
+      refetchInterval: 30_000,
+      staleTime: 15_000,
+      refetchIntervalInBackground: false,
     },
-    enabled: !!address,
-    refetchInterval: 30_000,
-    staleTime: 15_000,
-  });
+  );
 }

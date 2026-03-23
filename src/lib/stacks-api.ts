@@ -1,7 +1,8 @@
 /**
  * Stacks API Client
  * Centralized HTTP client for the Hiro Stacks API.
- * Handles request construction, error parsing, and response typing.
+ * Handles request construction, error parsing, response typing,
+ * and retry logic for transient failures.
  */
 
 import { API_URL, CURRENT_NETWORK } from './stacks-config';
@@ -33,8 +34,10 @@ export interface ApiTransaction {
   tx_status: string;
   block_height: number;
   burn_block_time: number;
+  burn_block_time_iso: string;
   fee_rate: string;
   sender_address: string;
+  nonce: number;
 }
 
 /** Page of transactions. */
@@ -45,30 +48,84 @@ export interface TransactionList {
   results: ApiTransaction[];
 }
 
+/** Status codes that indicate a transient failure worth retrying. */
+const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
+
+/** Maximum number of retry attempts for transient failures. */
+const MAX_RETRIES = 3;
+
+/** Base delay in ms for exponential backoff (doubles on each retry). */
+const BASE_DELAY_MS = 500;
+
 /**
- * Low-level fetch wrapper that prepends the API_URL and handles errors.
+ * Wait for a specified number of milliseconds.
+ */
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Try to extract a meaningful error message from an API error response.
+ * The Hiro API returns error details in the response body for 4xx errors.
+ */
+async function parseErrorBody(res: Response): Promise<string> {
+  try {
+    const body = await res.json();
+    if (body && typeof body === 'object') {
+      // Hiro API error format: { error: "...", reason: "..." }
+      if (body.error) return `${body.error}${body.reason ? `: ${body.reason}` : ''}`;
+      if (body.message) return body.message;
+    }
+  } catch {
+    // Body wasn't JSON; fall through to status text
+  }
+  return `API ${res.status}: ${res.statusText}`;
+}
+
+/**
+ * Low-level fetch wrapper that prepends the API_URL, handles errors,
+ * and retries transient failures with exponential backoff.
  */
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<ApiResult<T>> {
-  try {
-    const url = `${API_URL}${path}`;
-    const res = await fetch(url, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        ...init?.headers,
-      },
-    });
+  const url = `${API_URL}${path}`;
 
-    if (!res.ok) {
-      return { ok: false, status: res.status, error: `API ${res.status}: ${res.statusText}` };
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...init?.headers,
+        },
+      });
+
+      if (!res.ok) {
+        // Retry on transient server errors (429, 5xx)
+        if (RETRYABLE_STATUS_CODES.has(res.status) && attempt < MAX_RETRIES) {
+          await delay(BASE_DELAY_MS * Math.pow(2, attempt));
+          continue;
+        }
+
+        const errorMessage = await parseErrorBody(res);
+        return { ok: false, status: res.status, error: errorMessage };
+      }
+
+      const data = (await res.json()) as T;
+      return { ok: true, data };
+    } catch (err) {
+      // Network errors are retryable
+      if (attempt < MAX_RETRIES) {
+        await delay(BASE_DELAY_MS * Math.pow(2, attempt));
+        continue;
+      }
+
+      const message = err instanceof Error ? err.message : String(err);
+      return { ok: false, error: `Network error: ${message}` };
     }
-
-    const data = (await res.json()) as T;
-    return { ok: true, data };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return { ok: false, error: message };
   }
+
+  // Should never reach here, but TypeScript needs a return
+  return { ok: false, error: 'Max retries exceeded' };
 }
 
 /**
@@ -126,6 +183,18 @@ export async function callReadOnlyFunction(
       arguments: args,
     }),
   });
+}
+
+/**
+ * Fetch pending mempool transactions for an address.
+ */
+export async function fetchMempoolTransactions(
+  address: string,
+  limit = 20,
+): Promise<ApiResult<TransactionList>> {
+  return apiFetch<TransactionList>(
+    `/extended/v1/tx/mempool?sender_address=${address}&limit=${limit}`,
+  );
 }
 
 /**
