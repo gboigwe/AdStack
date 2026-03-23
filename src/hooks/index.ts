@@ -21,3 +21,4 @@ export { useKeyboardShortcut } from './use-keyboard-shortcut';
 export { useIntersectionObserver } from './use-intersection-observer';
 export { useCountdown } from './use-countdown';
 export { usePrevious } from './use-previous';
+export { useWindowSize } from './use-window-size';
