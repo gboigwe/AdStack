@@ -11,3 +11,6 @@ export { PageTransition } from './PageTransition';
 export { OfflineBanner } from './OfflineBanner';
 export { Tooltip } from './Tooltip';
 export { EmptyState } from './EmptyState';
+export { DataTable } from './DataTable';
+export type { Column } from './DataTable';
+export { ConfirmDialog } from './ConfirmDialog';

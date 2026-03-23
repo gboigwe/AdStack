@@ -1,0 +1,67 @@
+'use client';
+
+import { Modal } from './Modal';
+
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  /** Text for the confirm button (default: "Confirm") */
+  confirmLabel?: string;
+  /** Text for the cancel button (default: "Cancel") */
+  cancelLabel?: string;
+  /** Visual style for the confirm button */
+  variant?: 'danger' | 'primary';
+  /** Disable the confirm button (e.g. while processing) */
+  isLoading?: boolean;
+}
+
+const VARIANT_CLASSES = {
+  primary: 'bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-500 text-white',
+  danger: 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500 text-white',
+};
+
+/**
+ * A confirmation dialog built on top of Modal.
+ * Use for destructive or irreversible actions that
+ * need explicit user acknowledgement.
+ */
+export function ConfirmDialog({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  variant = 'primary',
+  isLoading = false,
+}: ConfirmDialogProps) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-sm">
+      <p className="text-sm text-gray-600 mb-6">{message}</p>
+      <div className="flex items-center justify-end gap-3">
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isLoading}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+        >
+          {cancelLabel}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onConfirm();
+          }}
+          disabled={isLoading}
+          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 ${VARIANT_CLASSES[variant]}`}
+        >
+          {isLoading ? 'Processing...' : confirmLabel}
+        </button>
+      </div>
+    </Modal>
+  );
+}
