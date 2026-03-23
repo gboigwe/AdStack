@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { WalletConnectButton } from './wallet/WalletModal';
@@ -18,6 +19,7 @@ const NAV_LINKS = [
 
 export function Header() {
   const { address, isConnected, setAddress, setConnected } = useWalletStore();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -60,11 +62,23 @@ export function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center space-x-6" aria-label="Main navigation">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link key={href} href={href} className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                  {label}
-                </Link>
-              ))}
+              {NAV_LINKS.map(({ href, label }) => {
+                const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`transition-colors font-medium ${
+                      isActive
+                        ? 'text-blue-600 border-b-2 border-blue-600 pb-0.5'
+                        : 'text-gray-700 hover:text-blue-600'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 
@@ -90,11 +104,24 @@ export function Header() {
         {mobileMenuOpen && (
           <div id="mobile-nav" className="md:hidden border-t border-gray-200 py-4" role="navigation" aria-label="Mobile navigation">
             <nav className="flex flex-col space-y-4">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link key={href} href={href} className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
-                  {label}
-                </Link>
-              ))}
+              {NAV_LINKS.map(({ href, label }) => {
+                const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`transition-colors font-medium px-2 py-1 rounded-md ${
+                      isActive
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-gray-700 hover:text-blue-600'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
               <div className="pt-4 border-t border-gray-200">
                 {isConnected && address ? <AccountSwitcher className="w-full" /> : <WalletConnectButton />}
               </div>
