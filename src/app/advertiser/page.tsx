@@ -1,11 +1,14 @@
 'use client';
 
-import { Plus, TrendingUp, DollarSign, Eye } from 'lucide-react';
+import { Plus, TrendingUp, DollarSign, Eye, RefreshCw } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
+import { useStxBalance } from '@/hooks';
+import { formatSTXWithSymbol, formatCompactNumber } from '@/lib/display-utils';
 import Link from 'next/link';
 
 export default function AdvertiserDashboard() {
-  const { isConnected } = useWalletStore();
+  const { isConnected, address } = useWalletStore();
+  const { data: balance, isLoading: balanceLoading } = useStxBalance(address);
 
   if (!isConnected) {
     return (
@@ -21,6 +24,8 @@ export default function AdvertiserDashboard() {
       </div>
     );
   }
+
+  const totalSent = balance ? BigInt(balance.total_sent) : 0n;
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -41,8 +46,16 @@ export default function AdvertiserDashboard() {
           <div className="bg-white p-6 rounded-xl border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Spent</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">0 STX</p>
+                <p className="text-sm text-gray-600">Total Sent</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {balanceLoading ? (
+                    <span className="inline-flex items-center gap-2 text-gray-400">
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    </span>
+                  ) : (
+                    formatSTXWithSymbol(totalSent, 2)
+                  )}
+                </p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-blue-600" />
@@ -53,8 +66,16 @@ export default function AdvertiserDashboard() {
           <div className="bg-white p-6 rounded-xl border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Views</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">0</p>
+                <p className="text-sm text-gray-600">Available Balance</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {balanceLoading ? (
+                    <span className="inline-flex items-center gap-2 text-gray-400">
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    </span>
+                  ) : (
+                    formatSTXWithSymbol(balance ? BigInt(balance.balance) : 0n, 2)
+                  )}
+                </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <Eye className="w-6 h-6 text-green-600" />
@@ -67,6 +88,7 @@ export default function AdvertiserDashboard() {
               <div>
                 <p className="text-sm text-gray-600">Active Campaigns</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">0</p>
+                <p className="text-xs text-gray-500 mt-1">Contract integration pending</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-purple-600" />
