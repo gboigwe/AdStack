@@ -40,7 +40,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
     // Focus the first focusable element on activation
     const focusableElements = container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
     if (focusableElements.length > 0) {
-      focusableElements[0].focus();
+      focusableElements[0]?.focus();
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,8 +49,8 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
       const focusable = container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       if (focusable.length === 0) return;
 
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
+      const first = focusable[0] as HTMLElement;
+      const last = focusable[focusable.length - 1] as HTMLElement;
 
       if (e.shiftKey) {
         if (document.activeElement === first) {

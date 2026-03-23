@@ -67,7 +67,9 @@ export function toStringUtf8CV(value: string): StringUtf8CV {
  */
 export function toPrincipalCV(address: string): PrincipalCV {
   if (address.includes('.')) {
-    const [addr, contractName] = address.split('.', 2);
+    const parts = address.split('.', 2);
+    const addr = parts[0] ?? '';
+    const contractName = parts[1] ?? '';
     return { type: 'principal', value: { address: addr, contractName } };
   }
   return { type: 'principal', value: { address } };

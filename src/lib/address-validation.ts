@@ -56,7 +56,9 @@ export function isAddressForNetwork(
 export function isValidContractId(contractId: string): boolean {
   if (!contractId || !contractId.includes('.')) return false;
 
-  const [address, contractName] = contractId.split('.', 2);
+  const parts = contractId.split('.', 2);
+  const address = parts[0] ?? '';
+  const contractName = parts[1];
 
   if (!isValidStacksAddress(address)) return false;
 
