@@ -81,6 +81,14 @@ export default function NewCampaignPage() {
       newErrors.durationDays = 'Duration must be between 1 and 365 days';
     }
 
+    // Cross-field: daily budget × duration should not exceed total budget
+    if (!newErrors.budget && !newErrors.dailyBudget && !newErrors.durationDays) {
+      const totalNeeded = dailyBudget * days;
+      if (totalNeeded > budget) {
+        newErrors.dailyBudget = `Daily budget × ${days} days = ${totalNeeded.toFixed(2)} STX exceeds total budget`;
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
