@@ -223,16 +223,53 @@ export function formatCampaignStatus(status: string): string {
 }
 
 /**
- * Get status color class for Tailwind
+ * Get status color class for Tailwind (with dark mode)
  */
 export function getStatusColorClass(status: string): string {
   const colorMap: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-800',
-    active: 'bg-green-100 text-green-800',
-    paused: 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-blue-100 text-blue-800',
-    cancelled: 'bg-red-100 text-red-800',
+    draft: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    paused: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+    completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   };
 
-  return colorMap[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
+  return colorMap[status.toLowerCase()] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
 }
+
+/**
+ * Format a number with commas for readability.
+ * @example 1234567 -> "1,234,567"
+ */
+export function formatNumber(value: number | bigint): string {
+  return Number(value).toLocaleString('en-US');
+}
+
+/**
+ * Pluralise a word based on count.
+ * @example pluralize(1, 'block') -> "1 block"
+ * @example pluralize(5, 'block') -> "5 blocks"
+ */
+export function pluralize(count: number, singular: string, plural?: string): string {
+  const word = count === 1 ? singular : (plural ?? `${singular}s`);
+  return `${formatNumber(count)} ${word}`;
+}
+
+/**
+ * Format a Stacks principal (address or contract identifier) for
+ * display, truncating the middle but preserving the contract name.
+ * @example "SP2…XYZ9.promo-manager"
+ */
+export function formatPrincipal(principal: string): string {
+  const dotIndex = principal.indexOf('.');
+  if (dotIndex === -1) return truncateAddress(principal);
+  const addr = principal.slice(0, dotIndex);
+  const name = principal.slice(dotIndex);
+  return `${truncateAddress(addr, 4, 4)}${name}`;
+}
+
+/**
+ * Return an explorer URL for a transaction.
+ * Re-exports from stacks-config for convenience in display contexts.
+ */
+export { getExplorerTxUrl } from './stacks-config';
