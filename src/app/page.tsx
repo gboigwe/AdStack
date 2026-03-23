@@ -17,32 +17,32 @@ const FEATURES = [
     title: 'Fraud Prevention',
     description:
       'Advanced on-chain verification to prevent click fraud and fake impressions.',
-    color: 'text-blue-600',
-    bg: 'bg-blue-100',
+    color: 'text-blue-600 dark:text-blue-400',
+    bg: 'bg-blue-100 dark:bg-blue-900/30',
   },
   {
     icon: TrendingUp,
     title: 'Real-time Analytics',
     description:
       'Track campaign performance with transparent, verifiable on-chain metrics.',
-    color: 'text-green-600',
-    bg: 'bg-green-100',
+    color: 'text-green-600 dark:text-green-400',
+    bg: 'bg-green-100 dark:bg-green-900/30',
   },
   {
     icon: Zap,
     title: 'Instant Payments',
     description:
       'Smart contract-powered automatic settlements with zero delays.',
-    color: 'text-yellow-600',
-    bg: 'bg-yellow-100',
+    color: 'text-yellow-600 dark:text-yellow-400',
+    bg: 'bg-yellow-100 dark:bg-yellow-900/30',
   },
   {
     icon: Users,
     title: 'Decentralized Network',
     description:
       'Join a growing global network of publishers and advertisers.',
-    color: 'text-purple-600',
-    bg: 'bg-purple-100',
+    color: 'text-purple-600 dark:text-purple-400',
+    bg: 'bg-purple-100 dark:bg-purple-900/30',
   },
 ] as const;
 
@@ -80,21 +80,21 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="px-4 pt-20 pb-20 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+      <section className="px-4 pt-20 pb-20 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
         <div className="mx-auto max-w-7xl text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-sm text-blue-700 font-medium mb-8">
-            <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-full text-sm text-blue-700 dark:text-blue-300 font-medium mb-8">
+            <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
             Built on Stacks &middot; Secured by Bitcoin
           </div>
 
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
+          <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl lg:text-7xl">
             Decentralized Advertising
             <br />
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               for the Open Web
             </span>
           </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Connect advertisers and publishers through transparent smart contracts.
             No middlemen, no fraud, no hidden fees — just verifiable results.
           </p>
@@ -102,14 +102,14 @@ export default function Home() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/advertiser"
-              className="w-full sm:w-auto rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto rounded-lg bg-blue-600 dark:bg-blue-500 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
             >
               Launch Campaign
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/publisher"
-              className="w-full sm:w-auto rounded-lg border-2 border-gray-300 px-8 py-3.5 text-base font-semibold text-gray-700 hover:border-blue-600 hover:text-blue-600 transition-colors flex items-center justify-center"
+              className="w-full sm:w-auto rounded-lg border-2 border-gray-300 dark:border-gray-600 px-8 py-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-400 dark:hover:text-blue-400 transition-colors flex items-center justify-center"
             >
               Become a Publisher
             </Link>
@@ -118,13 +118,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-white">
+      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
               Why Choose AdStack?
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Every transaction is recorded on the Stacks blockchain,
               giving both parties complete visibility and trust.
             </p>
@@ -134,17 +134,17 @@ export default function Home() {
             {FEATURES.map(({ icon: Icon, title, description, color, bg }) => (
               <div
                 key={title}
-                className="relative p-6 rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all group"
+                className="relative p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md dark:hover:shadow-blue-950/20 transition-all group"
               >
                 <div
                   className={`w-12 h-12 ${bg} rounded-lg flex items-center justify-center mb-4`}
                 >
                   <Icon className={`w-6 h-6 ${color}`} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                   {description}
                 </p>
               </div>
@@ -154,13 +154,13 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-950">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
               How It Works
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
               Get up and running in four simple steps.
             </p>
           </div>
@@ -169,17 +169,17 @@ export default function Home() {
             {HOW_IT_WORKS.map(({ step, icon: Icon, title, description }) => (
               <div key={step} className="text-center">
                 <div className="relative inline-flex items-center justify-center mb-4">
-                  <div className="w-16 h-16 bg-white border-2 border-blue-200 rounded-full flex items-center justify-center">
-                    <Icon className="w-7 h-7 text-blue-600" />
+                  <div className="w-16 h-16 bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-800 rounded-full flex items-center justify-center">
+                    <Icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-blue-600 dark:bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                     {step}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {title}
                 </h3>
-                <p className="text-gray-600 text-sm">{description}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{description}</p>
               </div>
             ))}
           </div>
@@ -187,27 +187,27 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-white">
+      <section className="px-4 py-20 sm:px-6 lg:px-8 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="p-8">
-              <div className="text-4xl font-bold text-blue-600">$0</div>
-              <div className="mt-2 text-gray-600 font-medium">Platform Fees</div>
-              <p className="text-sm text-gray-500 mt-1">
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">$0</div>
+              <div className="mt-2 text-gray-600 dark:text-gray-300 font-medium">Platform Fees</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 100% of budget goes to publishers
               </p>
             </div>
             <div className="p-8">
-              <div className="text-4xl font-bold text-blue-600">100%</div>
-              <div className="mt-2 text-gray-600 font-medium">Transparent</div>
-              <p className="text-sm text-gray-500 mt-1">
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">100%</div>
+              <div className="mt-2 text-gray-600 dark:text-gray-300 font-medium">Transparent</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Every transaction verifiable on-chain
               </p>
             </div>
             <div className="p-8">
-              <div className="text-4xl font-bold text-blue-600">24/7</div>
-              <div className="mt-2 text-gray-600 font-medium">Automated</div>
-              <p className="text-sm text-gray-500 mt-1">
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">24/7</div>
+              <div className="mt-2 text-gray-600 dark:text-gray-300 font-medium">Automated</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Smart contracts never sleep
               </p>
             </div>
