@@ -107,7 +107,7 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
       {/* Account Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-500 transition-colors"
+        className="flex items-center gap-3 px-4 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
       >
         {/* Network Indicator */}
         <div className="flex items-center gap-2">
@@ -116,11 +116,11 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
               currentNetwork === 'mainnet' ? 'bg-green-500' : 'bg-orange-500'
             }`}
           />
-          <span className="text-sm font-medium text-gray-700 capitalize">{currentNetwork}</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{currentNetwork}</span>
         </div>
 
         {/* Address */}
-        <span className="text-sm font-mono text-gray-900">{truncateAddress(address)}</span>
+        <span className="text-sm font-mono text-gray-900 dark:text-gray-100">{truncateAddress(address)}</span>
 
         {/* Dropdown Icon */}
         <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -128,7 +128,7 @@ export function AccountSwitcher({ className = '' }: AccountSwitcherProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
           {/* Account Info */}
           <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 border-b border-gray-200">
             <div className="flex items-center justify-between mb-2">
