@@ -12,6 +12,7 @@ import { connectWallet } from '@/lib/wallet';
 import { useWalletStore } from '@/store/wallet-store';
 import { parseStacksError } from '@/lib/error-handler';
 import { useToastStore } from '@/store/toast-store';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 /** Extend Window with known Stacks wallet provider globals. */
 interface StacksWalletWindow extends Window {
@@ -28,6 +29,7 @@ interface WalletModalProps {
 export function WalletModal({ isOpen, onClose }: WalletModalProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const trapRef = useFocusTrap<HTMLDivElement>(isOpen);
   const { setAddress, setConnected } = useWalletStore();
   const addToast = useToastStore((s) => s.addToast);
 
@@ -115,7 +117,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
       aria-labelledby="wallet-modal-title"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+      <div ref={trapRef} className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 id="wallet-modal-title" className="text-2xl font-bold text-gray-900">Connect Wallet</h2>

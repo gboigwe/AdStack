@@ -33,6 +33,12 @@ export function Header() {
 
   return (
     <header className="border-b border-gray-200 bg-white sticky top-0 z-40 backdrop-blur-sm bg-white/80">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -44,7 +50,7 @@ export function Header() {
               <h1 className="text-2xl font-bold text-gray-900">AdStack</h1>
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-6" aria-label="Main navigation">
               <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</Link>
               <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Advertiser</Link>
               <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Publisher</Link>
@@ -61,7 +67,10 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav"
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >
             {mobileMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
           </button>
@@ -69,7 +78,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div id="mobile-nav" className="md:hidden border-t border-gray-200 py-4" role="navigation" aria-label="Mobile navigation">
             <nav className="flex flex-col space-y-4">
               <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
               <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Advertiser</Link>
