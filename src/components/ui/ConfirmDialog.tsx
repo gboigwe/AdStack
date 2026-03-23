@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { Modal } from './Modal';
 
 interface ConfirmDialogProps {
@@ -27,6 +28,9 @@ const VARIANT_CLASSES = {
  * A confirmation dialog built on top of Modal.
  * Use for destructive or irreversible actions that
  * need explicit user acknowledgement.
+ *
+ * Passes descriptionId to Modal so screen readers announce
+ * both the title and the confirmation message.
  */
 export function ConfirmDialog({
   isOpen,
@@ -39,9 +43,11 @@ export function ConfirmDialog({
   variant = 'primary',
   isLoading = false,
 }: ConfirmDialogProps) {
+  const descId = useId();
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-sm">
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{message}</p>
+    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-sm" descriptionId={descId}>
+      <p id={descId} className="text-sm text-gray-600 dark:text-gray-400 mb-6">{message}</p>
       <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
         <button
           type="button"

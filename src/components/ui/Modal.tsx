@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useCallback } from 'react';
+import { type ReactNode, useEffect, useCallback, useId } from 'react';
 import { X } from 'lucide-react';
 import { useFocusTrap } from '@/hooks/use-focus-trap';
 
@@ -11,13 +11,17 @@ interface ModalProps {
   children: ReactNode;
   /** Max width class, defaults to max-w-md */
   maxWidth?: string;
+  /** Optional description id for aria-describedby linking */
+  descriptionId?: string;
 }
 
 /**
  * Reusable modal dialog with backdrop, focus trapping,
  * Escape key handler, and backdrop click to close.
  *
- * Uses the useFocusTrap hook for keyboard accessibility.
+ * Uses useId() to generate unique aria-labelledby IDs so multiple
+ * modals on the same page never clash. Uses the useFocusTrap hook
+ * for keyboard accessibility.
  */
 export function Modal({
   isOpen,
@@ -25,7 +29,9 @@ export function Modal({
   title,
   children,
   maxWidth = 'max-w-md',
+  descriptionId,
 }: ModalProps) {
+  const titleId = useId();
   const trapRef = useFocusTrap<HTMLDivElement>(isOpen);
 
   const handleKeyDown = useCallback(
@@ -53,7 +59,8 @@ export function Modal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -64,7 +71,7 @@ export function Modal({
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 id="modal-title" className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 id={titleId} className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {title}
           </h2>
           <button
