@@ -11,16 +11,15 @@ import { buildCreateCampaign } from '@/lib/contract-calls';
 import { useContractCall } from '@/hooks/use-contract-call';
 import { Breadcrumb } from '@/components/ui';
 import { FormInput, FormTextarea } from '@/components/forms';
+import {
+  validateCampaign,
+  validateField,
+  type CampaignFields,
+  type CampaignErrors,
+  MAX_DESCRIPTION_LENGTH,
+} from '@/lib/campaign-validation';
 
-interface CampaignFormData {
-  name: string;
-  budget: string;
-  dailyBudget: string;
-  durationDays: string;
-  description: string;
-}
-
-const INITIAL_FORM: CampaignFormData = {
+const INITIAL_FORM: CampaignFields = {
   name: '',
   budget: '',
   dailyBudget: '',
@@ -31,8 +30,8 @@ const INITIAL_FORM: CampaignFormData = {
 export default function NewCampaignPage() {
   const router = useRouter();
   const { isConnected, address } = useWalletStore();
-  const [form, setForm] = useState<CampaignFormData>(INITIAL_FORM);
-  const [errors, setErrors] = useState<Partial<CampaignFormData>>({});
+  const [form, setForm] = useState<CampaignFields>(INITIAL_FORM);
+  const [errors, setErrors] = useState<CampaignErrors>({});
 
   const { execute, isLoading: submitting } = useContractCall({
     label: 'Create Campaign',
@@ -58,39 +57,7 @@ export default function NewCampaignPage() {
   }
 
   const validate = (): boolean => {
-    const newErrors: Partial<CampaignFormData> = {};
-
-    if (!form.name.trim()) {
-      newErrors.name = 'Campaign name is required';
-    } else if (form.name.length > 64) {
-      newErrors.name = 'Name must be 64 characters or less';
-    }
-
-    const budget = parseFloat(form.budget);
-    if (!form.budget || isNaN(budget) || budget <= 0) {
-      newErrors.budget = 'Enter a valid budget amount in STX';
-    }
-
-    const dailyBudget = parseFloat(form.dailyBudget);
-    if (!form.dailyBudget || isNaN(dailyBudget) || dailyBudget <= 0) {
-      newErrors.dailyBudget = 'Enter a valid daily budget in STX';
-    } else if (budget && dailyBudget > budget) {
-      newErrors.dailyBudget = 'Daily budget cannot exceed total budget';
-    }
-
-    const days = parseInt(form.durationDays, 10);
-    if (!form.durationDays || isNaN(days) || days < 1 || days > 365) {
-      newErrors.durationDays = 'Duration must be between 1 and 365 days';
-    }
-
-    // Cross-field: daily budget × duration should not exceed total budget
-    if (!newErrors.budget && !newErrors.dailyBudget && !newErrors.durationDays) {
-      const totalNeeded = dailyBudget * days;
-      if (totalNeeded > budget) {
-        newErrors.dailyBudget = `Daily budget × ${days} days = ${totalNeeded.toFixed(2)} STX exceeds total budget`;
-      }
-    }
-
+    const newErrors = validateCampaign(form);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -101,8 +68,18 @@ export default function NewCampaignPage() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     // Clear error on change
-    if (errors[name as keyof CampaignFormData]) {
+    if (errors[name as keyof CampaignFields]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    const fieldError = validateField(name as keyof CampaignFields, value, form);
+    if (fieldError) {
+      setErrors((prev) => ({ ...prev, [name]: fieldError }));
     }
   };
 
@@ -156,6 +133,7 @@ export default function NewCampaignPage() {
             name="name"
             value={form.name}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="e.g. Q2 Brand Awareness"
             error={errors.name}
             required
@@ -171,6 +149,7 @@ export default function NewCampaignPage() {
               min="0"
               value={form.budget}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="100"
               error={errors.budget}
               required
@@ -183,6 +162,7 @@ export default function NewCampaignPage() {
               min="0"
               value={form.dailyBudget}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="10"
               error={errors.dailyBudget}
               required
@@ -198,6 +178,7 @@ export default function NewCampaignPage() {
             max="365"
             value={form.durationDays}
             onChange={handleChange}
+            onBlur={handleBlur}
             error={errors.durationDays}
             hint="Campaign runs for this many days on-chain"
             required
@@ -208,9 +189,12 @@ export default function NewCampaignPage() {
             label="Description (optional)"
             name="description"
             rows={4}
+            maxLength={MAX_DESCRIPTION_LENGTH}
             value={form.description}
             onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="Describe your campaign goals and target audience..."
+            error={errors.description}
           />
 
           {/* Preview */}
