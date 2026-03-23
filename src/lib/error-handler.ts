@@ -58,6 +58,15 @@ export function parseStacksError(error: unknown): StacksError {
         ? error
         : String(error);
 
+  // Wallet not installed
+  if (errorMessage.includes('no wallet') || errorMessage.includes('provider not found') || errorMessage.includes('not installed')) {
+    return {
+      code: ErrorCode.WALLET_NOT_CONNECTED,
+      message: 'No Stacks wallet detected. Please install Leather or Xverse.',
+      originalError: error,
+    };
+  }
+
   // Wallet errors
   if (errorMessage.includes('not signed in') || errorMessage.includes('User not signed in')) {
     return {
@@ -231,6 +240,40 @@ export function logError(error: StacksError, context?: string): void {
     // In production, send to error tracking service
     // Example: Sentry, LogRocket, etc.
     // sendToErrorTrackingService(error, context);
+  }
+}
+
+export interface RecoverySuggestion {
+  label: string;
+  action: 'retry' | 'connect-wallet' | 'external-link' | 'dismiss';
+  href?: string;
+}
+
+/**
+ * Get recovery suggestions for a given error code.
+ */
+export function getRecoverySuggestions(code: ErrorCode): RecoverySuggestion[] {
+  switch (code) {
+    case ErrorCode.WALLET_NOT_CONNECTED:
+    case ErrorCode.WALLET_LOCKED:
+      return [{ label: 'Connect Wallet', action: 'connect-wallet' }];
+    case ErrorCode.USER_REJECTED:
+      return [{ label: 'Try Again', action: 'retry' }];
+    case ErrorCode.INSUFFICIENT_FUNDS:
+      return [
+        { label: 'View Balance', action: 'external-link', href: '/transactions' },
+      ];
+    case ErrorCode.NETWORK_ERROR:
+    case ErrorCode.TIMEOUT:
+      return [{ label: 'Retry', action: 'retry' }];
+    case ErrorCode.TX_BROADCAST_FAILED:
+      return [{ label: 'Retry Transaction', action: 'retry' }];
+    case ErrorCode.POST_CONDITION_FAILED:
+      return [{ label: 'Dismiss', action: 'dismiss' }];
+    case ErrorCode.OFFLINE:
+      return [{ label: 'Retry When Online', action: 'retry' }];
+    default:
+      return [{ label: 'Dismiss', action: 'dismiss' }];
   }
 }
 
