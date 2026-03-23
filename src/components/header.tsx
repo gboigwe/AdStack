@@ -7,6 +7,14 @@ import { useWalletStore } from '@/store/wallet-store';
 import { WalletConnectButton } from './wallet/WalletModal';
 import { AccountSwitcher } from './wallet/AccountSwitcher';
 
+const NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/advertiser', label: 'Advertiser' },
+  { href: '/publisher', label: 'Publisher' },
+  { href: '/transactions', label: 'Transactions' },
+  { href: '/governance', label: 'Governance' },
+] as const;
+
 export function Header() {
   const { address, isConnected, setAddress, setConnected } = useWalletStore();
   const [mounted, setMounted] = useState(false);
@@ -51,11 +59,11 @@ export function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center space-x-6" aria-label="Main navigation">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Home</Link>
-              <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Advertiser</Link>
-              <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Publisher</Link>
-              <Link href="/transactions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Transactions</Link>
-              <Link href="/governance" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">Governance</Link>
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href} className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                  {label}
+                </Link>
+              ))}
             </nav>
           </div>
 
@@ -80,11 +88,11 @@ export function Header() {
         {mobileMenuOpen && (
           <div id="mobile-nav" className="md:hidden border-t border-gray-200 py-4" role="navigation" aria-label="Mobile navigation">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link href="/advertiser" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Advertiser</Link>
-              <Link href="/publisher" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Publisher</Link>
-              <Link href="/transactions" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Transactions</Link>
-              <Link href="/governance" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>Governance</Link>
+              {NAV_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href} className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
+                  {label}
+                </Link>
+              ))}
               <div className="pt-4 border-t border-gray-200">
                 {isConnected && address ? <AccountSwitcher className="w-full" /> : <WalletConnectButton />}
               </div>
