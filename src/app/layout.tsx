@@ -1,11 +1,27 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import nextDynamic from "next/dynamic";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { ToastContainer } from "@/components/toast";
-import { OfflineBanner, ScrollToTop } from "@/components/ui";
+
+/**
+ * Lazy-load non-critical layout components to reduce the initial
+ * JS bundle. These render after hydration without blocking first paint.
+ */
+const ToastContainer = nextDynamic(
+  () => import("@/components/toast").then((m) => ({ default: m.ToastContainer })),
+  { ssr: false },
+);
+const OfflineBanner = nextDynamic(
+  () => import("@/components/ui/OfflineBanner").then((m) => ({ default: m.OfflineBanner })),
+  { ssr: false },
+);
+const ScrollToTop = nextDynamic(
+  () => import("@/components/ui/ScrollToTop").then((m) => ({ default: m.ScrollToTop })),
+  { ssr: false },
+);
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
