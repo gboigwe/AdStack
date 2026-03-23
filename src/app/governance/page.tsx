@@ -5,6 +5,9 @@ import { Vote, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-rea
 import { useWalletStore } from '@/store/wallet-store';
 import { WalletGuard } from '@/components/wallet/WalletGuard';
 import { Badge } from '@/components/ui';
+import { buildCastVote, buildCreateProposal } from '@/lib/contract-calls';
+import { useContractCall } from '@/hooks/use-contract-call';
+import { CONTRACTS, BLOCK_TIME } from '@/lib/stacks-config';
 
 /** Proposal shape matching the GovernanceProposal contract type. */
 interface ProposalDisplay {
@@ -51,6 +54,15 @@ function StatusIcon({ status }: { status: string }) {
 }
 
 function ProposalCard({ proposal }: { proposal: ProposalDisplay }) {
+  const { execute: castVote, isLoading: voting } = useContractCall({
+    label: `Vote on Proposal #${proposal.id}`,
+    invalidateKeys: [['read-only', CONTRACTS.VOTE_HANDLER]],
+  });
+
+  const handleVote = (inFavor: boolean) => {
+    castVote(buildCastVote(proposal.id, inFavor));
+  };
+
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPercent = totalVotes > 0 ? (proposal.votesFor / totalVotes) * 100 : 0;
 
@@ -89,11 +101,19 @@ function ProposalCard({ proposal }: { proposal: ProposalDisplay }) {
 
         {proposal.status === 'active' && (
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors">
-              Vote For
+            <button
+              onClick={() => handleVote(true)}
+              disabled={voting}
+              className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+            >
+              {voting ? 'Voting...' : 'Vote For'}
             </button>
-            <button className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors">
-              Vote Against
+            <button
+              onClick={() => handleVote(false)}
+              disabled={voting}
+              className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {voting ? 'Voting...' : 'Vote Against'}
             </button>
           </div>
         )}
@@ -105,6 +125,32 @@ function ProposalCard({ proposal }: { proposal: ProposalDisplay }) {
 export default function GovernancePage() {
   const { address } = useWalletStore();
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [proposalTitle, setProposalTitle] = useState('');
+  const [proposalDesc, setProposalDesc] = useState('');
+  const [proposalDays, setProposalDays] = useState('7');
+
+  const { execute: submitProposal, isLoading: submittingProposal } = useContractCall({
+    label: 'Create Proposal',
+    invalidateKeys: [['read-only', CONTRACTS.VOTE_HANDLER]],
+    onSuccess: () => {
+      setShowCreateForm(false);
+      setProposalTitle('');
+      setProposalDesc('');
+      setProposalDays('7');
+    },
+  });
+
+  const handleCreateProposal = () => {
+    if (!proposalTitle.trim() || !proposalDesc.trim()) return;
+    const durationSeconds = parseInt(proposalDays, 10) * BLOCK_TIME.SECONDS_PER_DAY;
+    submitProposal(
+      buildCreateProposal({
+        title: proposalTitle.trim(),
+        description: proposalDesc.trim(),
+        duration: durationSeconds,
+      }),
+    );
+  };
 
   return (
     <WalletGuard
@@ -144,6 +190,8 @@ export default function GovernancePage() {
                   <input
                     id="proposal-title"
                     type="text"
+                    value={proposalTitle}
+                    onChange={(e) => setProposalTitle(e.target.value)}
                     placeholder="Proposal title"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
@@ -155,6 +203,8 @@ export default function GovernancePage() {
                   <textarea
                     id="proposal-desc"
                     rows={3}
+                    value={proposalDesc}
+                    onChange={(e) => setProposalDesc(e.target.value)}
                     placeholder="Describe your proposal..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
                   />
@@ -168,15 +218,18 @@ export default function GovernancePage() {
                     type="number"
                     min="1"
                     max="30"
-                    defaultValue={7}
+                    value={proposalDays}
+                    onChange={(e) => setProposalDays(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
                 <div className="flex gap-3">
                   <button
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+                    onClick={handleCreateProposal}
+                    disabled={submittingProposal || !proposalTitle.trim() || !proposalDesc.trim()}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50"
                   >
-                    Submit Proposal
+                    {submittingProposal ? 'Submitting...' : 'Submit Proposal'}
                   </button>
                   <button
                     onClick={() => setShowCreateForm(false)}

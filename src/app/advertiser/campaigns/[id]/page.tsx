@@ -15,7 +15,10 @@ import {
 } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useCampaign, useCampaignAnalytics } from '@/hooks';
+import { useContractCall } from '@/hooks/use-contract-call';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
+import { buildPauseCampaign, buildResumeCampaign } from '@/lib/contract-calls';
+import { CONTRACTS } from '@/lib/stacks-config';
 import { StatCard } from '@/components/ui';
 
 export default function CampaignDetailPage() {
@@ -35,6 +38,16 @@ export default function CampaignDetailPage() {
     data: analyticsData,
     isLoading: analyticsLoading,
   } = useCampaignAnalytics(isValidId ? campaignId : undefined);
+
+  const invalidateKeys = [['read-only', CONTRACTS.PROMO_MANAGER]];
+  const { execute: pauseCampaign, isLoading: pausing } = useContractCall({
+    label: 'Pause Campaign',
+    invalidateKeys,
+  });
+  const { execute: resumeCampaign, isLoading: resuming } = useContractCall({
+    label: 'Resume Campaign',
+    invalidateKeys,
+  });
 
   if (!isConnected) {
     return (
@@ -97,18 +110,22 @@ export default function CampaignDetailPage() {
 
             <div className="flex items-center gap-2">
               <button
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+                onClick={() => campaignId && pauseCampaign(buildPauseCampaign(campaignId))}
+                disabled={pausing || !isValidId}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700 disabled:opacity-50"
                 title="Pause campaign"
               >
                 <Pause className="w-4 h-4" />
-                Pause
+                {pausing ? 'Pausing...' : 'Pause'}
               </button>
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                onClick={() => campaignId && resumeCampaign(buildResumeCampaign(campaignId))}
+                disabled={resuming || !isValidId}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
                 title="Resume campaign"
               >
                 <Play className="w-4 h-4" />
-                Resume
+                {resuming ? 'Resuming...' : 'Resume'}
               </button>
             </div>
           </div>
