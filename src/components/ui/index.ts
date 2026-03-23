@@ -26,3 +26,4 @@ export { SearchInput } from './SearchInput';
 export { NotificationBell } from './NotificationBell';
 export { LoadingButton } from './LoadingButton';
 export { Avatar } from './Avatar';
+export { Card, CardHeader, CardBody } from './Card';
