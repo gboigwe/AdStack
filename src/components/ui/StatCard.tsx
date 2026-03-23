@@ -49,11 +49,11 @@ export const StatCard = memo(function StatCard(props: StatCardProps) {
   );
 
   return (
-    <div className={`bg-white p-6 rounded-xl border border-gray-200 ${className}`}>
+    <div className={`bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-700 ${className}`}>
       <div className="flex items-center justify-between">
         <div className="min-w-0">
-          <p className="text-sm text-gray-600">{label}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
+          <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
             {isLoading ? (
               <Skeleton className="h-7 w-20" />
             ) : (
@@ -61,7 +61,7 @@ export const StatCard = memo(function StatCard(props: StatCardProps) {
             )}
           </p>
           {subtitle && (
-            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{subtitle}</p>
           )}
         </div>
         {iconElement}

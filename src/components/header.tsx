@@ -43,7 +43,7 @@ export function Header() {
   }
 
   return (
-    <header className="border-b border-gray-200 bg-white sticky top-0 z-40 backdrop-blur-sm bg-white/80">
+    <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-40 backdrop-blur-sm bg-white/80 dark:bg-gray-900/80">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg"
@@ -58,7 +58,7 @@ export function Header() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">AdStack</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AdStack</h1>
             </Link>
 
             <nav className="hidden md:flex items-center space-x-6" aria-label="Main navigation">
@@ -70,8 +70,8 @@ export function Header() {
                     href={href}
                     className={`transition-colors font-medium ${
                       isActive
-                        ? 'text-blue-600 border-b-2 border-blue-600 pb-0.5'
-                        : 'text-gray-700 hover:text-blue-600'
+                        ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-0.5'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                     }`}
                     aria-current={isActive ? 'page' : undefined}
                   >
