@@ -41,13 +41,13 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="max-w-sm">
-      <p className="text-sm text-gray-600 mb-6">{message}</p>
-      <div className="flex items-center justify-end gap-3">
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">{message}</p>
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3">
         <button
           type="button"
           onClick={onClose}
           disabled={isLoading}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+          className="px-4 py-2.5 sm:py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
         >
           {cancelLabel}
         </button>
@@ -57,7 +57,7 @@ export function ConfirmDialog({
             onConfirm();
           }}
           disabled={isLoading}
-          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 ${VARIANT_CLASSES[variant]}`}
+          className={`px-4 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-50 ${VARIANT_CLASSES[variant]}`}
         >
           {isLoading ? 'Processing...' : confirmLabel}
         </button>
