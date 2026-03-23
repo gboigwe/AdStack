@@ -1,12 +1,15 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { openContractCall } from '@stacks/connect';
 import { useQueryClient } from '@tanstack/react-query';
 import { useWalletStore } from '@/store/wallet-store';
 import { useTransactionStore } from '@/store/transaction-store';
 import { useToast } from './use-toast';
 import { NETWORK } from '@/lib/stacks-config';
+
+/** Minimum interval between contract call submissions (ms). */
+const THROTTLE_MS = 2000;
 
 interface ContractCallArgs {
   contractAddress: string;
@@ -54,6 +57,7 @@ export function useContractCall({
   const { addTransaction } = useTransactionStore();
   const queryClient = useQueryClient();
   const toast = useToast();
+  const lastCallRef = useRef(0);
 
   const execute = useCallback(
     async (args: ContractCallArgs) => {
@@ -61,6 +65,14 @@ export function useContractCall({
         toast.error('Please connect your wallet first');
         return;
       }
+
+      // Prevent double-clicks and rapid re-submissions
+      const now = Date.now();
+      if (now - lastCallRef.current < THROTTLE_MS) {
+        toast.warning('Please wait before submitting again');
+        return;
+      }
+      lastCallRef.current = now;
 
       setIsLoading(true);
 
