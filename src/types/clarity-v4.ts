@@ -106,40 +106,10 @@ export interface ClarityV4ReadOnlyOptions {
   senderAddress: string;
 }
 
-// Campaign types with Clarity v4 fields
-export interface Campaign {
-  campaignId: number;
-  advertiser: string;
-  name: string;
-  budget: bigint;
-  spent: bigint;
-  dailyBudget: bigint;
-  startHeight: number;
-  endHeight: number;
-  status: string;
-  createdAt: number; // stacks-block-time (Unix timestamp)
-  lastUpdated: number; // stacks-block-time (Unix timestamp)
-}
-
-export interface AnalyticsMetrics {
-  totalViews: bigint;
-  validViews: bigint;
-  clicks: bigint;
-  conversions: bigint;
-  spent: bigint;
-  lastUpdated: number; // stacks-block-time
-}
-
-export interface UserProfile {
-  status: string;
-  roles: string[];
-  joinHeight: number; // stacks-block-time
-  lastActive: number; // stacks-block-time
-  verificationStatus: string;
-  verificationExpires: number; // stacks-block-time
-  profilesCount: number;
-  metadata?: string;
-}
+// Re-export domain types from contracts.ts to avoid duplicate definitions.
+// contracts.ts is the single source of truth for Campaign, AnalyticsMetrics,
+// and UserProfile interfaces.
+export type { Campaign, AnalyticsMetrics, UserProfile } from './contracts';
 
 // Response types
 export type ClarityResponse<T> = {

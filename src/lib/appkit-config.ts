@@ -76,10 +76,26 @@ export function getCurrentStacksChain() {
     : STACKS_CHAIN_CONFIG.testnet;
 }
 
+/** Wallet link configuration for native and universal deep links. */
+export interface WalletLink {
+  native: string;
+  universal: string;
+}
+
+/** A Stacks-compatible wallet entry shown in the connection modal. */
+export interface SupportedWallet {
+  id: string;
+  name: string;
+  homepage: string;
+  description: string;
+  mobile?: WalletLink;
+  desktop?: WalletLink;
+}
+
 /**
  * Supported Stacks Wallets
  */
-export const SUPPORTED_WALLETS = [
+export const SUPPORTED_WALLETS: SupportedWallet[] = [
   {
     id: 'leather',
     name: 'Leather Wallet',
