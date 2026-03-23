@@ -24,3 +24,4 @@ export { Tabs } from './Tabs';
 export type { TabItem } from './Tabs';
 export { SearchInput } from './SearchInput';
 export { NotificationBell } from './NotificationBell';
+export { LoadingButton } from './LoadingButton';
