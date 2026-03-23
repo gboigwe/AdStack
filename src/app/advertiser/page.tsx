@@ -34,7 +34,7 @@ export default function AdvertiserDashboard() {
     <PageTransition className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Advertiser Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Advertiser Dashboard</h1>
           <Link
             href="/advertiser/campaigns/new"
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
@@ -74,15 +74,15 @@ export default function AdvertiserDashboard() {
         </div>
 
         {/* Campaigns List */}
-        <div className="bg-white rounded-xl border border-gray-200">
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Your Campaigns</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Your Campaigns</h2>
           </div>
           <div className="p-6">
             {countLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="p-4 border border-gray-100 rounded-lg">
+                  <div key={i} className="p-4 border border-gray-100 dark:border-gray-800 rounded-lg">
                     <SkeletonLines count={3} />
                   </div>
                 ))}
