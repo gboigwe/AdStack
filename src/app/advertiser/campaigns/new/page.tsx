@@ -119,8 +119,8 @@ export default function NewCampaignPage() {
             ]}
             className="mb-4"
           />
-          <h1 className="text-3xl font-bold text-gray-900">Create Campaign</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Create Campaign</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             Set up a new advertising campaign on the Stacks blockchain.
           </p>
         </div>
@@ -198,17 +198,17 @@ export default function NewCampaignPage() {
           />
 
           {/* Preview */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Campaign Preview</h3>
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-200 mb-2">Campaign Preview</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-blue-700">Total Budget:</span>
-              <span className="text-blue-900 font-medium">{budgetPreview}</span>
-              <span className="text-blue-700">Duration:</span>
-              <span className="text-blue-900 font-medium">
+              <span className="text-blue-700 dark:text-blue-400">Total Budget:</span>
+              <span className="text-blue-900 dark:text-blue-200 font-medium">{budgetPreview}</span>
+              <span className="text-blue-700 dark:text-blue-400">Duration:</span>
+              <span className="text-blue-900 dark:text-blue-200 font-medium">
                 {form.durationDays || 0} days (~{(parseInt(form.durationDays, 10) || 0) * 144} blocks)
               </span>
-              <span className="text-blue-700">Contract:</span>
-              <span className="text-blue-900 font-mono text-xs">
+              <span className="text-blue-700 dark:text-blue-400">Contract:</span>
+              <span className="text-blue-900 dark:text-blue-200 font-mono text-xs">
                 {CONTRACTS.PROMO_MANAGER}
               </span>
             </div>
