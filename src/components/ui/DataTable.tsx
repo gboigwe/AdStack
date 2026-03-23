@@ -54,11 +54,11 @@ export function DataTable<T>({
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-left">
         <thead>
-          <tr className="border-b border-gray-200">
+          <tr className="border-b border-gray-200 dark:border-gray-700">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${col.hideBelow ? HIDE_CLASSES[col.hideBelow] ?? '' : ''} ${col.headerClassName ?? ''}`}
+                className={`px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${col.hideBelow ? HIDE_CLASSES[col.hideBelow] ?? '' : ''} ${col.headerClassName ?? ''}`}
               >
                 {col.header}
               </th>
@@ -68,7 +68,7 @@ export function DataTable<T>({
         <tbody>
           {isLoading
             ? Array.from({ length: loadingRows }, (_, i) => (
-                <tr key={`skeleton-${i}`} className="border-b border-gray-100">
+                <tr key={`skeleton-${i}`} className="border-b border-gray-100 dark:border-gray-800">
                   {columns.map((col) => (
                     <td
                       key={col.key}
@@ -84,7 +84,7 @@ export function DataTable<T>({
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="px-4 py-12 text-center text-gray-500"
+                      className="px-4 py-12 text-center text-gray-500 dark:text-gray-400"
                     >
                       {emptyMessage}
                     </td>
@@ -93,9 +93,9 @@ export function DataTable<T>({
               : data.map((row, idx) => (
                   <tr
                     key={getRowKey(row, idx)}
-                    className={`border-b border-gray-100 transition-colors ${
-                      onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''
-                    } ${striped && idx % 2 === 1 ? 'bg-gray-50/50' : ''}`}
+                    className={`border-b border-gray-100 dark:border-gray-800 transition-colors ${
+                      onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800' : ''
+                    } ${striped && idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-gray-800/50' : ''}`}
                     onClick={() => onRowClick?.(row)}
                   >
                     {columns.map((col) => (
