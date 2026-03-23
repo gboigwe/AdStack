@@ -10,6 +10,9 @@ import {
   formatFee,
   formatCampaignStatus,
   getStatusColorClass,
+  formatNumber,
+  pluralize,
+  formatPrincipal,
 } from '@/lib/display-utils';
 
 describe('truncateAddress', () => {
@@ -173,7 +176,69 @@ describe('getStatusColorClass', () => {
     expect(getStatusColorClass('active')).toContain('green');
   });
 
+  it('includes dark mode classes', () => {
+    expect(getStatusColorClass('active')).toContain('dark:');
+  });
+
   it('returns gray fallback for unknown', () => {
     expect(getStatusColorClass('unknown')).toContain('gray');
+  });
+});
+
+describe('formatNumber', () => {
+  it('formats with commas', () => {
+    expect(formatNumber(1234567)).toBe('1,234,567');
+  });
+
+  it('handles zero', () => {
+    expect(formatNumber(0)).toBe('0');
+  });
+
+  it('handles BigInt', () => {
+    expect(formatNumber(1000n)).toBe('1,000');
+  });
+
+  it('handles small numbers', () => {
+    expect(formatNumber(42)).toBe('42');
+  });
+});
+
+describe('pluralize', () => {
+  it('uses singular for count 1', () => {
+    expect(pluralize(1, 'block')).toBe('1 block');
+  });
+
+  it('uses default plural for count > 1', () => {
+    expect(pluralize(5, 'block')).toBe('5 blocks');
+  });
+
+  it('uses plural for count 0', () => {
+    expect(pluralize(0, 'block')).toBe('0 blocks');
+  });
+
+  it('accepts custom plural form', () => {
+    expect(pluralize(2, 'child', 'children')).toBe('2 children');
+  });
+
+  it('formats count with commas', () => {
+    expect(pluralize(1000, 'item')).toBe('1,000 items');
+  });
+});
+
+describe('formatPrincipal', () => {
+  it('truncates address-only principal', () => {
+    const addr = 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD';
+    expect(formatPrincipal(addr)).toBe('SP3B...4EAD');
+  });
+
+  it('preserves contract name after truncated address', () => {
+    const principal = 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD.promo-manager';
+    const result = formatPrincipal(principal);
+    expect(result).toContain('.promo-manager');
+    expect(result).toContain('...');
+  });
+
+  it('handles short address with contract', () => {
+    expect(formatPrincipal('SP12.token')).toBe('SP12.token');
   });
 });
