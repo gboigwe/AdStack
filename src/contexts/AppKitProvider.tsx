@@ -1,37 +1,42 @@
 'use client';
 
-import { createContext, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useWalletStore } from '@/store/wallet-store';
+import { useWalletSession } from '@/hooks/use-wallet-session';
 
 interface AppKitContextValue {
   isInitialized: boolean;
 }
 
-const AppKitContext = createContext<AppKitContextValue>({ isInitialized: true });
+const AppKitContext = createContext<AppKitContextValue>({ isInitialized: false });
 
 export function AppKitProvider({ children }: { children: ReactNode }) {
   const { setAddress, setConnected } = useWalletStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Monitor session expiry and update activity on focus
+  useWalletSession();
 
   useEffect(() => {
     const init = async () => {
-      const { userSession } = await import('@/lib/wallet');
-      const { CURRENT_NETWORK } = await import('@/lib/stacks-config');
-
-      if (userSession.isUserSignedIn()) {
-        const userData = userSession.loadUserData();
-        const address =
-          CURRENT_NETWORK === 'mainnet'
-            ? userData.profile.stxAddress.mainnet
-            : userData.profile.stxAddress.testnet;
-        setAddress(address);
-        setConnected(true);
+      try {
+        const { autoReconnectWallet } = await import('@/lib/wallet-session');
+        const result = await autoReconnectWallet();
+        if (result.success && result.address) {
+          setAddress(result.address);
+          setConnected(true);
+        }
+      } catch {
+        // Initialization failed — proceed without auto-connect
+      } finally {
+        setIsInitialized(true);
       }
     };
     init();
   }, [setAddress, setConnected]);
 
   return (
-    <AppKitContext.Provider value={{ isInitialized: true }}>
+    <AppKitContext.Provider value={{ isInitialized }}>
       {children}
     </AppKitContext.Provider>
   );
