@@ -1,46 +1,69 @@
+import { type ReactNode } from 'react';
 import { type LucideIcon, RefreshCw } from 'lucide-react';
 
-interface StatCardProps {
+interface StatCardBaseProps {
   label: string;
-  value: string | number;
+  value?: string | number;
+  isLoading?: boolean;
+  subtitle?: string;
+  className?: string;
+}
+
+interface StatCardWithIconComponent extends StatCardBaseProps {
   icon: LucideIcon;
   iconBgColor?: string;
   iconColor?: string;
-  isLoading?: boolean;
-  subtitle?: string;
+}
+
+interface StatCardWithIconElement extends StatCardBaseProps {
+  icon: ReactNode;
+}
+
+type StatCardProps = StatCardWithIconComponent | StatCardWithIconElement;
+
+function isIconComponent(
+  props: StatCardProps,
+): props is StatCardWithIconComponent {
+  return typeof props.icon === 'function';
 }
 
 /**
  * Reusable stat card used in advertiser and publisher dashboards.
+ * Accepts either a LucideIcon component or a pre-rendered ReactNode
+ * as the icon prop, making it flexible for both usage patterns.
  */
-export function StatCard({
-  label,
-  value,
-  icon: Icon,
-  iconBgColor = 'bg-blue-100',
-  iconColor = 'text-blue-600',
-  isLoading = false,
-  subtitle,
-}: StatCardProps) {
+export function StatCard(props: StatCardProps) {
+  const { label, value, isLoading = false, subtitle, className = '' } = props;
+
+  const iconElement = isIconComponent(props) ? (
+    <div
+      className={`w-12 h-12 ${props.iconBgColor || 'bg-blue-100'} rounded-lg flex items-center justify-center`}
+    >
+      <props.icon className={`w-6 h-6 ${props.iconColor || 'text-blue-600'}`} />
+    </div>
+  ) : (
+    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+      {props.icon}
+    </div>
+  );
+
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200">
+    <div className={`bg-white p-6 rounded-xl border border-gray-200 ${className}`}>
       <div className="flex items-center justify-between">
-        <div>
+        <div className="min-w-0">
           <p className="text-sm text-gray-600">{label}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {isLoading ? (
               <RefreshCw className="w-4 h-4 animate-spin text-gray-400" />
             ) : (
-              value
+              value ?? '—'
             )}
           </p>
           {subtitle && (
             <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
           )}
         </div>
-        <div className={`w-12 h-12 ${iconBgColor} rounded-lg flex items-center justify-center`}>
-          <Icon className={`w-6 h-6 ${iconColor}`} />
-        </div>
+        {iconElement}
       </div>
     </div>
   );
