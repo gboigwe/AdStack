@@ -10,6 +10,7 @@ import { formatSTXWithSymbol } from '@/lib/display-utils';
 import { buildCreateCampaign } from '@/lib/contract-calls';
 import { useContractCall } from '@/hooks/use-contract-call';
 import { Breadcrumb } from '@/components/ui';
+import { FormInput, FormTextarea } from '@/components/forms';
 
 interface CampaignFormData {
   name: string;
@@ -150,118 +151,67 @@ export default function NewCampaignPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Campaign Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Campaign Name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="e.g. Q2 Brand Awareness"
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
-              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.name ? 'border-red-300' : 'border-gray-300'
-              }`}
-            />
-            {errors.name && (
-              <p id="name-error" role="alert" className="text-sm text-red-600 mt-1">{errors.name}</p>
-            )}
-          </div>
+          <FormInput
+            label="Campaign Name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="e.g. Q2 Brand Awareness"
+            error={errors.name}
+            required
+          />
 
           {/* Budget */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-1">
-                Total Budget (STX)
-              </label>
-              <input
-                id="budget"
-                name="budget"
-                type="number"
-                step="0.01"
-                min="0"
-                value={form.budget}
-                onChange={handleChange}
-                placeholder="100"
-                aria-invalid={!!errors.budget}
-                aria-describedby={errors.budget ? 'budget-error' : undefined}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.budget ? 'border-red-300' : 'border-gray-300'
-                }`}
-              />
-              {errors.budget && (
-                <p id="budget-error" role="alert" className="text-sm text-red-600 mt-1">{errors.budget}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="dailyBudget" className="block text-sm font-medium text-gray-700 mb-1">
-                Daily Budget (STX)
-              </label>
-              <input
-                id="dailyBudget"
-                name="dailyBudget"
-                type="number"
-                step="0.01"
-                min="0"
-                value={form.dailyBudget}
-                onChange={handleChange}
-                placeholder="10"
-                aria-invalid={!!errors.dailyBudget}
-                aria-describedby={errors.dailyBudget ? 'daily-budget-error' : undefined}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.dailyBudget ? 'border-red-300' : 'border-gray-300'
-                }`}
-              />
-              {errors.dailyBudget && (
-                <p id="daily-budget-error" role="alert" className="text-sm text-red-600 mt-1">{errors.dailyBudget}</p>
-              )}
-            </div>
+            <FormInput
+              label="Total Budget (STX)"
+              name="budget"
+              type="number"
+              step="0.01"
+              min="0"
+              value={form.budget}
+              onChange={handleChange}
+              placeholder="100"
+              error={errors.budget}
+              required
+            />
+            <FormInput
+              label="Daily Budget (STX)"
+              name="dailyBudget"
+              type="number"
+              step="0.01"
+              min="0"
+              value={form.dailyBudget}
+              onChange={handleChange}
+              placeholder="10"
+              error={errors.dailyBudget}
+              required
+            />
           </div>
 
           {/* Duration */}
-          <div>
-            <label htmlFor="durationDays" className="block text-sm font-medium text-gray-700 mb-1">
-              Duration (days)
-            </label>
-            <input
-              id="durationDays"
-              name="durationDays"
-              type="number"
-              min="1"
-              max="365"
-              value={form.durationDays}
-              onChange={handleChange}
-              aria-invalid={!!errors.durationDays}
-              aria-describedby={errors.durationDays ? 'duration-error' : undefined}
-              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.durationDays ? 'border-red-300' : 'border-gray-300'
-              }`}
-            />
-            {errors.durationDays && (
-              <p id="duration-error" role="alert" className="text-sm text-red-600 mt-1">{errors.durationDays}</p>
-            )}
-          </div>
+          <FormInput
+            label="Duration (days)"
+            name="durationDays"
+            type="number"
+            min="1"
+            max="365"
+            value={form.durationDays}
+            onChange={handleChange}
+            error={errors.durationDays}
+            hint="Campaign runs for this many days on-chain"
+            required
+          />
 
           {/* Description */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              Description (optional)
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={4}
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Describe your campaign goals and target audience..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-          </div>
+          <FormTextarea
+            label="Description (optional)"
+            name="description"
+            rows={4}
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Describe your campaign goals and target audience..."
+          />
 
           {/* Preview */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
