@@ -5,7 +5,7 @@ import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ToastContainer } from "@/components/toast";
-import { OfflineBanner } from "@/components/ui";
+import { OfflineBanner, ScrollToTop } from "@/components/ui";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +65,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <ToastContainer />
+          <ScrollToTop />
         </Providers>
       </body>
     </html>
