@@ -5,31 +5,16 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useTransactions } from '@/hooks';
 import { TransactionList } from '@/components/transactions';
+import { WalletGuard } from '@/components/wallet/WalletGuard';
 
 const PAGE_SIZE = 20;
 
-export default function TransactionsPage() {
-  const { isConnected, address } = useWalletStore();
+function TransactionsContent() {
+  const { address } = useWalletStore();
   const [page, setPage] = useState(0);
   const offset = page * PAGE_SIZE;
 
   const { data: txList, isLoading } = useTransactions(address, PAGE_SIZE, offset);
-
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Connect Your Wallet
-          </h2>
-          <p className="text-gray-600">
-            Please connect your Stacks wallet to view your transactions.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const totalPages = txList ? Math.ceil(txList.total / PAGE_SIZE) : 0;
 
   return (
@@ -82,5 +67,16 @@ export default function TransactionsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TransactionsPage() {
+  return (
+    <WalletGuard
+      title="Connect Your Wallet"
+      description="Please connect your Stacks wallet to view your transactions."
+    >
+      <TransactionsContent />
+    </WalletGuard>
   );
 }
