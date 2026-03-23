@@ -15,3 +15,4 @@ export { DataTable } from './DataTable';
 export type { Column } from './DataTable';
 export { ConfirmDialog } from './ConfirmDialog';
 export { ScrollToTop } from './ScrollToTop';
+export { ProgressBar } from './ProgressBar';
