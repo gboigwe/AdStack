@@ -55,8 +55,8 @@ function TransactionsContent() {
     <PageTransition className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Transactions</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             {txList && !isLoading
               ? `${txList.total.toLocaleString()} total transactions`
               : 'Loading transactions...'}
@@ -65,10 +65,10 @@ function TransactionsContent() {
 
         {/* Pending Mempool Transactions */}
         {pendingCount > 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl mb-6">
-            <div className="p-4 flex items-center gap-3 border-b border-yellow-200">
-              <Clock className="w-5 h-5 text-yellow-600" />
-              <h2 className="font-semibold text-yellow-900">Pending Transactions</h2>
+          <div className="bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-xl mb-6">
+            <div className="p-4 flex items-center gap-3 border-b border-yellow-200 dark:border-yellow-800">
+              <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+              <h2 className="font-semibold text-yellow-900 dark:text-yellow-200">Pending Transactions</h2>
               <Badge variant="warning">{pendingCount}</Badge>
             </div>
             <div className="p-4">
@@ -82,7 +82,7 @@ function TransactionsContent() {
         )}
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 mb-4">
           <TransactionFilters
             searchQuery={searchQuery}
             onSearchChange={(q) => setParams({ q, page: '0' })}
@@ -94,7 +94,7 @@ function TransactionsContent() {
         </div>
 
         {/* Confirmed Transactions */}
-        <div className="bg-white rounded-xl border border-gray-200">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="p-6">
             <TransactionList
               transactions={filteredTxs}
