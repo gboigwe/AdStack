@@ -20,7 +20,7 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
 
     return (
       <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {label}
           {props.required && <span className="text-red-500 ml-0.5">*</span>}
         </label>
@@ -29,8 +29,8 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
           id={id}
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
-          className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white ${
-            error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+          className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 dark:text-gray-100 ${
+            error ? 'border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
           } ${className}`}
           {...props}
         >

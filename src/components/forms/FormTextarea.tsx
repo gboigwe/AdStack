@@ -24,7 +24,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
     return (
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {label}
             {props.required && <span className="text-red-500 ml-0.5">*</span>}
           </label>
@@ -42,8 +42,8 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
           aria-describedby={
             [error && errorId, hint && !error && hintId].filter(Boolean).join(' ') || undefined
           }
-          className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y ${
-            error ? 'border-red-300 bg-red-50' : 'border-gray-300'
+          className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y dark:bg-gray-800 dark:text-gray-100 ${
+            error ? 'border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-700' : 'border-gray-300 dark:border-gray-600'
           } ${className}`}
           {...props}
         />
@@ -53,7 +53,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
           </p>
         )}
         {hint && !error && (
-          <p id={hintId} className="mt-1 text-sm text-gray-500">
+          <p id={hintId} className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {hint}
           </p>
         )}
