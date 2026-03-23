@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { Clock } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
-import { useTransactions, useMempoolTransactions, useDebounce } from '@/hooks';
+import { useTransactions, useMempoolTransactions, useDebounce, useQueryParams } from '@/hooks';
 import { TransactionList } from '@/components/transactions';
 import { TransactionFilters, type TxStatusFilter, type TxTypeFilter } from '@/components/transactions/TransactionFilters';
 import { Pagination, Badge, PageTransition } from '@/components/ui';
@@ -19,12 +19,20 @@ function matchesStatus(txStatus: string, filter: TxStatusFilter): boolean {
   return true;
 }
 
+const FILTER_DEFAULTS = {
+  page: '0',
+  q: '',
+  status: 'all',
+  type: 'all',
+};
+
 function TransactionsContent() {
   const { address } = useWalletStore();
-  const [page, setPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<TxStatusFilter>('all');
-  const [typeFilter, setTypeFilter] = useState<TxTypeFilter>('all');
+  const [params, setParams] = useQueryParams(FILTER_DEFAULTS);
+  const page = parseInt(params.page, 10) || 0;
+  const searchQuery = params.q;
+  const statusFilter = params.status as TxStatusFilter;
+  const typeFilter = params.type as TxTypeFilter;
   const debouncedSearch = useDebounce(searchQuery, 300);
   const offset = page * PAGE_SIZE;
 
@@ -77,11 +85,11 @@ function TransactionsContent() {
         <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
           <TransactionFilters
             searchQuery={searchQuery}
-            onSearchChange={(q) => { setSearchQuery(q); setPage(0); }}
+            onSearchChange={(q) => setParams({ q, page: '0' })}
             statusFilter={statusFilter}
-            onStatusChange={(s) => { setStatusFilter(s); setPage(0); }}
+            onStatusChange={(s) => setParams({ status: s, page: '0' })}
             typeFilter={typeFilter}
-            onTypeChange={(t) => { setTypeFilter(t); setPage(0); }}
+            onTypeChange={(t) => setParams({ type: t, page: '0' })}
           />
         </div>
 
@@ -100,7 +108,7 @@ function TransactionsContent() {
           <Pagination
             page={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={(p) => setParams({ page: String(p) })}
           />
         </div>
       </div>
@@ -114,7 +122,9 @@ export default function TransactionsPage() {
       title="Connect Your Wallet"
       description="Please connect your Stacks wallet to view your transactions."
     >
-      <TransactionsContent />
+      <Suspense>
+        <TransactionsContent />
+      </Suspense>
     </WalletGuard>
   );
 }
