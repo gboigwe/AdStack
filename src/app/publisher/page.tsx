@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { DollarSign, Eye, TrendingUp, Users, RefreshCw, ExternalLink } from 'lucide-react';
+import { DollarSign, Eye, TrendingUp, Users, ExternalLink } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useStxBalance, useTransactions } from '@/hooks';
 import { formatSTXWithSymbol, formatTxId, getExplorerTxUrl } from '@/lib/display-utils';
 import { getExplorerTxUrl as explorerTx } from '@/lib/stacks-config';
-import { StatCard } from '@/components/ui';
-import { Badge } from '@/components/ui';
+import { StatCard, Badge, Skeleton } from '@/components/ui';
 
 export default function PublisherDashboard() {
   const { isConnected, address } = useWalletStore();
@@ -102,8 +101,16 @@ export default function PublisherDashboard() {
           </div>
           <div className="p-6">
             {txLoading ? (
-              <div className="flex justify-center py-8">
-                <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <Skeleton className="h-4 w-48 mb-2" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </div>
+                ))}
               </div>
             ) : txList && txList.results.length > 0 ? (
               <div className="space-y-3">

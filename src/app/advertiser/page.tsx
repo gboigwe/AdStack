@@ -4,7 +4,7 @@ import { Plus, TrendingUp, DollarSign, Eye } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet-store';
 import { useStxBalance, useCampaignCount } from '@/hooks';
 import { formatSTXWithSymbol } from '@/lib/display-utils';
-import { StatCard } from '@/components/ui';
+import { StatCard, SkeletonLines } from '@/components/ui';
 import Link from 'next/link';
 
 export default function AdvertiserDashboard() {
@@ -67,9 +67,9 @@ export default function AdvertiserDashboard() {
             iconBgColor="bg-purple-100"
             iconColor="text-purple-600"
             label="Active Campaigns"
-            value={countLoading ? undefined : (campaignCountRaw ? 'Queried' : '0')}
+            value={countLoading ? undefined : String(campaignCountRaw ?? 0)}
             isLoading={countLoading}
-            subtitle="Live contract data"
+            subtitle="From on-chain data"
           />
         </div>
 
@@ -79,19 +79,29 @@ export default function AdvertiserDashboard() {
             <h2 className="text-lg font-semibold text-gray-900">Your Campaigns</h2>
           </div>
           <div className="p-6">
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-gray-400" />
+            {countLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="p-4 border border-gray-100 rounded-lg">
+                    <SkeletonLines count={3} />
+                  </div>
+                ))}
               </div>
-              <p className="text-gray-600 mb-4">No campaigns yet</p>
-              <Link
-                href="/advertiser/campaigns/new"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-              >
-                <Plus className="w-4 h-4" />
-                Create your first campaign
-              </Link>
-            </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600 mb-4">No campaigns yet</p>
+                <Link
+                  href="/advertiser/campaigns/new"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create your first campaign
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
