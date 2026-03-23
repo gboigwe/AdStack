@@ -28,3 +28,4 @@ export { useClickOutside } from './use-click-outside';
 export { usePagination } from './use-pagination';
 export { useToggle } from './use-toggle';
 export { useMounted } from './use-mounted';
+export { useThrottle } from './use-throttle';
