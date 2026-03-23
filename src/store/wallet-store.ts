@@ -23,11 +23,13 @@ export const useWalletStore = create<WalletStore>()(
     {
       name: 'wallet-storage',
       storage: createJSONStorage(() =>
-        typeof window !== 'undefined' ? localStorage : ({
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        } as any)
+        typeof window !== 'undefined'
+          ? localStorage
+          : {
+              getItem: () => null,
+              setItem: () => {},
+              removeItem: () => {},
+            }
       ),
     }
   )

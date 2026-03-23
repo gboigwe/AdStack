@@ -3,6 +3,8 @@
  * Comprehensive TypeScript types for Clarity v4 smart contracts
  */
 
+import type { StacksNetwork } from '@stacks/network';
+
 export type ClarityValue =
   | UIntCV
   | IntCV
@@ -88,7 +90,7 @@ export interface ClarityV4TransactionOptions {
   contractName: string;
   functionName: string;
   functionArgs: ClarityValue[];
-  network: any;
+  network: StacksNetwork;
   anchorMode: number;
   postConditionMode: number;
   fee?: bigint;
@@ -100,7 +102,7 @@ export interface ClarityV4ReadOnlyOptions {
   contractName: string;
   functionName: string;
   functionArgs: ClarityValue[];
-  network: any;
+  network: StacksNetwork;
   senderAddress: string;
 }
 
@@ -151,4 +153,4 @@ export type ContractCallResponse = ClarityResponse<{
   result: ClarityValue;
 }>;
 
-export type ReadOnlyResponse<T = any> = ClarityResponse<T>;
+export type ReadOnlyResponse<T = unknown> = ClarityResponse<T>;

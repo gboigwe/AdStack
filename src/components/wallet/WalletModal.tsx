@@ -5,12 +5,19 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, ExternalLink, Smartphone, Monitor, Check } from 'lucide-react';
 import { SUPPORTED_WALLETS } from '@/lib/appkit-config';
 import { connectWallet } from '@/lib/wallet';
 import { useWalletStore } from '@/store/wallet-store';
 import { parseStacksError } from '@/lib/error-handler';
+
+/** Extend Window with known Stacks wallet provider globals. */
+interface StacksWalletWindow extends Window {
+  LeatherProvider?: unknown;
+  HiroWalletProvider?: unknown;
+  XverseProviders?: unknown;
+}
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -21,6 +28,20 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { setAddress, setConnected } = useWalletStore();
+
+  // Close on Escape key
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    },
+    [onClose],
+  );
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handleKeyDown]);
 
   if (!isOpen) return null;
 
@@ -47,7 +68,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
 
         onClose();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       const parsedError = parseStacksError(err);
       if (parsedError.code !== 'USER_REJECTED') {
         setError(parsedError.message);
@@ -57,28 +78,34 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
     }
   };
 
-  const isWalletInstalled = (walletId: string) => {
+  const isWalletInstalled = (walletId: string): boolean => {
     if (typeof window === 'undefined') return false;
 
-    // Check for wallet-specific objects
+    const w = window as StacksWalletWindow;
     switch (walletId) {
       case 'leather':
-        return !!(window as any).LeatherProvider || !!(window as any).HiroWalletProvider;
+        return !!w.LeatherProvider || !!w.HiroWalletProvider;
       case 'xverse':
-        return !!(window as any).XverseProviders;
+        return !!w.XverseProviders;
       case 'hiro':
-        return !!(window as any).HiroWalletProvider;
+        return !!w.HiroWalletProvider;
       default:
         return false;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wallet-modal-title"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Connect Wallet</h2>
+          <h2 id="wallet-modal-title" className="text-2xl font-bold text-gray-900">Connect Wallet</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"

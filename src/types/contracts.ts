@@ -202,7 +202,7 @@ export interface PayoutRecord {
 /**
  * Contract Call Result Generic
  */
-export interface ContractCallResult<T = any> {
+export interface ContractCallResult<T = unknown> {
   success: boolean;
   txId?: string;
   data?: T;
@@ -212,7 +212,7 @@ export interface ContractCallResult<T = any> {
 /**
  * Contract Read Result Generic
  */
-export interface ContractReadResult<T = any> {
+export interface ContractReadResult<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -224,7 +224,7 @@ export interface ContractReadResult<T = any> {
 export interface TransactionOptions {
   fee?: bigint;
   nonce?: bigint;
-  postConditions?: any[];
+  postConditions?: unknown[];
 }
 
 /**
@@ -302,7 +302,7 @@ export interface PayoutParams {
  */
 export interface ContractEvent {
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   txId: string;
   blockHeight: number;
   timestamp: number;

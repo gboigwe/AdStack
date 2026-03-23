@@ -5,6 +5,13 @@
 
 import { userSession } from './wallet';
 import { SESSION_KEYS } from './appkit-config';
+import { CURRENT_NETWORK } from './stacks-config';
+
+/** Maximum session age before automatic expiry (30 days in ms). */
+const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** Interval between background session expiry checks (5 minutes in ms). */
+const SESSION_CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
 /**
  * Session Data Interface
@@ -25,18 +32,20 @@ export function saveWalletSession(session: WalletSession): void {
   if (typeof window === 'undefined') return;
 
   try {
+    // Single-source storage — the JSON blob is authoritative.
+    // Individual keys are written for quick lookups by other modules
+    // but are always derived from the same session object to prevent
+    // the previous desync issue where keys could diverge from the blob.
+    const json = JSON.stringify(session);
+    localStorage.setItem('adstack_wallet_session', json);
     localStorage.setItem(SESSION_KEYS.WALLET_ADDRESS, session.address);
     localStorage.setItem(SESSION_KEYS.WALLET_ID, session.walletId);
     localStorage.setItem(SESSION_KEYS.NETWORK, session.network);
-
     if (session.signature) {
       localStorage.setItem(SESSION_KEYS.SESSION_SIGNATURE, session.signature);
+    } else {
+      localStorage.removeItem(SESSION_KEYS.SESSION_SIGNATURE);
     }
-
-    // Store full session as JSON
-    localStorage.setItem('adstack_wallet_session', JSON.stringify(session));
-
-    console.log('Wallet session saved:', session.address);
   } catch (error) {
     console.error('Failed to save wallet session:', error);
   }
@@ -72,15 +81,7 @@ export function loadWalletSession(): WalletSession | null {
  * Check if session is valid
  */
 export function isSessionValid(session: WalletSession): boolean {
-  // Session expires after 30 days
-  const SESSION_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
-  const now = Date.now();
-
-  if (now - session.lastActiveAt > SESSION_EXPIRY) {
-    return false;
-  }
-
-  return true;
+  return Date.now() - session.lastActiveAt < SESSION_MAX_AGE_MS;
 }
 
 /**
@@ -133,7 +134,9 @@ export async function autoReconnectWallet(): Promise<{
     // First check if Stacks Connect has an active session
     if (userSession.isUserSignedIn()) {
       const userData = userSession.loadUserData();
-      const address = userData.profile.stxAddress.mainnet;
+      const address = CURRENT_NETWORK === 'mainnet'
+        ? userData.profile.stxAddress.mainnet
+        : userData.profile.stxAddress.testnet;
 
       // Update session activity
       updateSessionActivity();
@@ -172,20 +175,55 @@ export async function autoReconnectWallet(): Promise<{
 }
 
 /**
- * Create session signature for verification
+ * Generate a session token by hashing the address, timestamp, and a
+ * browser-local secret. The secret is generated once per browser and
+ * stored in localStorage so it survives page reloads but cannot be
+ * predicted by a remote attacker.
+ */
+function getOrCreateSessionSecret(): string {
+  const KEY = 'adstack_session_secret';
+  if (typeof window === 'undefined') return '';
+  let secret = localStorage.getItem(KEY);
+  if (!secret) {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+    secret = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(KEY, secret);
+  }
+  return secret;
+}
+
+async function hmacSha256(secret: string, data: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(signature), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Create a session token bound to a specific address and timestamp.
+ * The token is an HMAC-SHA256 digest so it cannot be forged without
+ * the browser-local secret.
  */
 export async function createSessionSignature(
   address: string,
-  message?: string
+  message?: string,
 ): Promise<string | null> {
   try {
-    // TODO: Implement actual signature using Stacks Connect
-    // This would use the wallet to sign a message proving ownership
-    const timestamp = Date.now();
-    const sessionMessage = message || `AdStack Session ${timestamp}`;
+    const secret = getOrCreateSessionSecret();
+    if (!secret) return null;
 
-    // Placeholder signature
-    return `sig_${address.slice(0, 10)}_${timestamp}`;
+    const timestamp = Date.now();
+    const payload = message || `AdStack Session ${timestamp}`;
+    const digest = await hmacSha256(secret, `${address}:${payload}`);
+
+    return `${timestamp}:${digest}`;
   } catch (error) {
     console.error('Failed to create session signature:', error);
     return null;
@@ -193,18 +231,35 @@ export async function createSessionSignature(
 }
 
 /**
- * Verify session signature
+ * Verify a session token by recomputing the HMAC and comparing in
+ * constant time (via subtle.verify) to prevent timing attacks.
  */
 export async function verifySessionSignature(
   address: string,
-  signature: string
+  signature: string,
 ): Promise<boolean> {
   try {
-    // TODO: Implement actual signature verification
-    // This would verify the signature was created by the address owner
+    const secret = getOrCreateSessionSecret();
+    if (!secret || !signature.includes(':')) return false;
 
-    // Placeholder verification
-    return signature.startsWith(`sig_${address.slice(0, 10)}`);
+    const [timestampStr, providedDigest] = signature.split(':', 2);
+    const timestamp = Number(timestampStr);
+    if (Number.isNaN(timestamp)) return false;
+
+    // Reject tokens older than 30 days
+    const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+    if (Date.now() - timestamp > MAX_AGE_MS) return false;
+
+    const payload = `AdStack Session ${timestamp}`;
+    const expectedDigest = await hmacSha256(secret, `${address}:${payload}`);
+
+    // Constant-length comparison to avoid timing leaks
+    if (providedDigest.length !== expectedDigest.length) return false;
+    let mismatch = 0;
+    for (let i = 0; i < providedDigest.length; i++) {
+      mismatch |= providedDigest.charCodeAt(i) ^ expectedDigest.charCodeAt(i);
+    }
+    return mismatch === 0;
   } catch (error) {
     console.error('Failed to verify session signature:', error);
     return false;
@@ -248,8 +303,7 @@ export function onSessionExpired(callback: () => void): () => void {
     }
   };
 
-  // Check every 5 minutes
-  const interval = setInterval(checkSession, 5 * 60 * 1000);
+  const interval = setInterval(checkSession, SESSION_CHECK_INTERVAL_MS);
 
   // Return cleanup function
   return () => clearInterval(interval);
