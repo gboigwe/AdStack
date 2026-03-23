@@ -2,6 +2,7 @@
 
 import { fetchStxBalance } from '@/lib/stacks-api';
 import { useApiQuery } from './use-api-query';
+import { STALE_TIMES } from '@/lib/query-config';
 
 /**
  * React Query hook to fetch and cache an STX balance.
@@ -15,7 +16,7 @@ export function useStxBalance(address: string | undefined | null) {
     {
       enabled: !!address,
       refetchInterval: 30_000,
-      staleTime: 15_000,
+      staleTime: STALE_TIMES.BALANCE,
       refetchIntervalInBackground: false,
     },
   );

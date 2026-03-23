@@ -2,6 +2,7 @@
 
 import { fetchBlockHeight } from '@/lib/stacks-api';
 import { useApiQuery } from './use-api-query';
+import { STALE_TIMES, REFETCH_INTERVALS } from '@/lib/query-config';
 
 /**
  * React Query hook to fetch and track the current Stacks block height.
@@ -13,8 +14,8 @@ export function useBlockHeight() {
     ['block-height'],
     () => fetchBlockHeight(),
     {
-      refetchInterval: 60_000,
-      staleTime: 30_000,
+      refetchInterval: REFETCH_INTERVALS.BLOCK_HEIGHT,
+      staleTime: STALE_TIMES.BLOCK,
       refetchIntervalInBackground: false,
     },
   );
