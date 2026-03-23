@@ -25,13 +25,15 @@ export function useCampaign(campaignId: number | undefined) {
 
 /**
  * Hook to fetch total campaign count from the promo-manager contract.
+ * Polls every 60s by default so the dashboard stays fresh.
  */
-export function useCampaignCount() {
+export function useCampaignCount(refetchInterval = 60_000) {
   return useReadOnlyCall({
     contractName: CONTRACTS.PROMO_MANAGER,
     functionName: 'get-campaign-count',
     args: [],
     staleTime: 30_000,
+    refetchInterval,
   });
 }
 

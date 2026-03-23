@@ -11,6 +11,8 @@ interface ReadOnlyCallOptions {
   senderAddress?: string;
   enabled?: boolean;
   staleTime?: number;
+  /** Poll interval in ms. Set to `false` or 0 to disable. */
+  refetchInterval?: number | false;
 }
 
 /**
@@ -31,6 +33,7 @@ export function useReadOnlyCall({
   senderAddress,
   enabled = true,
   staleTime = 30_000,
+  refetchInterval,
 }: ReadOnlyCallOptions) {
   const sender = senderAddress || CONTRACT_ADDRESS;
 
@@ -56,5 +59,6 @@ export function useReadOnlyCall({
     },
     enabled,
     staleTime,
+    refetchInterval: refetchInterval || undefined,
   });
 }
