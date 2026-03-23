@@ -27,7 +27,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 export const Footer = memo(function Footer() {
 
   return (
-    <footer className="bg-gray-900 text-gray-400">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-400 border-t border-gray-800 dark:border-gray-800">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -38,14 +38,18 @@ export const Footer = memo(function Footer() {
               </div>
               <span className="text-xl font-bold text-white">AdStack</span>
             </Link>
-            <p className="text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed mb-4">
               Decentralized advertising built on Stacks, secured by Bitcoin.
             </p>
+            <div className="inline-flex items-center gap-1.5 text-xs font-medium text-orange-400 bg-orange-900/20 px-2.5 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 bg-orange-400 rounded-full" />
+              Built on Bitcoin
+            </div>
           </div>
 
           {/* Link columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
-            <div key={category}>
+            <nav key={category} aria-label={`${category} links`}>
               <h3 className="text-sm font-semibold text-white mb-3">
                 {category}
               </h3>
@@ -72,11 +76,11 @@ export const Footer = memo(function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-gray-800 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm">
             &copy; {CURRENT_YEAR} AdStack. All rights reserved.
           </p>
