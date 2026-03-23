@@ -16,14 +16,14 @@ interface TransactionListProps {
 function statusBadge(status: string) {
   switch (status) {
     case 'success':
-      return 'bg-green-100 text-green-700';
+      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-700';
+      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
     case 'abort_by_response':
     case 'abort_by_post_condition':
-      return 'bg-red-100 text-red-700';
+      return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
     default:
-      return 'bg-gray-100 text-gray-700';
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
   }
 }
 
@@ -47,7 +47,7 @@ export const TransactionList = memo(function TransactionList({
 }: TransactionListProps) {
   if (isLoading) {
     return (
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-gray-100 dark:divide-gray-800">
         {Array.from({ length: 5 }, (_, i) => (
           <div key={i} className="flex items-center justify-between py-3 px-1">
             <div className="flex-1 min-w-0">
@@ -64,21 +64,21 @@ export const TransactionList = memo(function TransactionList({
   if (transactions.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">{emptyMessage}</p>
+        <p className="text-gray-600 dark:text-gray-400">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-y divide-gray-100 dark:divide-gray-800">
       {transactions.map((tx) => (
         <div
           key={tx.tx_id}
-          className="flex items-center justify-between py-3 px-1 hover:bg-gray-50 rounded-lg transition-colors"
+          className="flex items-center justify-between py-3 px-1 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-mono text-gray-700 truncate">
+              <span className="text-sm font-mono text-gray-700 dark:text-gray-300 truncate">
                 {formatTxId(tx.tx_id)}
               </span>
               <CopyButton text={tx.tx_id} label="tx hash" />
