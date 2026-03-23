@@ -12,7 +12,7 @@ export default function PublisherLoading() {
         {/* Stats skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center gap-4">
                 <Skeleton className="h-12 w-12 rounded-lg" />
                 <div className="flex-1">
@@ -25,7 +25,7 @@ export default function PublisherLoading() {
         </div>
 
         {/* Recent transactions skeleton */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
           <Skeleton className="h-6 w-44 mb-4" />
           <div className="space-y-3">
             {Array.from({ length: 5 }, (_, i) => (

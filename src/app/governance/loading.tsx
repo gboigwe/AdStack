@@ -10,7 +10,7 @@ export default function GovernanceLoading() {
         </div>
 
         {/* Proposal form skeleton */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <Skeleton className="h-6 w-36 mb-4" />
           <Skeleton className="h-10 w-full mb-3" />
           <Skeleton className="h-24 w-full mb-3" />
@@ -20,7 +20,7 @@ export default function GovernanceLoading() {
         {/* Proposals list skeleton */}
         <div className="space-y-4">
           {Array.from({ length: 3 }, (_, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between mb-3">
                 <Skeleton className="h-5 w-48" />
                 <Skeleton className="h-6 w-16 rounded-full" />
