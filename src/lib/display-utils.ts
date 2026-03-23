@@ -194,6 +194,20 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 /**
+ * Format a fee_rate string (micro-STX) to a compact STX display.
+ * Fees are typically small so we show up to 6 decimals but strip
+ * trailing zeros for cleanliness.
+ * @example "2500" -> "0.0025 STX"
+ */
+export function formatFee(feeRate: string): string {
+  const micro = BigInt(feeRate || '0');
+  const stx = formatSTX(micro, 6);
+  // Strip trailing zeros after decimal point
+  const cleaned = stx.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+  return `${cleaned} STX`;
+}
+
+/**
  * Format campaign status for display
  */
 export function formatCampaignStatus(status: string): string {
