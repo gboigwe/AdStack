@@ -67,12 +67,13 @@ export function TransactionFilters({
         <div className="flex items-center gap-1.5">
           <Filter className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-xs font-medium text-gray-500 uppercase">Status:</span>
-          <div className="flex gap-1">
+          <div className="flex gap-1" role="group" aria-label="Filter by status">
             {STATUS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => onStatusChange(opt.value)}
-                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
+                aria-pressed={statusFilter === opt.value}
+                className={`px-2.5 py-1 text-xs rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 ${
                   statusFilter === opt.value
                     ? 'bg-blue-50 border-blue-300 text-blue-700 font-medium'
                     : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
@@ -86,12 +87,13 @@ export function TransactionFilters({
 
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-medium text-gray-500 uppercase">Type:</span>
-          <div className="flex gap-1">
+          <div className="flex gap-1" role="group" aria-label="Filter by type">
             {TYPE_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => onTypeChange(opt.value)}
-                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
+                aria-pressed={typeFilter === opt.value}
+                className={`px-2.5 py-1 text-xs rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 ${
                   typeFilter === opt.value
                     ? 'bg-blue-50 border-blue-300 text-blue-700 font-medium'
                     : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
