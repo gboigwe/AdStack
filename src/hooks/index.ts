@@ -18,3 +18,4 @@ export { useNetworkStatus } from './use-network-status';
 export { useQueryParams } from './use-query-params';
 export { useLocalStorage } from './use-local-storage';
 export { useKeyboardShortcut } from './use-keyboard-shortcut';
+export { useIntersectionObserver } from './use-intersection-observer';
