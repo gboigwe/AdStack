@@ -262,18 +262,47 @@ export interface FraudScore {
 
 /**
  * Governance Proposal Interface (from vote-handler contract)
+ * Matches the proposals map in vote-handler.clar.
  */
 export interface GovernanceProposal {
   proposalId: number;
   proposer: string;
   title: string;
   description: string;
-  votesFor: bigint;
-  votesAgainst: bigint;
+  votesFor: number;
+  votesAgainst: number;
+  totalVoters: number;
+  startHeight: number;
+  endHeight: number;
   status: ProposalStatus;
   createdAt: number;
-  expiresAt: number;
-  executedAt?: number;
+  executedAt: number;
+}
+
+/**
+ * Raw on-chain proposal shape from vote-handler read-only calls.
+ */
+export interface RawClarityProposal {
+  proposer: string;
+  title: string;
+  description: string;
+  'votes-for': bigint;
+  'votes-against': bigint;
+  'total-voters': bigint;
+  'start-height': bigint;
+  'end-height': bigint;
+  status: bigint;
+  'created-at': bigint;
+  'executed-at': bigint;
+}
+
+/**
+ * Vote tally summary from vote-handler.
+ */
+export interface VoteTally {
+  votesFor: number;
+  votesAgainst: number;
+  totalVoters: number;
 }
 
 /**
