@@ -1,0 +1,15 @@
+[project]
+name = "adstack-contracts"
+description = "Smart contracts for the AdStack decentralized advertising platform"
+authors = ["Gbolahan Akande <geakande@gmail.com>"]
+telemetry = true
+cache_dir = "./.cache"
+
+[contracts.promo-manager]
+path = "contracts/promo-manager.clar"
+clarity_version = 3
+epoch = "3.0"
+
+[repl.analysis]
+passes = ["check_checker"]
+check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }

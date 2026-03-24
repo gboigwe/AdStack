@@ -95,6 +95,50 @@ export function buildRegisterUser(params: RegisterUserParams) {
 }
 
 /**
+ * Build contract call options for cancelling a campaign.
+ * Calls promo-manager.cancel-campaign to stop the campaign
+ * and refund remaining escrowed STX back to the advertiser.
+ */
+export function buildCancelCampaign(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'cancel-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to complete an expired campaign.
+ * Calls promo-manager.complete-expired-campaign. This is
+ * permissionless so anyone can trigger cleanup of expired campaigns.
+ */
+export function buildCompleteExpiredCampaign(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'complete-expired-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call for remaining campaign budget.
+ * Calls promo-manager.get-remaining-budget.
+ */
+export function buildReadRemainingBudget(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-remaining-budget',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
  * Build contract call for claiming publisher payout.
  * Calls cash-distributor.claim-payout with campaign ID.
  */
@@ -184,6 +228,18 @@ export function buildReadCampaign(campaignId: number) {
   return {
     contractId: getContractId(CONTRACTS.PROMO_MANAGER),
     functionName: 'get-campaign',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call for checking if a campaign is currently active.
+ * Calls promo-manager.is-campaign-active (considers both status and block height).
+ */
+export function buildReadIsCampaignActive(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'is-campaign-active',
     functionArgs: [toUIntCV(campaignId)],
   };
 }
