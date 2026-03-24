@@ -9,6 +9,7 @@ export { useCampaignAnalytics, usePublisherStats, useHasViewed, useTotalViews, u
 export { useUserProfile, useIsRegistered, useIsVerified, useReputation, useUserCounts } from './use-user-profile';
 export { useMediaQuery, BREAKPOINTS } from './use-media-query';
 export { useProposalCount, useProposal, useHasVoted, useVoteTally, useIsGovernancePaused, useProposalStatus } from './use-governance';
+export { useEscrow, useEscrowBalance, usePublisherRelease, usePlatformFundStats } from './use-escrow';
 export { useContractCall } from './use-contract-call';
 export { useFocusTrap } from './use-focus-trap';
 export { useApiQuery } from './use-api-query';
