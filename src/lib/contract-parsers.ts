@@ -5,7 +5,7 @@
  * to number conversion for fields that fit safely in JS numbers.
  */
 
-import { UserRole, VerificationStatus } from '@/types/contracts';
+import { UserRole, VerificationStatus, ProposalStatus } from '@/types/contracts';
 import type {
   UserProfile,
   RawClarityProfile,
@@ -17,6 +17,9 @@ import type {
   RawClarityPublisherStats,
   ViewerRecord,
   RawClarityViewerRecord,
+  GovernanceProposal,
+  RawClarityProposal,
+  VoteTally,
 } from '@/types/contracts';
 
 // --- Role mapping ---
@@ -129,5 +132,54 @@ export function parseViewerRecord(
     viewCount: Number(raw['view-count']),
     firstViewBlock: Number(raw['first-view-block']),
     lastViewBlock: Number(raw['last-view-block']),
+  };
+}
+
+// --- Vote-handler parsers ---
+
+const PROPOSAL_STATUS_MAP: Record<number, ProposalStatus> = {
+  1: ProposalStatus.ACTIVE,
+  2: ProposalStatus.PASSED,
+  3: ProposalStatus.REJECTED,
+  4: ProposalStatus.EXECUTED,
+};
+
+/**
+ * Parse raw proposal from vote-handler contract.
+ */
+export function parseProposal(
+  proposalId: number,
+  raw: RawClarityProposal,
+): GovernanceProposal {
+  const statusNum = Number(raw.status);
+
+  return {
+    proposalId,
+    proposer: raw.proposer,
+    title: raw.title,
+    description: raw.description,
+    votesFor: Number(raw['votes-for']),
+    votesAgainst: Number(raw['votes-against']),
+    totalVoters: Number(raw['total-voters']),
+    startHeight: Number(raw['start-height']),
+    endHeight: Number(raw['end-height']),
+    status: PROPOSAL_STATUS_MAP[statusNum] ?? ProposalStatus.ACTIVE,
+    createdAt: Number(raw['created-at']),
+    executedAt: Number(raw['executed-at']),
+  };
+}
+
+/**
+ * Parse vote tally response.
+ */
+export function parseVoteTally(raw: {
+  'votes-for': bigint;
+  'votes-against': bigint;
+  'total-voters': bigint;
+}): VoteTally {
+  return {
+    votesFor: Number(raw['votes-for']),
+    votesAgainst: Number(raw['votes-against']),
+    totalVoters: Number(raw['total-voters']),
   };
 }
