@@ -791,3 +791,141 @@ export function buildReadCampaignSegmentCount(campaignId: number) {
     functionArgs: [toUIntCV(campaignId)],
   };
 }
+
+// --- Partner-hub builders ---
+
+/**
+ * Build contract call to propose a partnership with a publisher.
+ */
+export function buildProposePartnership(
+  publisherAddress: string,
+  commissionRate: number,
+  message: string,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'propose-partnership',
+    functionArgs: [
+      toPrincipalCV(publisherAddress),
+      toUIntCV(commissionRate),
+      toStringAsciiCV(message),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for a publisher to accept a partnership.
+ */
+export function buildAcceptPartnership(partnershipId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'accept-partnership',
+    functionArgs: [toUIntCV(partnershipId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to pause a partnership.
+ */
+export function buildPausePartnership(partnershipId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'pause-partnership',
+    functionArgs: [toUIntCV(partnershipId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to resume a paused partnership.
+ */
+export function buildResumePartnership(partnershipId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'resume-partnership',
+    functionArgs: [toUIntCV(partnershipId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to terminate a partnership.
+ */
+export function buildTerminatePartnership(partnershipId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'terminate-partnership',
+    functionArgs: [toUIntCV(partnershipId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to enroll a campaign into a partnership.
+ */
+export function buildEnrollCampaign(partnershipId: number, campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PARTNER_HUB,
+    functionName: 'enroll-campaign',
+    functionArgs: [toUIntCV(partnershipId), toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call to get partnership details.
+ */
+export function buildReadPartnership(partnershipId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PARTNER_HUB),
+    functionName: 'get-partnership',
+    functionArgs: [toUIntCV(partnershipId)],
+  };
+}
+
+/**
+ * Build read-only call to look up partnership by advertiser and publisher.
+ */
+export function buildReadPartnershipByParties(advertiser: string, publisher: string) {
+  return {
+    contractId: getContractId(CONTRACTS.PARTNER_HUB),
+    functionName: 'get-partnership-by-parties',
+    functionArgs: [toPrincipalCV(advertiser), toPrincipalCV(publisher)],
+  };
+}
+
+/**
+ * Build read-only call to check if a partnership is active.
+ */
+export function buildReadIsPartnershipActive(partnershipId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PARTNER_HUB),
+    functionName: 'is-partnership-active',
+    functionArgs: [toUIntCV(partnershipId)],
+  };
+}
+
+/**
+ * Build read-only call to get total active partnerships.
+ */
+export function buildReadTotalActivePartnerships() {
+  return {
+    contractId: getContractId(CONTRACTS.PARTNER_HUB),
+    functionName: 'get-total-active-partnerships',
+    functionArgs: [],
+  };
+}
