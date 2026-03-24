@@ -12,6 +12,7 @@ export { useProposalCount, useProposal, useHasVoted, useVoteTally, useIsGovernan
 export { useEscrow, useEscrowBalance, usePublisherRelease, usePlatformFundStats } from './use-escrow';
 export { usePublisherEarnings, useClaimableAmount, usePublisherTotals, useDistributionStats } from './use-payouts';
 export { useCampaignFraudScore, useThreatLevel, useIsAccountBlocked, useAccountThreats } from './use-fraud-detection';
+export { useAudienceSegment, useCampaignSegmentCount, usePublisherAudienceProfile, useMatchScore, useTotalSegments, useTotalPublisherProfiles } from './use-audience';
 export { useContractCall } from './use-contract-call';
 export { useContractEvents, useFilteredContractEvents, useInvalidateContractEvents } from './use-contract-events';
 export { useTxStatus, useBatchTxStatus, useInvalidateTxStatus } from './use-tx-status';
