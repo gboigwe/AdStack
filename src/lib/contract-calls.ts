@@ -495,3 +495,49 @@ export function buildInvalidateView(campaignId: number, viewerAddress: string) {
     postConditions: [],
   };
 }
+
+// --- Funds-keeper builders ---
+
+/**
+ * Build read-only call to get escrow details for a campaign.
+ */
+export function buildReadEscrow(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.FUNDS_KEEPER),
+    functionName: 'get-escrow',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get available escrow balance.
+ */
+export function buildReadEscrowBalance(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.FUNDS_KEEPER),
+    functionName: 'get-escrow-balance',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get publisher release record.
+ */
+export function buildReadPublisherRelease(campaignId: number, publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.FUNDS_KEEPER),
+    functionName: 'get-publisher-release',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get platform-wide fund stats.
+ */
+export function buildReadPlatformFundStats() {
+  return {
+    contractId: getContractId(CONTRACTS.FUNDS_KEEPER),
+    functionName: 'get-platform-stats',
+    functionArgs: [],
+  };
+}
