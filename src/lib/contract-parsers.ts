@@ -303,3 +303,44 @@ export function parsePublisherEarnings(
     lastUpdated: Number(raw['last-updated']),
   };
 }
+
+// --- Audience-selector parsers ---
+
+/**
+ * Parse raw audience segment from audience-selector contract.
+ */
+export function parseAudienceSegment(
+  segmentId: number,
+  raw: import('@/types/contracts').RawClaritySegment,
+): import('@/types/contracts').AudienceSegment {
+  return {
+    segmentId,
+    campaignId: Number(raw['campaign-id']),
+    creator: raw.creator,
+    name: raw.name,
+    minReputation: Number(raw['min-reputation']),
+    requireVerified: raw['require-verified'],
+    tagCount: Number(raw['tag-count']),
+    createdAt: Number(raw['created-at']),
+    isActive: raw['is-active'],
+  };
+}
+
+/**
+ * Parse raw publisher audience profile from audience-selector contract.
+ */
+export function parsePublisherAudienceProfile(
+  publisher: string,
+  raw: import('@/types/contracts').RawClarityPublisherAudienceProfile,
+): import('@/types/contracts').PublisherAudienceProfile {
+  return {
+    publisher,
+    category: raw.category,
+    region: raw.region,
+    language: raw.language,
+    audienceSize: Number(raw['audience-size']),
+    tagCount: Number(raw['tag-count']),
+    registeredAt: Number(raw['registered-at']),
+    lastUpdated: Number(raw['last-updated']),
+  };
+}
