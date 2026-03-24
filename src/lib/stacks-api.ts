@@ -269,3 +269,74 @@ export function getApiUrl(): string {
 export function getNetworkName(): string {
   return CURRENT_NETWORK;
 }
+
+/** Contract event from the Hiro API events endpoint. */
+export interface ApiContractEvent {
+  event_index: number;
+  event_type: string;
+  tx_id: string;
+  contract_log: {
+    contract_id: string;
+    topic: string;
+    value: { hex: string; repr: string };
+  };
+}
+
+/** Page of contract events. */
+export interface ContractEventList {
+  limit: number;
+  offset: number;
+  results: ApiContractEvent[];
+}
+
+/**
+ * Fetch recent contract events for a deployed contract.
+ * Useful for indexing print events from campaigns, payouts, etc.
+ */
+export function fetchContractEvents(
+  contractId: string,
+  limit = 20,
+  offset = 0,
+): Promise<ApiResult<ContractEventList>> {
+  return deduplicatedFetch(
+    `events:${contractId}:${limit}:${offset}`,
+    () =>
+      apiFetch<ContractEventList>(
+        `/extended/v1/contract/${contractId}/events?limit=${limit}&offset=${offset}`,
+      ),
+  );
+}
+
+/** NFT holding from the Hiro API. */
+export interface NftHolding {
+  asset_identifier: string;
+  value: { hex: string; repr: string };
+  block_height: number;
+  tx_id: string;
+}
+
+/** Page of NFT holdings. */
+export interface NftHoldingList {
+  total: number;
+  limit: number;
+  offset: number;
+  results: NftHolding[];
+}
+
+/**
+ * Fetch NFT holdings for an address.
+ * Can be used for badge/achievement NFTs in the platform.
+ */
+export function fetchNftHoldings(
+  address: string,
+  limit = 50,
+  offset = 0,
+): Promise<ApiResult<NftHoldingList>> {
+  return deduplicatedFetch(
+    `nfts:${address}:${limit}:${offset}`,
+    () =>
+      apiFetch<NftHoldingList>(
+        `/extended/v1/tokens/nft/holdings?principal=${address}&limit=${limit}&offset=${offset}`,
+      ),
+  );
+}

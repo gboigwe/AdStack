@@ -356,14 +356,62 @@ export interface UserSubscription {
 /**
  * Payout Record Interface (from cash-distributor contract)
  */
+/**
+ * Matches the payouts map in cash-distributor.clar.
+ */
 export interface PayoutRecord {
   payoutId: number;
-  recipient: string;
-  amount: bigint;
+  publisher: string;
   campaignId: number;
-  timestamp: number;
-  txId: string;
+  amount: bigint;
+  fee: bigint;
   status: PayoutStatus;
+  createdAt: number;
+  completedAt: number;
+}
+
+/**
+ * Publisher earnings for a specific campaign from cash-distributor.
+ */
+export interface PublisherEarnings {
+  campaignId: number;
+  publisher: string;
+  grossEarnings: bigint;
+  feesDeducted: bigint;
+  netEarnings: bigint;
+  claimed: bigint;
+  lastUpdated: number;
+}
+
+/**
+ * Raw on-chain publisher earnings shape.
+ */
+export interface RawClarityPublisherEarnings {
+  'gross-earnings': bigint;
+  'fees-deducted': bigint;
+  'net-earnings': bigint;
+  claimed: bigint;
+  'last-updated': bigint;
+}
+
+/**
+ * Aggregate publisher totals across all campaigns.
+ */
+export interface PublisherTotals {
+  totalEarned: bigint;
+  totalClaimed: bigint;
+  totalFees: bigint;
+  payoutCount: number;
+}
+
+/**
+ * Distribution statistics from cash-distributor.
+ */
+export interface DistributionStats {
+  totalDistributed: bigint;
+  totalFees: bigint;
+  totalPayouts: number;
+  paused: boolean;
 }
 
 /**
