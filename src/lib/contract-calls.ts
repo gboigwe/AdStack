@@ -233,6 +233,18 @@ export function buildReadCampaign(campaignId: number) {
 }
 
 /**
+ * Build read-only call for checking if a campaign is currently active.
+ * Calls promo-manager.is-campaign-active (considers both status and block height).
+ */
+export function buildReadIsCampaignActive(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'is-campaign-active',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
  * Build read-only call arguments for fetching analytics.
  */
 export function buildReadAnalytics(campaignId: number) {
