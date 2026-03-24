@@ -22,10 +22,10 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Something went wrong
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           {error.message || 'An unexpected error occurred while loading this page.'}
         </p>
         <div className="flex items-center justify-center gap-4">
@@ -38,7 +38,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           </button>
           <Link
             href="/"
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors font-medium"
           >
             <Home className="w-4 h-4" />
             Go Home
