@@ -28,9 +28,12 @@ export const CONTRACT_ADDRESS =
   process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
   (CURRENT_NETWORK === 'devnet' ? DEVNET_DEPLOYER : 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD');
 
+/**
+ * API URL defaults to Hiro mainnet; Clarinet devnet uses localhost:3999.
+ */
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  'https://api.hiro.so';
+  (CURRENT_NETWORK === 'devnet' ? 'http://localhost:3999' : 'https://api.hiro.so');
 
 /**
  * Deployed Clarity v4 Contract Names
