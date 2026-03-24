@@ -5,7 +5,7 @@
  * to number conversion for fields that fit safely in JS numbers.
  */
 
-import { UserRole, VerificationStatus, ProposalStatus } from '@/types/contracts';
+import { UserRole, VerificationStatus, ProposalStatus, EscrowStatus } from '@/types/contracts';
 import type {
   UserProfile,
   RawClarityProfile,
@@ -20,6 +20,8 @@ import type {
   GovernanceProposal,
   RawClarityProposal,
   VoteTally,
+  EscrowDetails,
+  RawClarityEscrow,
 } from '@/types/contracts';
 
 // --- Role mapping ---
@@ -181,5 +183,34 @@ export function parseVoteTally(raw: {
     votesFor: Number(raw['votes-for']),
     votesAgainst: Number(raw['votes-against']),
     totalVoters: Number(raw['total-voters']),
+  };
+}
+
+// --- Funds-keeper parsers ---
+
+const ESCROW_STATUS_MAP: Record<number, EscrowStatus> = {
+  1: EscrowStatus.ACTIVE,
+  2: EscrowStatus.COMPLETED,
+  3: EscrowStatus.REFUNDED,
+};
+
+/**
+ * Parse raw escrow from funds-keeper contract.
+ */
+export function parseEscrow(
+  campaignId: number,
+  raw: RawClarityEscrow,
+): EscrowDetails {
+  const statusNum = Number(raw.status);
+
+  return {
+    campaignId,
+    advertiser: raw.advertiser,
+    deposited: raw.deposited,
+    released: raw.released,
+    refunded: raw.refunded,
+    status: ESCROW_STATUS_MAP[statusNum] ?? EscrowStatus.ACTIVE,
+    createdAt: Number(raw['created-at']),
+    lastReleaseBlock: Number(raw['last-release-block']),
   };
 }

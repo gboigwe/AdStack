@@ -25,6 +25,11 @@ path = "contracts/vote-handler.clar"
 clarity_version = 3
 epoch = "3.0"
 
+[contracts.funds-keeper]
+path = "contracts/funds-keeper.clar"
+clarity_version = 3
+epoch = "3.0"
+
 [repl.analysis]
 passes = ["check_checker"]
 check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
