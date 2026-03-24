@@ -579,3 +579,73 @@ export interface DisputeEvent extends ContractEvent {
     defendant: string;
   };
 }
+
+// ============================================================
+// Audience Selector Types (from audience-selector contract)
+// ============================================================
+
+/**
+ * Audience Segment Interface
+ * Matches the segments map in audience-selector.clar.
+ */
+export interface AudienceSegment {
+  segmentId: number;
+  campaignId: number;
+  creator: string;
+  name: string;
+  minReputation: number;
+  requireVerified: boolean;
+  tagCount: number;
+  createdAt: number;
+  isActive: boolean;
+}
+
+/**
+ * Raw on-chain segment shape from audience-selector read-only calls.
+ */
+export interface RawClaritySegment {
+  'campaign-id': bigint;
+  creator: string;
+  name: string;
+  'min-reputation': bigint;
+  'require-verified': boolean;
+  'tag-count': bigint;
+  'created-at': bigint;
+  'is-active': boolean;
+}
+
+/**
+ * Publisher Audience Profile
+ * Matches the publisher-profiles map in audience-selector.clar.
+ */
+export interface PublisherAudienceProfile {
+  publisher: string;
+  category: string;
+  region: string;
+  language: string;
+  audienceSize: number;
+  tagCount: number;
+  registeredAt: number;
+  lastUpdated: number;
+}
+
+/**
+ * Raw on-chain publisher profile shape.
+ */
+export interface RawClarityPublisherAudienceProfile {
+  category: string;
+  region: string;
+  language: string;
+  'audience-size': bigint;
+  'tag-count': bigint;
+  'registered-at': bigint;
+  'last-updated': bigint;
+}
+
+/**
+ * Match score between a segment and publisher.
+ */
+export interface MatchScore {
+  score: number;
+  computedAt: number;
+}
