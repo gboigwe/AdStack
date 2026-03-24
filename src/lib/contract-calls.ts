@@ -655,3 +655,139 @@ export function buildReadIsAccountBlocked(address: string) {
     functionArgs: [toPrincipalCV(address)],
   };
 }
+
+// --- Audience-selector builders ---
+
+/**
+ * Build contract call to create an audience segment for a campaign.
+ */
+export function buildCreateSegment(
+  campaignId: number,
+  name: string,
+  minReputation: number,
+  requireVerified: boolean,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.AUDIENCE_SELECTOR,
+    functionName: 'create-segment',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toStringAsciiCV(name),
+      toUIntCV(minReputation),
+      toBoolCV(requireVerified),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to add a tag to an audience segment.
+ */
+export function buildAddSegmentTag(segmentId: number, tag: string) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.AUDIENCE_SELECTOR,
+    functionName: 'add-segment-tag',
+    functionArgs: [toUIntCV(segmentId), toStringAsciiCV(tag)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to deactivate an audience segment.
+ */
+export function buildDeactivateSegment(segmentId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.AUDIENCE_SELECTOR,
+    functionName: 'deactivate-segment',
+    functionArgs: [toUIntCV(segmentId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to set/update publisher audience profile.
+ */
+export function buildSetPublisherProfile(
+  category: string,
+  region: string,
+  language: string,
+  audienceSize: number,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.AUDIENCE_SELECTOR,
+    functionName: 'set-publisher-profile',
+    functionArgs: [
+      toStringAsciiCV(category),
+      toStringAsciiCV(region),
+      toStringAsciiCV(language),
+      toUIntCV(audienceSize),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to add a tag to the publisher's profile.
+ */
+export function buildAddPublisherTag(tag: string) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.AUDIENCE_SELECTOR,
+    functionName: 'add-publisher-tag',
+    functionArgs: [toStringAsciiCV(tag)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call to get an audience segment.
+ */
+export function buildReadSegment(segmentId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.AUDIENCE_SELECTOR),
+    functionName: 'get-segment',
+    functionArgs: [toUIntCV(segmentId)],
+  };
+}
+
+/**
+ * Build read-only call to get publisher audience profile.
+ */
+export function buildReadPublisherProfile(publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.AUDIENCE_SELECTOR),
+    functionName: 'get-publisher-profile',
+    functionArgs: [toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get match score between segment and publisher.
+ */
+export function buildReadMatchScore(segmentId: number, publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.AUDIENCE_SELECTOR),
+    functionName: 'get-match-score',
+    functionArgs: [toUIntCV(segmentId), toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get the number of segments for a campaign.
+ */
+export function buildReadCampaignSegmentCount(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.AUDIENCE_SELECTOR),
+    functionName: 'get-campaign-segment-count',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}

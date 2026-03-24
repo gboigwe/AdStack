@@ -40,6 +40,11 @@ path = "contracts/threat-detector.clar"
 clarity_version = 3
 epoch = "3.0"
 
+[contracts.audience-selector]
+path = "contracts/audience-selector.clar"
+clarity_version = 3
+epoch = "3.0"
+
 [repl.analysis]
 passes = ["check_checker"]
 check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
