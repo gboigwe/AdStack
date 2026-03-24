@@ -344,3 +344,34 @@ export function parsePublisherAudienceProfile(
     lastUpdated: Number(raw['last-updated']),
   };
 }
+
+// --- Partner-hub parsers ---
+
+const PARTNERSHIP_STATUS_MAP: Record<number, import('@/types/contracts').PartnershipStatus> = {
+  1: 1, // PENDING
+  2: 2, // ACTIVE
+  3: 3, // PAUSED
+  4: 4, // TERMINATED
+};
+
+/**
+ * Parse raw partnership from partner-hub contract.
+ */
+export function parsePartnership(
+  partnershipId: number,
+  raw: import('@/types/contracts').RawClarityPartnership,
+): import('@/types/contracts').Partnership {
+  const statusNum = Number(raw.status);
+
+  return {
+    partnershipId,
+    advertiser: raw.advertiser,
+    publisher: raw.publisher,
+    commissionRate: Number(raw['commission-rate']),
+    status: PARTNERSHIP_STATUS_MAP[statusNum] ?? 1,
+    campaignsShared: Number(raw['campaigns-shared']),
+    totalRevenue: raw['total-revenue'],
+    createdAt: Number(raw['created-at']),
+    lastActivity: Number(raw['last-activity']),
+  };
+}

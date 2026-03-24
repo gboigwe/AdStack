@@ -108,10 +108,40 @@ export {
   buildSubmitView,
   buildCreateProposal,
   buildCastVote,
+  buildFinalizeProposal,
+  buildExecuteProposal,
   buildReadCampaign,
   buildReadAnalytics,
   buildReadUserProfile,
+  buildReadIsRegistered,
+  buildReadIsVerified,
+  buildCreateSegment,
+  buildSetPublisherProfile,
+  buildProposePartnership,
+  buildAcceptPartnership,
+  buildTerminatePartnership,
+  buildEnrollCampaign,
+  buildReadPartnership,
+  buildReadPartnershipByParties,
 } from './contract-calls';
+
+// Contract response parsers
+export {
+  parseUserProfile,
+  parseUserCounts,
+  parseCampaignAnalytics,
+  parsePublisherStats,
+  parseViewerRecord,
+  parseProposal,
+  parseVoteTally,
+  parseEscrow,
+  parseFraudScore,
+  parseAccountThreats,
+  parsePublisherEarnings,
+  parseAudienceSegment,
+  parsePublisherAudienceProfile,
+  parsePartnership,
+} from './contract-parsers';
 
 // Address validation
 export {

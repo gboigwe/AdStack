@@ -649,3 +649,66 @@ export interface MatchScore {
   score: number;
   computedAt: number;
 }
+
+// ============================================================
+// Partner Hub Types (from partner-hub contract)
+// ============================================================
+
+/**
+ * Partnership status enum matching contract constants.
+ */
+export enum PartnershipStatus {
+  PENDING = 1,
+  ACTIVE = 2,
+  PAUSED = 3,
+  TERMINATED = 4,
+}
+
+/**
+ * Partnership Interface
+ * Matches the partnerships map in partner-hub.clar.
+ */
+export interface Partnership {
+  partnershipId: number;
+  advertiser: string;
+  publisher: string;
+  commissionRate: number;
+  status: PartnershipStatus;
+  campaignsShared: number;
+  totalRevenue: bigint;
+  createdAt: number;
+  lastActivity: number;
+}
+
+/**
+ * Raw on-chain partnership shape from partner-hub read-only calls.
+ */
+export interface RawClarityPartnership {
+  advertiser: string;
+  publisher: string;
+  'commission-rate': bigint;
+  status: bigint;
+  'campaigns-shared': bigint;
+  'total-revenue': bigint;
+  'created-at': bigint;
+  'last-activity': bigint;
+}
+
+/**
+ * Partnership Invitation details.
+ */
+export interface PartnershipInvitation {
+  message: string;
+  invitedAt: number;
+  expiresAt: number;
+}
+
+/**
+ * Campaign enrollment in a partnership.
+ */
+export interface CampaignEnrollment {
+  enrolledAt: number;
+  isActive: boolean;
+  viewsGenerated: number;
+  revenueEarned: bigint;
+}
