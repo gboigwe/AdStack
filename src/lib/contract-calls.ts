@@ -354,3 +354,78 @@ export function buildRequestVerification() {
     postConditions: [],
   };
 }
+
+/**
+ * Build read-only call to get viewer record for a campaign.
+ * Returns view count, first/last view blocks for a specific viewer.
+ */
+export function buildReadViewerRecord(campaignId: number, viewerAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.STATS_TRACKER),
+    functionName: 'get-viewer-record',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get publisher stats for a campaign.
+ */
+export function buildReadPublisherStats(campaignId: number, publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.STATS_TRACKER),
+    functionName: 'get-publisher-stats',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to check if a viewer has seen a campaign.
+ */
+export function buildReadHasViewed(campaignId: number, viewerAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.STATS_TRACKER),
+    functionName: 'has-viewed',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get global total views count.
+ */
+export function buildReadTotalViews() {
+  return {
+    contractId: getContractId(CONTRACTS.STATS_TRACKER),
+    functionName: 'get-total-views',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build contract call to record campaign spend in analytics.
+ * Admin only - called to sync spend data from promo-manager.
+ */
+export function buildRecordCampaignSpend(campaignId: number, amount: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.STATS_TRACKER,
+    functionName: 'record-campaign-spend',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(amount)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call to invalidate a fraudulent view.
+ * Admin only - decrements valid view counts for anti-fraud.
+ */
+export function buildInvalidateView(campaignId: number, viewerAddress: string) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.STATS_TRACKER,
+    functionName: 'invalidate-view',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}

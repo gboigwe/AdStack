@@ -146,28 +146,64 @@ export interface UserCounts {
 
 /**
  * Analytics Metrics Interface (from stats-tracker contract)
+ * Matches the campaign-analytics map in stats-tracker.clar.
  */
 export interface AnalyticsMetrics {
-  totalViews: bigint;
-  validViews: bigint;
-  clicks: bigint;
-  conversions: bigint;
-  spent: bigint;
-  revenue: bigint;
-  lastUpdated: number; // Unix timestamp
+  campaignId: number;
+  totalViews: number;
+  uniqueViewers: number;
+  totalSpent: bigint;
+  lastViewBlock: number;
 }
 
 /**
- * Publisher Metrics Interface
+ * Raw on-chain analytics shape from stats-tracker read-only calls.
+ */
+export interface RawClarityAnalytics {
+  'total-views': bigint;
+  'unique-viewers': bigint;
+  'total-spent': bigint;
+  'last-view-block': bigint;
+}
+
+/**
+ * Publisher stats from stats-tracker contract.
  */
 export interface PublisherMetrics {
   publisher: string;
   campaignId: number;
-  totalViews: bigint;
-  totalEarned: bigint;
-  avgCtr: number;
-  qualityScore: number;
-  lastPayout: number; // Unix timestamp
+  viewsSubmitted: number;
+  validViews: number;
+  lastSubmitBlock: number;
+}
+
+/**
+ * Raw on-chain publisher stats shape.
+ */
+export interface RawClarityPublisherStats {
+  'views-submitted': bigint;
+  'valid-views': bigint;
+  'last-submit-block': bigint;
+}
+
+/**
+ * Viewer record from stats-tracker contract.
+ */
+export interface ViewerRecord {
+  campaignId: number;
+  viewer: string;
+  viewCount: number;
+  firstViewBlock: number;
+  lastViewBlock: number;
+}
+
+/**
+ * Raw on-chain viewer record shape.
+ */
+export interface RawClarityViewerRecord {
+  'view-count': bigint;
+  'first-view-block': bigint;
+  'last-view-block': bigint;
 }
 
 /**
