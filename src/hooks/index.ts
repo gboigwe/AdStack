@@ -5,7 +5,7 @@ export { useReadOnlyCall } from './use-read-only-call';
 export { useWalletSession } from './use-wallet-session';
 export { useToast } from './use-toast';
 export { useCampaign, useCampaignCount, useCampaignAnalytics } from './use-campaign';
-export { useUserProfile, useIsRegistered } from './use-user-profile';
+export { useUserProfile, useIsRegistered, useIsVerified, useReputation, useUserCounts } from './use-user-profile';
 export { useMediaQuery, BREAKPOINTS } from './use-media-query';
 export { useProposalCount, useProposal, useHasVoted } from './use-governance';
 export { useContractCall } from './use-contract-call';
