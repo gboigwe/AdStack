@@ -541,3 +541,71 @@ export function buildReadPlatformFundStats() {
     functionArgs: [],
   };
 }
+
+// --- Cash-distributor builders ---
+
+/**
+ * Build read-only call to get publisher earnings for a campaign.
+ */
+export function buildReadPublisherEarnings(campaignId: number, publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-publisher-earnings',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get claimable payout amount.
+ */
+export function buildReadClaimableAmount(campaignId: number, publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-claimable-amount',
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get publisher totals across all campaigns.
+ */
+export function buildReadPublisherTotals(publisherAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-publisher-totals',
+    functionArgs: [toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get distribution stats.
+ */
+export function buildReadDistributionStats() {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-distribution-stats',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build contract call to record publisher earnings (admin only).
+ */
+export function buildRecordEarnings(
+  campaignId: number,
+  publisherAddress: string,
+  amount: number,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'record-earnings',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toPrincipalCV(publisherAddress),
+      toUIntCV(amount),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
