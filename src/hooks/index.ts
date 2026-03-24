@@ -8,7 +8,7 @@ export { useCampaign, useCampaignCount, useRemainingBudget, useIsCampaignActive,
 export { useCampaignAnalytics, usePublisherStats, useHasViewed, useTotalViews, useTotalValidViews } from './use-analytics';
 export { useUserProfile, useIsRegistered, useIsVerified, useReputation, useUserCounts } from './use-user-profile';
 export { useMediaQuery, BREAKPOINTS } from './use-media-query';
-export { useProposalCount, useProposal, useHasVoted } from './use-governance';
+export { useProposalCount, useProposal, useHasVoted, useVoteTally, useIsGovernancePaused, useProposalStatus } from './use-governance';
 export { useContractCall } from './use-contract-call';
 export { useFocusTrap } from './use-focus-trap';
 export { useApiQuery } from './use-api-query';

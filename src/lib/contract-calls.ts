@@ -237,6 +237,72 @@ export function buildCastVote(proposalId: number, inFavor: boolean) {
 }
 
 /**
+ * Build contract call for finalizing an expired proposal.
+ * Permissionless: anyone can trigger finalization after voting ends.
+ */
+export function buildFinalizeProposal(proposalId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'finalize-proposal',
+    functionArgs: [toUIntCV(proposalId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for executing a passed proposal (admin only).
+ */
+export function buildExecuteProposal(proposalId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'execute-proposal',
+    functionArgs: [toUIntCV(proposalId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for cancelling an active proposal.
+ * Can be called by the proposer or contract admin.
+ */
+export function buildCancelProposal(proposalId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.VOTE_HANDLER,
+    functionName: 'cancel-proposal',
+    functionArgs: [toUIntCV(proposalId)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call for vote tally on a proposal.
+ */
+export function buildReadVoteTally(proposalId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.VOTE_HANDLER),
+    functionName: 'get-vote-tally',
+    functionArgs: [toUIntCV(proposalId)],
+  };
+}
+
+/**
+ * Build read-only call to get a specific vote record.
+ */
+export function buildReadVote(proposalId: number, voterAddress: string) {
+  return {
+    contractId: getContractId(CONTRACTS.VOTE_HANDLER),
+    functionName: 'get-vote',
+    functionArgs: [toUIntCV(proposalId), toPrincipalCV(voterAddress)],
+  };
+}
+
+/**
  * Build read-only call arguments for fetching a campaign.
  * Calls promo-manager.get-campaign.
  */
