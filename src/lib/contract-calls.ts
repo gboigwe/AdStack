@@ -265,3 +265,76 @@ export function buildReadUserProfile(address: string) {
     functionArgs: [toPrincipalCV(address)],
   };
 }
+
+/**
+ * Build read-only call to check if a user is registered.
+ */
+export function buildReadIsRegistered(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.USER_PROFILES),
+    functionName: 'is-registered',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}
+
+/**
+ * Build read-only call to check if a user is verified.
+ * Considers both verification status and expiry block height.
+ */
+export function buildReadIsVerified(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.USER_PROFILES),
+    functionName: 'is-verified',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}
+
+/**
+ * Build read-only call to get user reputation score.
+ */
+export function buildReadReputation(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.USER_PROFILES),
+    functionName: 'get-reputation',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}
+
+/**
+ * Build read-only call to get platform user counts.
+ */
+export function buildReadUserCounts() {
+  return {
+    contractId: getContractId(CONTRACTS.USER_PROFILES),
+    functionName: 'get-user-counts',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build contract call for updating display name.
+ */
+export function buildUpdateDisplayName(newName: string) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'update-display-name',
+    functionArgs: [toStringAsciiCV(newName)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for requesting verification.
+ */
+export function buildRequestVerification() {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'request-verification',
+    functionArgs: [],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
