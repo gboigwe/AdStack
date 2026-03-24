@@ -1,12 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   truncateAddress,
   formatSTX,
   formatSTXWithSymbol,
   formatCompactNumber,
+  formatTimestamp,
+  formatRelativeTime,
   formatTxId,
   formatPercentage,
   formatDuration,
+  estimateBlockDate,
+  copyToClipboard,
   formatFee,
   formatCampaignStatus,
   getStatusColorClass,
@@ -222,6 +226,124 @@ describe('pluralize', () => {
 
   it('formats count with commas', () => {
     expect(pluralize(1000, 'item')).toBe('1,000 items');
+  });
+});
+
+describe('formatTimestamp', () => {
+  it('formats a Unix timestamp to a readable date', () => {
+    // 2024-01-15 12:00:00 UTC = 1705320000
+    const result = formatTimestamp(1705320000);
+    expect(result).toContain('Jan');
+    expect(result).toContain('15');
+    expect(result).toContain('2024');
+  });
+
+  it('accepts custom Intl options', () => {
+    const result = formatTimestamp(1705320000, { year: 'numeric', month: 'long' });
+    expect(result).toContain('January');
+    expect(result).toContain('2024');
+  });
+
+  it('includes time by default', () => {
+    const result = formatTimestamp(1705320000);
+    // Default options include hour and minute
+    expect(result).toMatch(/\d{1,2}:\d{2}/);
+  });
+});
+
+describe('formatRelativeTime', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-16T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('formats seconds ago', () => {
+    const thirtySecondsAgo = Math.floor(Date.now() / 1000) - 30;
+    const result = formatRelativeTime(thirtySecondsAgo);
+    expect(result).toContain('30 seconds ago');
+  });
+
+  it('formats minutes ago', () => {
+    const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 300;
+    const result = formatRelativeTime(fiveMinutesAgo);
+    expect(result).toContain('5 minutes ago');
+  });
+
+  it('formats hours ago', () => {
+    const twoHoursAgo = Math.floor(Date.now() / 1000) - 7200;
+    const result = formatRelativeTime(twoHoursAgo);
+    expect(result).toContain('2 hours ago');
+  });
+
+  it('formats days ago', () => {
+    const threeDaysAgo = Math.floor(Date.now() / 1000) - 259200;
+    const result = formatRelativeTime(threeDaysAgo);
+    expect(result).toContain('3 days ago');
+  });
+
+  it('formats weeks ago', () => {
+    const twoWeeksAgo = Math.floor(Date.now() / 1000) - 1209600;
+    const result = formatRelativeTime(twoWeeksAgo);
+    expect(result).toContain('2 weeks ago');
+  });
+
+  it('formats future timestamps', () => {
+    const inTwoHours = Math.floor(Date.now() / 1000) + 7200;
+    const result = formatRelativeTime(inTwoHours);
+    expect(result).toContain('in 2 hours');
+  });
+});
+
+describe('estimateBlockDate', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-03-16T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('estimates a future block date', () => {
+    const result = estimateBlockDate(1006, 1000);
+    // 6 blocks × 10 min = 60 min in the future
+    const expected = new Date('2026-03-16T13:00:00Z');
+    expect(result.getTime()).toBe(expected.getTime());
+  });
+
+  it('estimates a past block date', () => {
+    const result = estimateBlockDate(994, 1000);
+    // -6 blocks × 10 min = 60 min in the past
+    const expected = new Date('2026-03-16T11:00:00Z');
+    expect(result.getTime()).toBe(expected.getTime());
+  });
+
+  it('returns now for same block height', () => {
+    const result = estimateBlockDate(1000, 1000);
+    expect(result.getTime()).toBe(Date.now());
+  });
+});
+
+describe('copyToClipboard', () => {
+  it('returns true on successful copy', async () => {
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+    });
+    const result = await copyToClipboard('hello');
+    expect(result).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('hello');
+  });
+
+  it('returns false when clipboard fails', async () => {
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error('fail')) },
+    });
+    const result = await copyToClipboard('hello');
+    expect(result).toBe(false);
   });
 });
 
