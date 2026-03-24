@@ -18,9 +18,15 @@ export const CURRENT_NETWORK: NetworkType =
 
 export const NETWORK: StacksNetwork = NETWORKS[CURRENT_NETWORK];
 
+/**
+ * Devnet deployer address from Clarinet settings/Devnet.toml.
+ * Used when NEXT_PUBLIC_NETWORK=devnet for local contract testing.
+ */
+const DEVNET_DEPLOYER = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+
 export const CONTRACT_ADDRESS =
   process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
-  'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD';
+  (CURRENT_NETWORK === 'devnet' ? DEVNET_DEPLOYER : 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD');
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
