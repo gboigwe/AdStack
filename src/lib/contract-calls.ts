@@ -609,3 +609,49 @@ export function buildRecordEarnings(
     postConditions: [],
   };
 }
+
+// --- Threat-detector builders ---
+
+/**
+ * Build read-only call to get campaign fraud score.
+ */
+export function buildReadCampaignScore(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.THREAT_DETECTOR),
+    functionName: 'get-campaign-score',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get threat level for a campaign.
+ */
+export function buildReadThreatLevel(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.THREAT_DETECTOR),
+    functionName: 'get-threat-level',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get account threat status.
+ */
+export function buildReadAccountThreats(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.THREAT_DETECTOR),
+    functionName: 'get-account-threats',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}
+
+/**
+ * Build read-only call to check if an account is blocked.
+ */
+export function buildReadIsAccountBlocked(address: string) {
+  return {
+    contractId: getContractId(CONTRACTS.THREAT_DETECTOR),
+    functionName: 'is-account-blocked',
+    functionArgs: [toPrincipalCV(address)],
+  };
+}

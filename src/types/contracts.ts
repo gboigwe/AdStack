@@ -271,17 +271,39 @@ export interface Dispute {
 
 /**
  * Fraud Score Interface (from threat-detector contract)
+ * Matches the campaign-scores map in threat-detector.clar.
  */
 export interface FraudScore {
   campaignId: number;
-  score: number; // 0-100
+  fraudScore: number; // 0-100
   flagCount: number;
   lastChecked: number;
-  details: {
-    suspiciousViews: bigint;
-    totalViews: bigint;
-    fraudPercentage: number;
-  };
+  threatLevel: number; // 0-4
+  suspiciousViews: number;
+  totalViewsAtCheck: number;
+}
+
+/**
+ * Account threat status from threat-detector.
+ */
+export interface AccountThreats {
+  account: string;
+  totalFlagsReceived: number;
+  totalFlagsResolved: number;
+  threatLevel: number;
+  lastFlagged: number;
+  isBlocked: boolean;
+}
+
+/**
+ * Threat level enum for display purposes.
+ */
+export enum ThreatLevel {
+  NONE = 0,
+  LOW = 1,
+  MEDIUM = 2,
+  HIGH = 3,
+  CRITICAL = 4,
 }
 
 /**
