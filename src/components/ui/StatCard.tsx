@@ -38,12 +38,12 @@ export const StatCard = memo(function StatCard(props: StatCardProps) {
 
   const iconElement = isIconComponent(props) ? (
     <div
-      className={`w-12 h-12 ${props.iconBgColor || 'bg-blue-100'} rounded-lg flex items-center justify-center`}
+      className={`w-12 h-12 ${props.iconBgColor || 'bg-blue-100 dark:bg-blue-900/30'} rounded-lg flex items-center justify-center`}
     >
-      <props.icon className={`w-6 h-6 ${props.iconColor || 'text-blue-600'}`} />
+      <props.icon className={`w-6 h-6 ${props.iconColor || 'text-blue-600 dark:text-blue-400'}`} />
     </div>
   ) : (
-    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
       {props.icon}
     </div>
   );
