@@ -10,6 +10,7 @@ sbtc_balance = 1_000_000_000
 # stx_address: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
 # btc_address: mqVnk6NPRdhntvfm4hh9vvjiRkFDUuSYsH
 
+# Advertiser test account
 [accounts.wallet_1]
 mnemonic = "sell invite acquire kitten bamboo drastic jelly vivid peace spawn twice guilt pave pen trash pretty park cube fragile unaware remain midnight betray rebuild"
 balance = 100_000_000_000_000
@@ -18,6 +19,7 @@ sbtc_balance = 1_000_000_000
 # stx_address: ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5
 # btc_address: mr1iPkD9N3RJZZxXRk7xF9d36gffa6exNC
 
+# Publisher test account
 [accounts.wallet_2]
 mnemonic = "hold excess usual excess ring elephant install account glad dry fragile donkey gaze humble truck breeze nation gasp vacuum limb head keep delay hospital"
 balance = 100_000_000_000_000
@@ -26,6 +28,7 @@ sbtc_balance = 1_000_000_000
 # stx_address: ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG
 # btc_address: muYdXKmX9bByAueDe6KFfHd5Ff1gdN9ErG
 
+# Viewer test account
 [accounts.wallet_3]
 mnemonic = "cycle puppy glare enroll cost improve round trend wrist mushroom scorpion tower claim oppose clever elephant dinosaur eight problem before frozen dune wagon high"
 balance = 100_000_000_000_000
