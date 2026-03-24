@@ -13,6 +13,8 @@ export { useEscrow, useEscrowBalance, usePublisherRelease, usePlatformFundStats 
 export { usePublisherEarnings, useClaimableAmount, usePublisherTotals, useDistributionStats } from './use-payouts';
 export { useCampaignFraudScore, useThreatLevel, useIsAccountBlocked, useAccountThreats } from './use-fraud-detection';
 export { useContractCall } from './use-contract-call';
+export { useContractEvents, useFilteredContractEvents, useInvalidateContractEvents } from './use-contract-events';
+export { useTxStatus, useBatchTxStatus, useInvalidateTxStatus } from './use-tx-status';
 export { useFocusTrap } from './use-focus-trap';
 export { useApiQuery } from './use-api-query';
 export { useMempoolTransactions } from './use-mempool';
