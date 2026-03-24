@@ -63,7 +63,7 @@
   { count: uint }
 )
 
-;; Campaign → segment ID mapping (index-based)
+;; Campaign -> segment ID mapping (index-based)
 (define-map campaign-segments
   { campaign-id: uint, index: uint }
   { segment-id: uint }
@@ -111,7 +111,7 @@
 )
 
 ;; ============================================================
-;; Public Functions — Segment Management
+;; Public Functions -- Segment Management
 ;; ============================================================
 
 ;; Create a new audience segment for a campaign
@@ -216,7 +216,7 @@
 )
 
 ;; ============================================================
-;; Public Functions — Publisher Profiles
+;; Public Functions -- Publisher Profiles
 ;; ============================================================
 
 ;; Register or update a publisher's audience profile
@@ -285,7 +285,7 @@
 )
 
 ;; ============================================================
-;; Public Functions — Match Scoring (Admin/Oracle)
+;; Public Functions -- Match Scoring (Admin/Oracle)
 ;; ============================================================
 
 ;; Record a pre-computed match score between a segment and publisher
