@@ -47,10 +47,27 @@ export {
   fetchTransaction,
   fetchBlockHeight,
   callReadOnlyFunction,
+  fetchMempoolTransactions,
+  fetchContractEvents,
+  fetchNftHoldings,
+  fetchAccountNonces,
+  fetchContractInfo,
+  fetchContractInterface,
   healthCheck,
   getApiUrl,
   getNetworkName,
 } from './stacks-api';
+
+// Clarity hex decoder
+export {
+  decodeClarityHex,
+  decodeUint,
+  decodeBool,
+  decodeString,
+  decodeTupleToObject,
+  isOkResponse,
+  isErrResponse,
+} from './clarity-decoder';
 
 // Clarity value converters
 export {
