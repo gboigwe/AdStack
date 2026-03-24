@@ -96,8 +96,8 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} title="Connect Wallet">
       {/* Error Message */}
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-800">{error}</p>
+        <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
         </div>
       )}
 
@@ -112,7 +112,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
               key={wallet.id}
               onClick={() => handleWalletConnect(wallet.id)}
               disabled={isConnecting}
-              className="w-full p-4 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="w-full p-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -122,17 +122,17 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
 
                   <div className="text-left">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">{wallet.name}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{wallet.name}</h3>
                       {installed && (
-                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full flex items-center gap-1">
+                        <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 text-xs rounded-full flex items-center gap-1">
                           <Check className="w-3 h-3" />
                           Installed
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 mt-0.5">{wallet.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">{wallet.description}</p>
 
-                    <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-500">
                       {wallet.mobile && (
                         <span className="flex items-center gap-1">
                           <Smartphone className="w-3 h-3" />
@@ -159,14 +159,14 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
       </div>
 
       {/* Footer */}
-      <div className="mt-6 pt-4 border-t border-gray-200 text-center">
-        <p className="text-sm text-gray-600">
+      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           New to Stacks?{' '}
           <a
             href="https://www.stacks.co/explore/wallets"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center gap-1"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium inline-flex items-center gap-1"
           >
             Learn about wallets
             <ExternalLink className="w-3 h-3" />
