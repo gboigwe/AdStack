@@ -10,6 +10,7 @@ export { useUserProfile, useIsRegistered, useIsVerified, useReputation, useUserC
 export { useMediaQuery, BREAKPOINTS } from './use-media-query';
 export { useProposalCount, useProposal, useHasVoted, useVoteTally, useIsGovernancePaused, useProposalStatus } from './use-governance';
 export { useEscrow, useEscrowBalance, usePublisherRelease, usePlatformFundStats } from './use-escrow';
+export { usePublisherEarnings, useClaimableAmount, usePublisherTotals, useDistributionStats } from './use-payouts';
 export { useContractCall } from './use-contract-call';
 export { useFocusTrap } from './use-focus-trap';
 export { useApiQuery } from './use-api-query';
