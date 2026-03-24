@@ -208,15 +208,39 @@ export interface RawClarityViewerRecord {
 
 /**
  * Escrow Details Interface (from funds-keeper contract)
+ * Matches the escrows map in funds-keeper.clar.
  */
 export interface EscrowDetails {
   campaignId: number;
-  balance: bigint;
-  locked: bigint;
+  advertiser: string;
+  deposited: bigint;
   released: bigint;
-  createdAt: number;
-  expiresAt: number;
+  refunded: bigint;
   status: EscrowStatus;
+  createdAt: number;
+  lastReleaseBlock: number;
+}
+
+/**
+ * Raw on-chain escrow shape from funds-keeper read-only calls.
+ */
+export interface RawClarityEscrow {
+  advertiser: string;
+  deposited: bigint;
+  released: bigint;
+  refunded: bigint;
+  status: bigint;
+  'created-at': bigint;
+  'last-release-block': bigint;
+}
+
+/**
+ * Platform-wide fund statistics from funds-keeper.
+ */
+export interface PlatformFundStats {
+  escrowed: bigint;
+  released: bigint;
+  refunded: bigint;
 }
 
 /**
