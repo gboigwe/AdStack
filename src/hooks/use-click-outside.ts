@@ -7,17 +7,38 @@ import { useEffect, useRef, type RefObject } from 'react';
  * referenced element. Commonly used to close dropdowns, popovers,
  * and context menus.
  *
- * @param handler — called on outside click
- * @returns a ref to attach to the container element
+ * Supports two call signatures:
  *
- * @example
- * const ref = useClickOutside<HTMLDivElement>(() => setOpen(false));
- * return <div ref={ref}>...</div>;
+ * 1. Returns a ref — caller attaches it to a DOM element:
+ *    ```ts
+ *    const ref = useClickOutside<HTMLDivElement>(() => setOpen(false));
+ *    return <div ref={ref}>...</div>;
+ *    ```
+ *
+ * 2. Accepts an existing ref — useful when the caller already owns the ref:
+ *    ```ts
+ *    const menuRef = useRef<HTMLDivElement>(null);
+ *    useClickOutside(menuRef, () => setOpen(false));
+ *    return <div ref={menuRef}>...</div>;
+ *    ```
  */
 export function useClickOutside<T extends HTMLElement>(
   handler: () => void,
-): RefObject<T | null> {
-  const ref = useRef<T | null>(null);
+): RefObject<T | null>;
+export function useClickOutside<T extends HTMLElement>(
+  ref: RefObject<T | null>,
+  handler: () => void,
+): void;
+export function useClickOutside<T extends HTMLElement>(
+  refOrHandler: RefObject<T | null> | (() => void),
+  maybeHandler?: () => void,
+): RefObject<T | null> | void {
+  const isRefOverload = typeof refOrHandler !== 'function';
+  const externalRef = isRefOverload ? refOrHandler : null;
+  const handler = isRefOverload ? maybeHandler! : refOrHandler;
+
+  const internalRef = useRef<T | null>(null);
+  const ref = externalRef ?? internalRef;
   const handlerRef = useRef(handler);
   handlerRef.current = handler;
 
@@ -34,7 +55,7 @@ export function useClickOutside<T extends HTMLElement>(
       document.removeEventListener('mousedown', listener);
       document.removeEventListener('touchstart', listener);
     };
-  }, []);
+  }, [ref]);
 
-  return ref;
+  if (!isRefOverload) return internalRef;
 }
