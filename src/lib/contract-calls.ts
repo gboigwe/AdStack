@@ -18,6 +18,17 @@ import {
   PC_MODE,
 } from './post-conditions';
 import type { CreateCampaignParams, RegisterUserParams, CreateProposalParams } from '@/types/contracts';
+import { UserRole } from '@/types/contracts';
+
+/**
+ * Map frontend UserRole enum values to on-chain uint constants.
+ * Must stay in sync with user-profiles.clar ROLE_* constants.
+ */
+const ROLE_TO_UINT: Record<string, number> = {
+  [UserRole.ADVERTISER]: 1,
+  [UserRole.PUBLISHER]: 2,
+  [UserRole.VIEWER]: 3,
+};
 
 /**
  * Build contract call options for creating a new campaign.
@@ -81,12 +92,17 @@ export function buildResumeCampaign(campaignId: number) {
  * Calls user-profiles.register with role and display name.
  */
 export function buildRegisterUser(params: RegisterUserParams) {
+  const roleUint = ROLE_TO_UINT[params.role];
+  if (roleUint === undefined) {
+    throw new Error(`Invalid role: ${params.role}`);
+  }
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.USER_PROFILES,
     functionName: 'register',
     functionArgs: [
-      toStringAsciiCV(params.role),
+      toUIntCV(roleUint),
       toStringAsciiCV(params.displayName),
     ],
     postConditionMode: PC_MODE.DENY,
