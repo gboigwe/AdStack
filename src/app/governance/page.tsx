@@ -102,10 +102,10 @@ export default function GovernancePage() {
                     placeholder="Proposal title"
                     aria-invalid={!!formErrors.title}
                     aria-describedby={formErrors.title ? 'proposal-title-error' : 'proposal-title-hint'}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.title ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.title ? 'border-red-400 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}`}
                   />
                   {formErrors.title ? (
-                    <p id="proposal-title-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.title}</p>
+                    <p id="proposal-title-error" className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">{formErrors.title}</p>
                   ) : (
                     <p id="proposal-title-hint" className="text-xs text-gray-400 mt-1">{proposalTitle.length}/100</p>
                   )}
@@ -122,10 +122,10 @@ export default function GovernancePage() {
                     placeholder="Describe your proposal (at least 20 characters)..."
                     aria-invalid={!!formErrors.desc}
                     aria-describedby={formErrors.desc ? 'proposal-desc-error' : undefined}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${formErrors.desc ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${formErrors.desc ? 'border-red-400 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}`}
                   />
                   {formErrors.desc && (
-                    <p id="proposal-desc-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.desc}</p>
+                    <p id="proposal-desc-error" className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">{formErrors.desc}</p>
                   )}
                 </div>
                 <div>
@@ -141,10 +141,10 @@ export default function GovernancePage() {
                     onChange={(e) => { setProposalDays(e.target.value); setFormErrors((p) => { const { duration: _, ...r } = p; return r; }); }}
                     aria-invalid={!!formErrors.duration}
                     aria-describedby={formErrors.duration ? 'proposal-duration-error' : undefined}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.duration ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${formErrors.duration ? 'border-red-400 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'}`}
                   />
                   {formErrors.duration && (
-                    <p id="proposal-duration-error" className="text-xs text-red-600 mt-1" role="alert">{formErrors.duration}</p>
+                    <p id="proposal-duration-error" className="text-xs text-red-600 dark:text-red-400 mt-1" role="alert">{formErrors.duration}</p>
                   )}
                 </div>
                 <div className="flex gap-3">
