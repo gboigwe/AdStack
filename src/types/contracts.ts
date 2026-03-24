@@ -91,17 +91,57 @@ export interface Campaign {
 
 /**
  * User Profile Interface (from user-profiles contract)
+ * Matches the on-chain `profiles` map structure in user-profiles.clar.
  */
 export interface UserProfile {
   address: string;
+  displayName: string;
+  role: UserRole;
   status: 'active' | 'inactive' | 'suspended';
-  roles: UserRole[];
-  joinHeight: number; // Unix timestamp from stacks-block-time
-  lastActive: number; // Unix timestamp from stacks-block-time
   verificationStatus: VerificationStatus;
-  verificationExpires: number; // Unix timestamp
-  profilesCount: number;
-  metadata?: string;
+  verificationExpires: number; // block height
+  reputationScore: number; // 0-100
+  joinHeight: number; // block height at registration
+  lastActive: number; // block height of last activity
+  totalCampaigns: number;
+  totalEarnings: bigint;
+}
+
+/**
+ * On-chain profile shape returned by the Clarity read-only call.
+ * Keys use kebab-case matching the Clarity map field names.
+ */
+export interface RawClarityProfile {
+  'display-name': string;
+  role: bigint;
+  status: bigint;
+  'verification-status': bigint;
+  'verification-expires': bigint;
+  'reputation-score': bigint;
+  'join-height': bigint;
+  'last-active': bigint;
+  'total-campaigns': bigint;
+  'total-earnings': bigint;
+}
+
+/**
+ * On-chain user counts shape returned by get-user-counts.
+ */
+export interface RawClarityUserCounts {
+  total: bigint;
+  advertisers: bigint;
+  publishers: bigint;
+  viewers: bigint;
+}
+
+/**
+ * Parsed user counts for frontend consumption.
+ */
+export interface UserCounts {
+  total: number;
+  advertisers: number;
+  publishers: number;
+  viewers: number;
 }
 
 /**
