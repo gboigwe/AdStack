@@ -3,9 +3,13 @@
  * Convert raw Clarity read-only responses into typed frontend objects.
  * Each parser handles the kebab-case to camelCase mapping and bigint
  * to number conversion for fields that fit safely in JS numbers.
+ *
+ * Two layers of parsing:
+ * 1. decodeClarityHex: hex string → DecodedClarityValue tree
+ * 2. These parsers: DecodedClarityValue or raw object → typed frontend interfaces
  */
 
-import { UserRole, VerificationStatus, ProposalStatus, EscrowStatus } from '@/types/contracts';
+import { UserRole, VerificationStatus, ProposalStatus, EscrowStatus, ThreatLevel } from '@/types/contracts';
 import type {
   UserProfile,
   RawClarityProfile,
@@ -212,5 +216,90 @@ export function parseEscrow(
     status: ESCROW_STATUS_MAP[statusNum] ?? EscrowStatus.ACTIVE,
     createdAt: Number(raw['created-at']),
     lastReleaseBlock: Number(raw['last-release-block']),
+  };
+}
+
+// --- Threat-detector parsers ---
+
+/** Raw on-chain campaign score shape from threat-detector. */
+interface RawCampaignScore {
+  'fraud-score': bigint;
+  'flag-count': bigint;
+  'last-checked': bigint;
+  'threat-level': bigint;
+  'suspicious-views': bigint;
+  'total-views-at-check': bigint;
+}
+
+/** Raw on-chain account threats shape from threat-detector. */
+interface RawAccountThreats {
+  'total-flags-received': bigint;
+  'total-flags-resolved': bigint;
+  'threat-level': bigint;
+  'last-flagged': bigint;
+  'is-blocked': boolean;
+}
+
+const THREAT_LEVEL_MAP: Record<number, ThreatLevel> = {
+  0: ThreatLevel.NONE,
+  1: ThreatLevel.LOW,
+  2: ThreatLevel.MEDIUM,
+  3: ThreatLevel.HIGH,
+  4: ThreatLevel.CRITICAL,
+};
+
+/**
+ * Parse raw campaign fraud score from threat-detector contract.
+ */
+export function parseFraudScore(
+  campaignId: number,
+  raw: RawCampaignScore,
+): import('@/types/contracts').FraudScore {
+  return {
+    campaignId,
+    fraudScore: Number(raw['fraud-score']),
+    flagCount: Number(raw['flag-count']),
+    lastChecked: Number(raw['last-checked']),
+    threatLevel: THREAT_LEVEL_MAP[Number(raw['threat-level'])] ?? ThreatLevel.NONE,
+    suspiciousViews: Number(raw['suspicious-views']),
+    totalViewsAtCheck: Number(raw['total-views-at-check']),
+  };
+}
+
+/**
+ * Parse raw account threats from threat-detector contract.
+ */
+export function parseAccountThreats(
+  account: string,
+  raw: RawAccountThreats,
+): import('@/types/contracts').AccountThreats {
+  return {
+    account,
+    totalFlagsReceived: Number(raw['total-flags-received']),
+    totalFlagsResolved: Number(raw['total-flags-resolved']),
+    threatLevel: THREAT_LEVEL_MAP[Number(raw['threat-level'])] ?? ThreatLevel.NONE,
+    lastFlagged: Number(raw['last-flagged']),
+    isBlocked: raw['is-blocked'],
+  };
+}
+
+// --- Cash-distributor parsers ---
+
+/**
+ * Parse raw publisher earnings from cash-distributor contract.
+ */
+export function parsePublisherEarnings(
+  campaignId: number,
+  publisher: string,
+  raw: import('@/types/contracts').RawClarityPublisherEarnings,
+): import('@/types/contracts').PublisherEarnings {
+  return {
+    campaignId,
+    publisher,
+    grossEarnings: raw['gross-earnings'],
+    feesDeducted: raw['fees-deducted'],
+    netEarnings: raw['net-earnings'],
+    claimed: raw.claimed,
+    lastUpdated: Number(raw['last-updated']),
   };
 }

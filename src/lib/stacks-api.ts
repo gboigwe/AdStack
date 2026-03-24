@@ -340,3 +340,77 @@ export function fetchNftHoldings(
       ),
   );
 }
+
+/** Account nonce info from the extended API. */
+export interface AccountNonces {
+  last_mempool_tx_nonce: number | null;
+  last_executed_tx_nonce: number | null;
+  possible_next_nonce: number;
+  detected_missing_nonces: number[];
+  detected_mempool_nonces: number[];
+}
+
+/**
+ * Fetch account nonce information.
+ * Useful for building transactions with the correct nonce to avoid
+ * stuck transactions and nonce gaps.
+ */
+export function fetchAccountNonces(address: string): Promise<ApiResult<AccountNonces>> {
+  return deduplicatedFetch(
+    `nonces:${address}`,
+    () => apiFetch<AccountNonces>(`/extended/v1/address/${address}/nonces`),
+  );
+}
+
+/** Contract interface (ABI) from the API. */
+export interface ContractInterface {
+  functions: Array<{
+    name: string;
+    access: 'public' | 'read_only' | 'private';
+    args: Array<{ name: string; type: string }>;
+    outputs: { type: string };
+  }>;
+  variables: Array<{
+    name: string;
+    type: string;
+    access: 'constant' | 'variable';
+  }>;
+  maps: Array<{
+    name: string;
+    key: string;
+    value: string;
+  }>;
+  fungible_tokens: Array<{ name: string }>;
+  non_fungible_tokens: Array<{ name: string; type: string }>;
+}
+
+/** Contract source info from the API. */
+export interface ContractInfo {
+  tx_id: string;
+  contract_id: string;
+  block_height: number;
+  source_code: string;
+  abi: string;
+  canonical: boolean;
+}
+
+/**
+ * Fetch contract source and ABI for a deployed contract.
+ * The ABI string can be parsed with JSON.parse() to get the ContractInterface.
+ */
+export function fetchContractInfo(contractId: string): Promise<ApiResult<ContractInfo>> {
+  return deduplicatedFetch(
+    `contract-info:${contractId}`,
+    () => apiFetch<ContractInfo>(`/v2/contracts/source/${contractId.replace('.', '/')}`),
+  );
+}
+
+/**
+ * Fetch the parsed ABI/interface for a deployed contract.
+ */
+export async function fetchContractInterface(contractId: string): Promise<ApiResult<ContractInterface>> {
+  return deduplicatedFetch(
+    `contract-abi:${contractId}`,
+    () => apiFetch<ContractInterface>(`/v2/contracts/interface/${contractId.replace('.', '/')}`),
+  );
+}
