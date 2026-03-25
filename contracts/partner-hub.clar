@@ -8,6 +8,7 @@
 ;; ============================================================
 
 (define-constant CONTRACT_ADMIN tx-sender)
+(define-constant CONTRACT_VERSION "4.0.0")
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u900))
@@ -167,7 +168,8 @@
       partnership-id: pid,
       advertiser: tx-sender,
       publisher: publisher,
-      commission-rate: commission-rate
+      commission-rate: commission-rate,
+      timestamp: stacks-block-time
     })
 
     (ok pid)
@@ -200,7 +202,8 @@
     (print {
       event: "partnership-accepted",
       partnership-id: partnership-id,
-      publisher: tx-sender
+      publisher: tx-sender,
+      timestamp: stacks-block-time
     })
 
     (ok true)
@@ -225,7 +228,7 @@
 
     (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
 
-    (print { event: "partnership-paused", partnership-id: partnership-id, paused-by: tx-sender })
+    (print { event: "partnership-paused", partnership-id: partnership-id, paused-by: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -248,7 +251,7 @@
 
     (var-set total-active-partnerships (+ (var-get total-active-partnerships) u1))
 
-    (print { event: "partnership-resumed", partnership-id: partnership-id, resumed-by: tx-sender })
+    (print { event: "partnership-resumed", partnership-id: partnership-id, resumed-by: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -275,7 +278,7 @@
       true
     )
 
-    (print { event: "partnership-terminated", partnership-id: partnership-id, terminated-by: tx-sender })
+    (print { event: "partnership-terminated", partnership-id: partnership-id, terminated-by: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -314,7 +317,8 @@
     (print {
       event: "campaign-enrolled",
       partnership-id: partnership-id,
-      campaign-id: campaign-id
+      campaign-id: campaign-id,
+      timestamp: stacks-block-time
     })
 
     (ok true)
@@ -364,7 +368,7 @@
   (begin
     (asserts! (is-admin) ERR_UNAUTHORIZED)
     (var-set platform-paused paused)
-    (print { event: "platform-pause-toggled", paused: paused })
+    (print { event: "platform-pause-toggled", paused: paused, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -419,4 +423,8 @@
   (default-to DEFAULT_COMMISSION
     (get commission-rate (map-get? partnerships { partnership-id: partnership-id }))
   )
+)
+
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
 )
