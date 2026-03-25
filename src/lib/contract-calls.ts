@@ -929,3 +929,103 @@ export function buildReadTotalActivePartnerships() {
     functionArgs: [],
   };
 }
+
+// ---------------------------------------------------------------------------
+// Clarity 4 Admin Functions
+// These functions are restricted to CONTRACT_OWNER (admin wallet).
+// ---------------------------------------------------------------------------
+
+/**
+ * Build contract call to initialize promo-manager deploy timestamp.
+ * Clarity 4: captures stacks-block-time at deployment.
+ * Must be called once immediately after contract deployment.
+ */
+export function buildInitPromoManager() {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'init',
+    functionArgs: [],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build admin contract call to refund remaining campaign budget to advertiser.
+ * Clarity 4: CONTRACT_OWNER issues the actual STX refund from admin wallet
+ * after campaign has been cancelled or completed.
+ */
+export function buildRefundCampaignBudget(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'refund-campaign-budget',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build admin contract call to refund remaining escrow to advertiser.
+ * Clarity 4: calls funds-keeper.refund-advertiser, which transfers
+ * remaining escrowed STX from CONTRACT_OWNER to the advertiser.
+ */
+export function buildRefundEscrow(campaignId: number) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.FUNDS_KEEPER,
+    functionName: 'refund-advertiser',
+    functionArgs: [toUIntCV(campaignId)],
+    postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build admin contract call to release escrow funds to a publisher.
+ * Clarity 4: CONTRACT_OWNER issues the STX transfer from admin wallet.
+ */
+export function buildReleaseToPublisher(
+  campaignId: number,
+  publisherAddress: string,
+  amount: number,
+) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.FUNDS_KEEPER,
+    functionName: 'release-to-publisher',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toPrincipalCV(publisherAddress),
+      toUIntCV(amount),
+    ],
+    postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build read-only call to get deployed contract version.
+ * Returns CONTRACT_VERSION string (e.g. "4.0.0").
+ */
+export function buildReadContractVersion(contractName: string) {
+  return {
+    contractId: getContractId(contractName as any),
+    functionName: 'get-contract-version',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build read-only call to get deploy timestamp from promo-manager.
+ * Returns the stacks-block-time captured in init().
+ */
+export function buildReadDeployTime() {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-deploy-time',
+    functionArgs: [],
+  };
+}
