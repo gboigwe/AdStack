@@ -291,4 +291,100 @@ describe("promo-manager contract", () => {
       expect(result.result).toBeErr(Cl.uint(100));
     });
   });
+
+  // Clarity 4 specific tests
+  describe("Clarity 4: init and deploy-time", () => {
+    it("allows owner to call init once", () => {
+      const result = simnet.callPublicFn(
+        CONTRACT,
+        "init",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeOk(expect.anything()); // returns stacks-block-time
+    });
+
+    it("rejects double init", () => {
+      const result = simnet.callPublicFn(
+        CONTRACT,
+        "init",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeErr(Cl.uint(100));
+    });
+
+    it("returns deploy time after init", () => {
+      const result = simnet.callReadOnlyFn(
+        CONTRACT,
+        "get-deploy-time",
+        [],
+        deployer,
+      );
+      // Should be non-zero after init
+      const deployTime = result.result;
+      expect(deployTime).not.toBeUint(0);
+    });
+
+    it("returns contract version 4.0.0", () => {
+      const result = simnet.callReadOnlyFn(
+        CONTRACT,
+        "get-contract-version",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeAscii("4.0.0");
+    });
+  });
+
+  describe("Clarity 4: refund-campaign-budget (admin)", () => {
+    it("allows owner to refund cancelled campaign budget", () => {
+      // Create and cancel a campaign
+      simnet.callPublicFn(
+        CONTRACT,
+        "set-contract-paused",
+        [Cl.bool(false)],
+        deployer,
+      );
+      simnet.callPublicFn(
+        CONTRACT,
+        "create-campaign",
+        [
+          Cl.stringAscii("ToRefund"),
+          Cl.uint(5 * ONE_STX),
+          Cl.uint(ONE_STX),
+          Cl.uint(MIN_DURATION),
+        ],
+        advertiser1,
+      );
+      const campaignCount = simnet.callReadOnlyFn(
+        CONTRACT, "get-campaign-count", [], deployer
+      );
+
+      simnet.callPublicFn(
+        CONTRACT,
+        "cancel-campaign",
+        [Cl.uint(0)],
+        advertiser1,
+      );
+
+      const result = simnet.callPublicFn(
+        CONTRACT,
+        "refund-campaign-budget",
+        [Cl.uint(0)],
+        deployer,
+      );
+      expect(result.result).toBeOk(expect.anything());
+    });
+
+    it("rejects refund from non-owner", () => {
+      const result = simnet.callPublicFn(
+        CONTRACT,
+        "refund-campaign-budget",
+        [Cl.uint(0)],
+        nonOwner,
+      );
+      expect(result.result).toBeErr(Cl.uint(100));
+    });
+  });
 });
