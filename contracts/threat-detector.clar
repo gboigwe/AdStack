@@ -6,6 +6,7 @@
 ;; --- Constants ---
 
 (define-constant CONTRACT_OWNER tx-sender)
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant ERR_NOT_AUTHORIZED (err u700))
 (define-constant ERR_CAMPAIGN_NOT_FOUND (err u701))
 (define-constant ERR_ALREADY_FLAGGED (err u702))
@@ -158,6 +159,10 @@
   (default-to { count: u0 } (map-get? campaign-flag-counts { campaign-id: campaign-id }))
 )
 
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a fraud flag against a campaign
@@ -212,6 +217,7 @@
       campaign-id: campaign-id,
       reporter: tx-sender,
       flag-type: flag-type,
+      timestamp: stacks-block-time,
     })
 
     (ok flag-count)
@@ -246,6 +252,7 @@
       campaign-id: campaign-id,
       score: new-score,
       threat-level: (score-to-threat-level new-score),
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -262,7 +269,7 @@
       (merge threats { is-blocked: true })
     )
 
-    (print { event: "account-blocked", account: account })
+    (print { event: "account-blocked", account: account, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -278,7 +285,7 @@
       (merge threats { is-blocked: false })
     )
 
-    (print { event: "account-unblocked", account: account })
+    (print { event: "account-unblocked", account: account, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -315,6 +322,7 @@
       event: "flag-resolved",
       campaign-id: campaign-id,
       flag-index: flag-index,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
