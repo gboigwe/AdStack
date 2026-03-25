@@ -1,7 +1,31 @@
 /**
  * Contract TypeScript Types for AdStack
  * Type-safe contract interactions with Clarity v4
+ *
+ * Clarity 4 additions:
+ * - stacks-block-time: Unix timestamp exposed on all print events
+ * - BlockTimestamp: branded type for Clarity stacks-block-time values
+ * - Campaign.createdTimestamp / lastUpdatedTimestamp: from block-time
  */
+
+/**
+ * Branded Unix timestamp from Clarity v4 stacks-block-time.
+ * Distinguishes block-time timestamps (seconds) from JS Date timestamps (ms).
+ */
+export type BlockTimestamp = number & { readonly _brand: 'BlockTimestamp' };
+
+export function toBlockTimestamp(value: number | bigint): BlockTimestamp {
+  return Number(value) as BlockTimestamp;
+}
+
+export function blockTimestampToMs(ts: BlockTimestamp): number {
+  return ts * 1000;
+}
+
+/**
+ * Clarity v4 contract version string.
+ */
+export type ClarityContractVersion = `${number}.${number}.${number}`;
 
 /**
  * Campaign Status Enum
@@ -73,6 +97,8 @@ export enum DisputeStatus {
 
 /**
  * Campaign Interface (from promo-manager contract)
+ * Clarity 4: createdTimestamp and lastUpdatedTimestamp are Unix seconds
+ * from stacks-block-time; createdAt and lastUpdated remain block heights.
  */
 export interface Campaign {
   campaignId: number;
@@ -81,11 +107,15 @@ export interface Campaign {
   budget: bigint;
   spent: bigint;
   dailyBudget: bigint;
+  dailySpent: bigint;
+  lastSpendBlock: number;
   startHeight: number;
   endHeight: number;
   status: CampaignStatus;
-  createdAt: number; // Unix timestamp from stacks-block-time
-  lastUpdated: number; // Unix timestamp from stacks-block-time
+  createdAt: number;            // block height
+  lastUpdated: number;          // block height
+  createdTimestamp: BlockTimestamp;    // Clarity 4: stacks-block-time at creation
+  lastUpdatedTimestamp: BlockTimestamp; // Clarity 4: stacks-block-time at last update
   metadata?: string;
 }
 
@@ -536,13 +566,14 @@ export interface PayoutParams {
 
 /**
  * Contract Event Types
+ * Clarity 4: all print events include a `timestamp` field (stacks-block-time)
  */
 export interface ContractEvent {
   type: string;
   data: Record<string, unknown>;
   txId: string;
   blockHeight: number;
-  timestamp: number;
+  timestamp: BlockTimestamp; // Clarity 4 stacks-block-time Unix seconds
 }
 
 /**
@@ -712,3 +743,66 @@ export interface CampaignEnrollment {
   viewsGenerated: number;
   revenueEarned: bigint;
 }
+
+// ============================================================
+// Clarity 4 On-Chain Event Shapes
+// Matches print event tuples emitted by Clarity 4 contracts.
+// All events include `timestamp: stacks-block-time` (Unix seconds).
+// ============================================================
+
+export interface OnChainCampaignCreatedEvent {
+  event: 'campaign-created';
+  'campaign-id': bigint;
+  advertiser: string;
+  budget: bigint;
+  duration: bigint;
+  timestamp: bigint; // stacks-block-time
+}
+
+export interface OnChainEscrowCreatedEvent {
+  event: 'escrow-created';
+  'campaign-id': bigint;
+  advertiser: string;
+  amount: bigint;
+  timestamp: bigint;
+}
+
+export interface OnChainFundsReleasedEvent {
+  event: 'funds-released';
+  'campaign-id': bigint;
+  publisher: string;
+  amount: bigint;
+  timestamp: bigint;
+}
+
+export interface OnChainFundsRefundedEvent {
+  event: 'funds-refunded';
+  'campaign-id': bigint;
+  advertiser: string;
+  amount: bigint;
+  timestamp: bigint;
+}
+
+export interface OnChainPayoutClaimedEvent {
+  event: 'payout-claimed';
+  'payout-id': bigint;
+  publisher: string;
+  'campaign-id': bigint;
+  amount: bigint;
+  timestamp: bigint;
+}
+
+export interface OnChainSpendRecordedEvent {
+  event: 'spend-recorded';
+  'campaign-id': bigint;
+  amount: bigint;
+  timestamp: bigint;
+}
+
+export type OnChainAdStackEvent =
+  | OnChainCampaignCreatedEvent
+  | OnChainEscrowCreatedEvent
+  | OnChainFundsReleasedEvent
+  | OnChainFundsRefundedEvent
+  | OnChainPayoutClaimedEvent
+  | OnChainSpendRecordedEvent;
