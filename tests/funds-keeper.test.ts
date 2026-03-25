@@ -194,4 +194,31 @@ describe("funds-keeper contract", () => {
       expect(result.result).toBeErr(Cl.uint(500));
     });
   });
+
+  // Clarity 4 specific tests
+  describe("Clarity 4: version and platform stats", () => {
+    it("returns contract version 4.0.0", () => {
+      const result = simnet.callReadOnlyFn(
+        CONTRACT,
+        "get-contract-version",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeAscii("4.0.0");
+    });
+
+    it("returns platform stats tuple", () => {
+      const result = simnet.callReadOnlyFn(
+        CONTRACT,
+        "get-platform-stats",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeTuple({
+        escrowed: expect.anything(),
+        released: expect.anything(),
+        refunded: expect.anything(),
+      });
+    });
+  });
 });

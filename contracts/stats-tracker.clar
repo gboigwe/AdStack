@@ -5,6 +5,7 @@
 
 ;; --- Constants ---
 
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u300))
 (define-constant ERR_CAMPAIGN_NOT_FOUND (err u301))
@@ -123,6 +124,10 @@
   )
 )
 
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
@@ -208,6 +213,7 @@
       campaign-id: campaign-id,
       publisher: publisher,
       viewer: viewer,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -230,6 +236,7 @@
       event: "spend-tracked",
       campaign-id: campaign-id,
       amount: amount,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -256,6 +263,7 @@
       event: "view-invalidated",
       campaign-id: campaign-id,
       viewer: viewer,
+      timestamp: stacks-block-time,
     })
 
     (ok true)

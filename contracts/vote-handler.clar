@@ -6,6 +6,7 @@
 ;; --- Constants ---
 
 (define-constant CONTRACT_OWNER tx-sender)
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant ERR_NOT_AUTHORIZED (err u400))
 (define-constant ERR_PROPOSAL_NOT_FOUND (err u401))
 (define-constant ERR_ALREADY_VOTED (err u402))
@@ -135,6 +136,10 @@
   (default-to { count: u0 } (map-get? proposer-counts { proposer: proposer }))
 )
 
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new governance proposal
@@ -187,6 +192,7 @@
       proposer: tx-sender,
       title: title,
       duration: duration,
+      timestamp: stacks-block-time,
     })
 
     (ok proposal-id)
@@ -231,6 +237,7 @@
       proposal-id: proposal-id,
       voter: tx-sender,
       in-favor: in-favor,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -266,6 +273,7 @@
         status: new-status,
         votes-for: (get votes-for proposal),
         votes-against: (get votes-against proposal),
+        timestamp: stacks-block-time,
       })
 
       (ok new-status)
@@ -292,6 +300,7 @@
     (print {
       event: "proposal-executed",
       proposal-id: proposal-id,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -317,6 +326,7 @@
     (print {
       event: "proposal-cancelled",
       proposal-id: proposal-id,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -330,7 +340,7 @@
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (var-set governance-paused paused)
-    (print { event: "governance-pause-toggled", paused: paused })
+    (print { event: "governance-pause-toggled", paused: paused, timestamp: stacks-block-time })
     (ok true)
   )
 )

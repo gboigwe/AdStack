@@ -79,12 +79,49 @@ export const TX_OPTIONS = {
 
 /**
  * Clarity v4 Block Time Constants
+ * stacks-block-height: current Stacks chain block (used for durations/cooldowns)
+ * stacks-block-time: Unix timestamp of current block (Clarity 4 only)
  */
 export const BLOCK_TIME = {
   SECONDS_PER_BLOCK: 600,
   BLOCKS_PER_DAY: 144,
   SECONDS_PER_DAY: 86400,
 } as const;
+
+/**
+ * Clarity version deployed on-chain (matches CONTRACT_VERSION in contracts)
+ */
+export const CLARITY_CONTRACT_VERSION = '4.0.0';
+
+/**
+ * Minimum escrow amount in micro-STX (matches funds-keeper MIN_ESCROW_AMOUNT)
+ */
+export const MIN_ESCROW_AMOUNT = 100_000;
+
+/**
+ * Withdrawal cooldown in blocks (matches funds-keeper WITHDRAWAL_COOLDOWN)
+ */
+export const WITHDRAWAL_COOLDOWN_BLOCKS = 12;
+
+/**
+ * Convert a Clarity v4 stacks-block-time Unix timestamp to a JS Date.
+ */
+export function blockTimeToDate(blockTime: number | bigint): Date {
+  return new Date(Number(blockTime) * 1000);
+}
+
+/**
+ * Estimate the stacks-block-time for a future block given a reference point.
+ */
+export function estimateBlockTime(
+  targetBlock: number,
+  currentBlock: number,
+  currentTimestamp: number,
+): Date {
+  const blockDelta = targetBlock - currentBlock;
+  const secondsDelta = blockDelta * BLOCK_TIME.SECONDS_PER_BLOCK;
+  return new Date((currentTimestamp + secondsDelta) * 1000);
+}
 
 /**
  * STX Conversion

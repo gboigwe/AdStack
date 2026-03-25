@@ -4,6 +4,7 @@
 
 ;; --- Constants ---
 
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u200))
 (define-constant ERR_ALREADY_REGISTERED (err u201))
@@ -138,6 +139,10 @@
   }
 )
 
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
@@ -178,6 +183,7 @@
       user: tx-sender,
       role: role,
       display-name: display-name,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -199,7 +205,7 @@
       })
     )
 
-    (print { event: "name-updated", user: tx-sender })
+    (print { event: "name-updated", user: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -218,7 +224,7 @@
       })
     )
 
-    (print { event: "verification-requested", user: tx-sender })
+    (print { event: "verification-requested", user: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -267,7 +273,7 @@
       })
     )
 
-    (print { event: "verification-updated", user: user, status: status })
+    (print { event: "verification-updated", user: user, status: status, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -282,7 +288,7 @@
       (merge profile { status: STATUS_SUSPENDED })
     )
 
-    (print { event: "user-suspended", user: user })
+    (print { event: "user-suspended", user: user, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -298,7 +304,7 @@
       (merge profile { status: STATUS_ACTIVE })
     )
 
-    (print { event: "user-reinstated", user: user })
+    (print { event: "user-reinstated", user: user, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -314,7 +320,7 @@
         (merge profile { reputation-score: clamped-score })
       )
 
-      (print { event: "reputation-updated", user: user, score: clamped-score })
+      (print { event: "reputation-updated", user: user, score: clamped-score, timestamp: stacks-block-time })
       (ok true)
     )
   )

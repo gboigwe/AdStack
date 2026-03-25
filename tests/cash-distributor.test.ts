@@ -178,6 +178,17 @@ describe("cash-distributor contract", () => {
       expect(result.result).toBeErr(Cl.uint(600));
     });
 
+    // Clarity 4: get-contract-version
+    it("returns contract version 4.0.0", () => {
+      const result = simnet.callReadOnlyFn(
+        CONTRACT,
+        "get-contract-version",
+        [],
+        deployer,
+      );
+      expect(result.result).toBeAscii("4.0.0");
+    });
+
     it("confirms payouts paused status", () => {
       simnet.callPublicFn(
         CONTRACT,

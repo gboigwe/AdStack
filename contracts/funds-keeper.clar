@@ -1,10 +1,15 @@
 ;; funds-keeper.clar
-;; Escrow and fund management for AdStack campaigns
+;; Escrow and fund management for AdStack campaigns -- Clarity 4
 ;; Holds campaign budgets in escrow, manages releases to publishers,
 ;; and handles refund flows on campaign cancellation or expiry.
+;;
+;; Clarity 4 changes:
+;; - as-contract removed: STX releases issued by CONTRACT_OWNER admin wallet
+;; - stacks-block-time added to print events for Unix timestamp indexing
 
 ;; --- Constants ---
 
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u500))
 (define-constant ERR_ESCROW_NOT_FOUND (err u501))
@@ -103,6 +108,10 @@
   }
 )
 
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
@@ -132,6 +141,7 @@
       campaign-id: campaign-id,
       advertiser: advertiser,
       amount: amount,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -160,8 +170,8 @@
       (>= (- stacks-block-height (get last-release-block escrow)) WITHDRAWAL_COOLDOWN)
     ) ERR_COOLDOWN_ACTIVE)
 
-    ;; Transfer STX from contract to publisher
-    (try! (as-contract (stx-transfer? amount tx-sender publisher)))
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
+    (try! (stx-transfer? amount tx-sender publisher))
 
     ;; Update escrow
     (map-set escrows
@@ -189,6 +199,7 @@
       campaign-id: campaign-id,
       publisher: publisher,
       amount: amount,
+      timestamp: stacks-block-time,
     })
 
     (ok true)
@@ -206,7 +217,8 @@
 
     (if (> remaining u0)
       (begin
-        (try! (as-contract (stx-transfer? remaining tx-sender (get advertiser escrow))))
+        ;; Clarity 4: CONTRACT_OWNER admin wallet issues the refund transfer
+        (try! (stx-transfer? remaining tx-sender (get advertiser escrow)))
 
         (map-set escrows
           { campaign-id: campaign-id }
@@ -223,6 +235,7 @@
           campaign-id: campaign-id,
           advertiser: (get advertiser escrow),
           amount: remaining,
+          timestamp: stacks-block-time,
         })
 
         (ok remaining)
@@ -255,6 +268,7 @@
     (print {
       event: "escrow-completed",
       campaign-id: campaign-id,
+      timestamp: stacks-block-time,
     })
 
     (ok true)

@@ -2,9 +2,14 @@
 ;; Payout distribution for AdStack publisher earnings
 ;; Manages payout calculations, claim processing, and
 ;; distribution records for campaign ad revenue.
+;;
+;; Clarity 4 changes:
+;; - as-contract removed: STX payouts issued by CONTRACT_OWNER admin wallet
+;; - stacks-block-time added to print events for Unix timestamp indexing
 
 ;; --- Constants ---
 
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u600))
 (define-constant ERR_PAYOUT_NOT_FOUND (err u601))
@@ -200,6 +205,7 @@
       gross: amount,
       fee: fee,
       net: net,
+      timestamp: stacks-block-time,
     })
 
     (ok net)
@@ -219,8 +225,8 @@
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
 
-    ;; Transfer STX to publisher
-    (try! (as-contract (stx-transfer? claimable tx-sender publisher)))
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
+    (try! (stx-transfer? claimable tx-sender publisher))
 
     ;; Update earnings claimed amount
     (map-set publisher-earnings
@@ -260,6 +266,7 @@
       publisher: publisher,
       campaign-id: campaign-id,
       amount: claimable,
+      timestamp: stacks-block-time,
     })
 
     (ok payout-id)
@@ -273,7 +280,11 @@
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (var-set payouts-paused paused)
-    (print { event: "payouts-pause-toggled", paused: paused })
+    (print { event: "payouts-pause-toggled", paused: paused, timestamp: stacks-block-time })
     (ok true)
   )
+)
+
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
 )
