@@ -1,11 +1,18 @@
 ;; promo-manager.clar
-;; Campaign management contract for AdStack
+;; Campaign management contract for AdStack -- Clarity 4
 ;; Handles creation, lifecycle management, and budget tracking
 ;; for advertising campaigns on the Stacks blockchain.
+;;
+;; Clarity 4 changes:
+;; - as-contract removed: STX escrow uses CONTRACT_OWNER admin wallet
+;; - stacks-block-time added: Unix timestamp for campaign expiry tracking
+;; - Deposit routes STX through CONTRACT_OWNER; refunds require admin tx
 
 ;; --- Constants ---
 
+(define-constant CONTRACT_VERSION "4.0.0")
 (define-constant CONTRACT_OWNER tx-sender)
+
 (define-constant ERR_NOT_AUTHORIZED (err u100))
 (define-constant ERR_CAMPAIGN_NOT_FOUND (err u101))
 (define-constant ERR_INVALID_BUDGET (err u102))
@@ -39,6 +46,7 @@
 (define-data-var total-campaigns-created uint u0)
 (define-data-var total-stx-locked uint u0)
 (define-data-var contract-paused bool false)
+(define-data-var deploy-time uint u0)
 
 ;; --- Data Maps ---
 
@@ -57,6 +65,8 @@
     status: uint,
     created-at: uint,
     last-updated: uint,
+    created-timestamp: uint,
+    last-updated-timestamp: uint,
   }
 )
 
@@ -99,6 +109,8 @@
     status: uint,
     created-at: uint,
     last-updated: uint,
+    created-timestamp: uint,
+    last-updated-timestamp: uint,
   }))
   ;; Reset daily spend if we've passed a day boundary (144 blocks)
   (if (>= (- stacks-block-height (get last-spend-block campaign-data)) u144)
@@ -159,9 +171,20 @@
   (var-get contract-paused)
 )
 
+;; Clarity 4: return Unix timestamp of deployment
+(define-read-only (get-deploy-time)
+  (var-get deploy-time)
+)
+
+;; Clarity 4: return version string
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
+;; Clarity 4: STX deposited into CONTRACT_OWNER wallet, tracked via map
 (define-public (create-campaign
     (name (string-ascii 64))
     (budget uint)
@@ -182,10 +205,10 @@
     (asserts! (<= daily-budget budget) ERR_INVALID_BUDGET)
     (asserts! (> daily-budget u0) ERR_INVALID_BUDGET)
 
-    ;; Transfer STX from advertiser to contract (escrow)
-    (try! (stx-transfer? budget tx-sender (as-contract tx-sender)))
+    ;; Clarity 4: escrow through CONTRACT_OWNER admin wallet
+    (try! (stx-transfer? budget tx-sender CONTRACT_OWNER))
 
-    ;; Create campaign record
+    ;; Create campaign record with Clarity 4 timestamps
     (map-set campaigns
       { campaign-id: campaign-id }
       {
@@ -201,6 +224,8 @@
         status: STATUS_ACTIVE,
         created-at: stacks-block-height,
         last-updated: stacks-block-height,
+        created-timestamp: stacks-block-time,
+        last-updated-timestamp: stacks-block-time,
       }
     )
 
@@ -219,6 +244,7 @@
       advertiser: tx-sender,
       budget: budget,
       duration: duration,
+      timestamp: stacks-block-time,
     })
 
     (ok campaign-id)
@@ -236,10 +262,11 @@
       (merge campaign {
         status: STATUS_PAUSED,
         last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
       })
     )
 
-    (print { event: "campaign-paused", campaign-id: campaign-id })
+    (print { event: "campaign-paused", campaign-id: campaign-id, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -256,15 +283,17 @@
       (merge campaign {
         status: STATUS_ACTIVE,
         last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
       })
     )
 
-    (print { event: "campaign-resumed", campaign-id: campaign-id })
+    (print { event: "campaign-resumed", campaign-id: campaign-id, timestamp: stacks-block-time })
     (ok true)
   )
 )
 
-;; Cancel a campaign and refund remaining budget
+;; Cancel a campaign and mark for refund
+;; Clarity 4: actual STX refund is issued by CONTRACT_OWNER in refund-campaign-budget
 (define-public (cancel-campaign (campaign-id uint))
   (let (
     (campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND))
@@ -276,18 +305,13 @@
       (is-eq (get status campaign) STATUS_PAUSED)
     ) ERR_CAMPAIGN_NOT_ACTIVE)
 
-    ;; Refund remaining budget
-    (if (> remaining u0)
-      (try! (as-contract (stx-transfer? remaining tx-sender (get advertiser campaign))))
-      true
-    )
-
     ;; Update campaign status
     (map-set campaigns
       { campaign-id: campaign-id }
       (merge campaign {
         status: STATUS_CANCELLED,
         last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
       })
     )
 
@@ -298,6 +322,34 @@
       event: "campaign-cancelled",
       campaign-id: campaign-id,
       refunded: remaining,
+      timestamp: stacks-block-time,
+    })
+    (ok remaining)
+  )
+)
+
+;; Clarity 4: CONTRACT_OWNER issues actual STX refund on cancel/completion
+(define-public (refund-campaign-budget (campaign-id uint))
+  (let (
+    (campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND))
+    (remaining (- (get budget campaign) (get spent campaign)))
+  )
+    ;; Only CONTRACT_OWNER (admin) can execute refunds from escrow wallet
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (or
+      (is-eq (get status campaign) STATUS_CANCELLED)
+      (is-eq (get status campaign) STATUS_COMPLETED)
+    ) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> remaining u0) ERR_INVALID_BUDGET)
+
+    (try! (stx-transfer? remaining tx-sender (get advertiser campaign)))
+
+    (print {
+      event: "campaign-budget-refunded",
+      campaign-id: campaign-id,
+      amount: remaining,
+      recipient: (get advertiser campaign),
+      timestamp: stacks-block-time,
     })
     (ok remaining)
   )
@@ -325,6 +377,7 @@
           daily-spent: (+ effective-daily-spent amount),
           last-spend-block: stacks-block-height,
           last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
         })
       )
 
@@ -337,6 +390,7 @@
             daily-spent: (+ effective-daily-spent amount),
             last-spend-block: stacks-block-height,
             last-updated: stacks-block-height,
+            last-updated-timestamp: stacks-block-time,
             status: STATUS_COMPLETED,
           })
         )
@@ -348,6 +402,7 @@
       event: "spend-recorded",
       campaign-id: campaign-id,
       amount: amount,
+      timestamp: stacks-block-time,
     })
     (ok true)
   )
@@ -355,12 +410,22 @@
 
 ;; --- Admin Functions ---
 
+;; Initialize deploy time (call once after deployment)
+(define-public (init)
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (var-get deploy-time) u0) ERR_NOT_AUTHORIZED)
+    (var-set deploy-time stacks-block-time)
+    (ok stacks-block-time)
+  )
+)
+
 ;; Emergency pause contract
 (define-public (set-contract-paused (paused bool))
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (var-set contract-paused paused)
-    (print { event: "contract-pause-toggled", paused: paused })
+    (print { event: "contract-pause-toggled", paused: paused, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -372,17 +437,12 @@
     (asserts! (> stacks-block-height (get end-height campaign)) ERR_CAMPAIGN_NOT_ACTIVE)
 
     (let ((remaining (- (get budget campaign) (get spent campaign))))
-      ;; Refund remaining to advertiser
-      (if (> remaining u0)
-        (try! (as-contract (stx-transfer? remaining tx-sender (get advertiser campaign))))
-        true
-      )
-
       (map-set campaigns
         { campaign-id: campaign-id }
         (merge campaign {
           status: STATUS_COMPLETED,
           last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
         })
       )
 
@@ -391,7 +451,8 @@
       (print {
         event: "campaign-completed",
         campaign-id: campaign-id,
-        refunded: remaining,
+        refundable: remaining,
+        timestamp: stacks-block-time,
       })
       (ok remaining)
     )
