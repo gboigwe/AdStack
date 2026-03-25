@@ -1,7 +1,8 @@
 'use client';
 
 import { useReadOnlyCall } from './use-read-only-call';
-import { CONTRACTS } from '@/lib/stacks-config';
+import { CONTRACTS, blockTimeToDate } from '@/lib/stacks-config';
+import { toBlockTimestamp } from '@/types/contracts';
 
 /**
  * Encode a campaign ID as a Clarity uint hex argument.
@@ -76,4 +77,39 @@ export function useTotalStxLocked() {
     staleTime: 60_000,
     refetchInterval: 120_000,
   });
+}
+
+/**
+ * Hook to fetch the on-chain deploy timestamp from promo-manager.
+ * Clarity 4: Returns the stacks-block-time captured in init().
+ * Returns undefined until init() has been called post-deployment.
+ */
+export function useDeployTime() {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-deploy-time',
+    args: [],
+    staleTime: Infinity, // deploy time never changes
+  });
+}
+
+/**
+ * Hook to read the deployed contract version string.
+ * Returns "4.0.0" for Clarity 4 contracts.
+ */
+export function useContractVersion(contractName: string) {
+  return useReadOnlyCall({
+    contractName: contractName as any,
+    functionName: 'get-contract-version',
+    args: [],
+    staleTime: Infinity,
+  });
+}
+
+/**
+ * Convert a raw Clarity 4 campaign-created event timestamp to a JS Date.
+ * Used when parsing print events from the Hiro API.
+ */
+export function campaignTimestampToDate(rawTimestamp: number | bigint): Date {
+  return blockTimeToDate(toBlockTimestamp(rawTimestamp) as any);
 }
