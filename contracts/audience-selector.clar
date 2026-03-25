@@ -9,6 +9,7 @@
 ;; ============================================================
 
 (define-constant CONTRACT_ADMIN tx-sender)
+(define-constant CONTRACT_VERSION "4.0.0")
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u800))
@@ -162,7 +163,8 @@
       segment-id: seg-id,
       campaign-id: campaign-id,
       creator: tx-sender,
-      name: name
+      name: name,
+      timestamp: stacks-block-time
     })
 
     (ok seg-id)
@@ -210,7 +212,7 @@
       (merge segment { is-active: false })
     )
 
-    (print { event: "segment-deactivated", segment-id: segment-id })
+    (print { event: "segment-deactivated", segment-id: segment-id, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -254,7 +256,8 @@
       event: "publisher-profile-updated",
       publisher: tx-sender,
       category: category,
-      region: region
+      region: region,
+      timestamp: stacks-block-time
     })
 
     (ok true)
@@ -347,6 +350,10 @@
 
 (define-read-only (get-total-publisher-profiles)
   (var-get total-publisher-profiles)
+)
+
+(define-read-only (get-contract-version)
+  CONTRACT_VERSION
 )
 
 ;; Check if a publisher meets the basic requirements of a segment
