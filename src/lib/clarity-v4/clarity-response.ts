@@ -4,3 +4,8 @@ import type { ClarityResponse, ClarityResponseOk, ClarityResponseErr } from './c
 export type OkResult<T> = ClarityResponseOk<T>;
 
 export type ErrResult<E> = ClarityResponseErr<E>;
+
+export type ResultHandler<T, E, R> = {
+  ok: (value: T) => R;
+  err: (error: E) => R;
+};
