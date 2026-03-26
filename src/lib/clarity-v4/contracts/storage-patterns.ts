@@ -50,3 +50,15 @@ export function dataVarSet<T>(v: StorageDataVar<T>, value: T): StorageDataVar<T>
 export type CampaignKey = { advertiser: string; campaignId: bigint };
 export type PublisherKey = { publisher: string };
 export type ProposalKey = { proposalId: bigint };
+
+export function campaignKeyToString(key: CampaignKey): string {
+  return `${key.advertiser}:${key.campaignId}`;
+}
+
+export function publisherKeyToString(key: PublisherKey): string {
+  return key.publisher;
+}
+
+export function proposalKeyToString(key: ProposalKey): string {
+  return key.proposalId.toString();
+}
