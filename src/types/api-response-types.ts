@@ -6,3 +6,9 @@ export interface PaginatedResponse<T> {
   total: number;
   results: T[];
 }
+
+export interface ApiError {
+  error: string;
+  message: string;
+  code?: number;
+}
