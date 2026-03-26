@@ -63,3 +63,9 @@ export function encodeString(s: string): string {
   const bytes = new TextEncoder().encode(s);
   return encodeLength(bytes.length) + bytesToHex(bytes);
 }
+
+export function reverseHex(hex: string): string {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  const pairs = clean.match(/.{2}/g) ?? [];
+  return pairs.reverse().join('');
+}
