@@ -38,3 +38,11 @@ export interface ContractCallTransaction extends BaseTransaction {
     function_args: Array<{ hex: HexString; repr: string; name: string; type: string }>;
   };
 }
+
+export interface SmartContractTransaction extends BaseTransaction {
+  tx_type: 'smart_contract';
+  smart_contract: {
+    contract_id: string;
+    source_code: string;
+  };
+}
