@@ -25,3 +25,9 @@ export function blocksToSeconds(blocks: bigint): bigint {
 export function secondsToBlocks(seconds: bigint): bigint {
   return seconds / BigInt(600);
 }
+
+export function safeAddUint(a: ClarityUint, b: ClarityUint): ClarityUint | null {
+  const sum = a.value + b.value;
+  if (sum > MAX_UINT128) return null;
+  return makeUint(sum);
+}
