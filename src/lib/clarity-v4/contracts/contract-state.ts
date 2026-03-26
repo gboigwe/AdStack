@@ -83,3 +83,11 @@ export function canTransitionCampaign(
   };
   return transitions[from].includes(to);
 }
+
+export function transitionCampaignStatus(
+  campaign: Campaign,
+  newStatus: CampaignStatus
+): Campaign | null {
+  if (!canTransitionCampaign(campaign.status, newStatus)) return null;
+  return { ...campaign, status: newStatus };
+}
