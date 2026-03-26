@@ -26,3 +26,10 @@ async function fetchNetworkInfo(base: string): Promise<NetworkInfo> {
   if (!res.ok) throw new Error(`Network info failed: ${res.status}`);
   return res.json() as Promise<NetworkInfo>;
 }
+
+export function useNetworkStatusV2(network: 'mainnet' | 'testnet' = 'mainnet') {
+  const base = network === 'testnet' ? 'https://api.testnet.hiro.so' : 'https://api.hiro.so';
+  const [state, setState] = useState<NetworkStatusState>({
+    info: null, isOnline: true, isLoading: false, lastUpdated: null, error: null,
+  });
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
