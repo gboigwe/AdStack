@@ -34,3 +34,7 @@ export function openStructuredDataSignature(params: SignStructuredDataParams): v
   const event = new CustomEvent('openStacksStructuredDataSignature', { detail: params });
   window.dispatchEvent(event);
 }
+
+export function verifySignatureFormat(sig: string): boolean {
+  return /^[0-9a-fA-F]{130}$/.test(sig);
+}
