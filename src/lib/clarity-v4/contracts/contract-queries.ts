@@ -66,3 +66,19 @@ export function paginateItems<T>(items: T[], page: number, pageSize: number): Pa
   const pageItems = items.slice(start, start + pageSize);
   return makePaginatedQuery(pageItems, items.length, page, pageSize);
 }
+
+export type SortDirection = 'asc' | 'desc';
+
+export function sortItems<T>(
+  items: T[],
+  key: keyof T,
+  direction: SortDirection = 'asc'
+): T[] {
+  return [...items].sort((a, b) => {
+    const av = a[key];
+    const bv = b[key];
+    if (av < bv) return direction === 'asc' ? -1 : 1;
+    if (av > bv) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
