@@ -120,3 +120,7 @@ export function summarizeCampaigns(campaigns: Campaign[]): {
 export function resetPublisherPayout(publisher: Publisher): Publisher {
   return { ...publisher, pendingPayout: BigInt(0) };
 }
+
+export function incrementPublisherImpressions(publisher: Publisher, count: bigint): Publisher {
+  return { ...publisher, impressionCount: publisher.impressionCount + count };
+}
