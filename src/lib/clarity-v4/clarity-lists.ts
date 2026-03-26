@@ -108,3 +108,7 @@ export function lastList<T>(list: ClarityList<T>): T | null {
 export function initList<T>(list: ClarityList<T>): ClarityList<T> {
   return makeList(list.items.slice(0, -1));
 }
+
+export function countWhere<T>(list: ClarityList<T>, predicate: (item: T) => boolean): number {
+  return list.items.filter(predicate).length;
+}
