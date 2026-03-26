@@ -46,3 +46,7 @@ export function dataVarGet<T>(v: StorageDataVar<T>): T {
 export function dataVarSet<T>(v: StorageDataVar<T>, value: T): StorageDataVar<T> {
   return { ...v, value };
 }
+
+export type CampaignKey = { advertiser: string; campaignId: bigint };
+export type PublisherKey = { publisher: string };
+export type ProposalKey = { proposalId: bigint };
