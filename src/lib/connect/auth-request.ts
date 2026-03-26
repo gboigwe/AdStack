@@ -3,3 +3,5 @@
 export type AuthRequestParams = { appDetails: AppDetails; redirectTo?: string; onFinish?: (payload: AuthResponsePayload) => void; onCancel?: () => void };
 
 export type AppDetails = { name: string; icon: string };
+
+export type AuthResponsePayload = { authResponseToken: string; appPrivateKey: string; userData: UserData };
