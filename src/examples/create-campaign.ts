@@ -12,3 +12,12 @@ export interface CreateCampaignArgs {
   durationBlocks: number;
   targetAudience: string;
 }
+
+export function buildCreateCampaignArgs(args: CreateCampaignArgs) {
+  return [
+    makeStringAscii(args.title),
+    makeUint(args.budgetUstx),
+    makeUint(BigInt(args.durationBlocks)),
+    makeStringAscii(args.targetAudience),
+  ];
+}
