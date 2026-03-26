@@ -30,3 +30,10 @@ export function validateNonEmptyString(value: string, fieldName: string): Valida
   if (!value || value.trim().length === 0) return invalidResult(`${fieldName} cannot be empty`);
   return validResult();
 }
+
+export function combineValidations(...results: ValidationResult[]): ValidationResult {
+  for (const r of results) {
+    if (!r.valid) return r;
+  }
+  return validResult();
+}
