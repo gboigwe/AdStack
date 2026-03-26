@@ -19,3 +19,7 @@ export function isEpoch3OrLater(blockHeight: bigint): boolean {
 export function blockHashToHex(hash: string): string {
   return hash.startsWith('0x') ? hash : `0x${hash}`;
 }
+
+export function isSameBlock(a: BlockInfo, b: BlockInfo): boolean {
+  return a.height === b.height && a.hash === b.hash;
+}
