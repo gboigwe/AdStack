@@ -56,3 +56,11 @@ export function mapIsEmpty<K, V>(m: ClarityMap<K, V>): boolean {
 export function mapClear<K, V>(m: ClarityMap<K, V>): ClarityMap<K, V> {
   return { ...m, entries: new Map() };
 }
+
+export function mapFilter<K, V>(m: ClarityMap<K, V>, predicate: (key: string, value: V) => boolean): ClarityMap<K, V> {
+  const filtered = new Map<string, V>();
+  for (const [k, v] of m.entries) {
+    if (predicate(k, v)) filtered.set(k, v);
+  }
+  return { ...m, entries: filtered };
+}
