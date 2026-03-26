@@ -43,3 +43,11 @@ export function mapQueryResult<T, U>(r: QueryResult<T>, fn: (data: T) => U): Que
   if (r.data === null) return errorQuery<U>('No data');
   return successQuery(fn(r.data));
 }
+
+export type PaginatedQuery<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+};
