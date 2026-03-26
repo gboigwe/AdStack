@@ -12,3 +12,6 @@ export interface FeeEstimateState {
   isLoading: boolean;
   error: string | null;
 }
+
+const MIN_FEE = 180n;
+const FEE_MULTIPLIERS = { low: 1n, medium: 2n, high: 5n } as const;
