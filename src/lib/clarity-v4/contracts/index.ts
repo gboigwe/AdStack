@@ -23,3 +23,4 @@ export function isCallablePrincipal(address: string, caller: string): boolean {
 export * from './contract-events';
 export * from './contract-state';
 export * from './contract-queries';
+export * from './contract-abi';
