@@ -80,3 +80,4 @@ export const TYPE_GUARD_ID_77 = 77;
 export const TYPE_GUARD_ID_78 = 78;
 export const TYPE_GUARD_ID_79 = 79;
 export const TYPE_GUARD_ID_80 = 80;
+export const TYPE_GUARD_ID_81 = 81;
