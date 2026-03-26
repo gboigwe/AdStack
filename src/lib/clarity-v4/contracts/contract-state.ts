@@ -25,3 +25,15 @@ export type Publisher = {
   impressionCount: bigint;
   registeredAt: bigint;
 };
+
+export type Proposal = {
+  id: bigint;
+  proposer: string;
+  title: string;
+  description: string;
+  status: ProposalStatus;
+  votesFor: bigint;
+  votesAgainst: bigint;
+  quorum: bigint;
+  endBlock: bigint;
+};
