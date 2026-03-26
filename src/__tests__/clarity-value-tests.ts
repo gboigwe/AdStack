@@ -15,3 +15,8 @@ describe('makeUint', () => {
   it('throws for negative values', () => {
     expect(() => makeUint(-1n)).toThrow(RangeError);
   });
+  it('throws when exceeding uint128 max', () => {
+    const tooBig = 340282366920938463463374607431768211456n;
+    expect(() => makeUint(tooBig)).toThrow(RangeError);
+  });
+});
