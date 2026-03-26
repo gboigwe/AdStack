@@ -223,3 +223,4 @@ export const TYPE_GUARD_ID_220 = 220;
 export const TYPE_GUARD_ID_221 = 221;
 export const TYPE_GUARD_ID_222 = 222;
 export const TYPE_GUARD_ID_223 = 223;
+export const TYPE_GUARD_ID_224 = 224;
