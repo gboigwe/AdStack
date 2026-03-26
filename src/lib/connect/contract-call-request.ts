@@ -13,3 +13,21 @@ export type TxBroadcastResult = { txId: string; txRaw: string };
 export const DEFAULT_POST_CONDITION_MODE: PostConditionMode = 'deny';
 
 export const DEFAULT_ANCHOR_MODE: AnchorMode = 'any';
+
+export function buildContractCallRequest(
+  contractId: string,
+  functionName: string,
+  functionArgs: unknown[],
+  network: Network = 'mainnet'
+): ContractCallRequestParams {
+  const [contractAddress, contractName] = contractId.split('.');
+  return {
+    contractAddress,
+    contractName,
+    functionName,
+    functionArgs,
+    network,
+    postConditionMode: DEFAULT_POST_CONDITION_MODE,
+    anchorMode: DEFAULT_ANCHOR_MODE,
+  };
+}
