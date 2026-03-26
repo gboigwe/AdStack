@@ -42,3 +42,10 @@ export function isUint128Safe(n: bigint): n is Uint128 {
 export function isInt128Safe(n: bigint): n is Int128 {
   return n >= MIN_INT128 && n <= MAX_INT128;
 }
+
+export function isTxId(s: string): s is TxId {
+  return /^0x[0-9a-f]{64}$/.test(s);
+}
+export function isStxAddress(s: string): s is StxAddress {
+  return /^(SP|ST)[A-Z0-9]{33,39}$/.test(s);
+}
