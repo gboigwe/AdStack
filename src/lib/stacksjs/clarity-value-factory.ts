@@ -138,3 +138,6 @@ export function makeUint10(): UintCV { return uintCV(10); }
 
 // Factory helper 11
 export function makeUint11(): UintCV { return uintCV(11); }
+
+// Factory helper 12
+export function makeUint12(): UintCV { return uintCV(12); }
