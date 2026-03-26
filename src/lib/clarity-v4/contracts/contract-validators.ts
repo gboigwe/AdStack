@@ -77,3 +77,8 @@ export function validateImpressionRate(rate: bigint): ValidationResult {
     validateUintRange(rate, BigInt(1), BigInt(1_000_000))
   );
 }
+
+export function validateField1(value: unknown): ValidationResult {
+  if (value === null || value === undefined) return invalidResult('Field 1 is required');
+  return validResult();
+}
