@@ -458,3 +458,5 @@ export const API_ENDPOINT_VERSION_203 = 'v203';
 export const API_ENDPOINT_VERSION_204 = 'v204';
 
 export const API_ENDPOINT_VERSION_205 = 'v205';
+
+export const API_ENDPOINT_VERSION_206 = 'v206';
