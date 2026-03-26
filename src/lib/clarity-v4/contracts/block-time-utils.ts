@@ -42,3 +42,7 @@ export function durationFromWeeks(weeks: number): BlockDuration {
 export function makeBlockExpiry(startBlock: bigint, durationBlocks: bigint): BlockExpiry {
   return { startBlock, durationBlocks, expiryBlock: startBlock + durationBlocks };
 }
+
+export function isExpiryReached(expiry: BlockExpiry, currentBlock: bigint): boolean {
+  return currentBlock >= expiry.expiryBlock;
+}
