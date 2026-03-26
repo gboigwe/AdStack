@@ -69,3 +69,9 @@ export function serializeClarityValue(cv: ClarityValue): string {
 export function cvToHex(cv: ClarityValue): string {
   return '0x' + serializeClarityValue(cv);
 }
+
+export function serializeListCV(items: ClarityValue[]): string {
+  const lengthHex = items.length.toString(16).padStart(8, '0');
+  const serialized = items.map(serializeClarityValue).join('');
+  return '0b' + lengthHex + serialized;
+}
