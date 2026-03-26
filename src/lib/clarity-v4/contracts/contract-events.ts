@@ -23,3 +23,8 @@ export type CampaignCreatedEvent = AdStackEvent & {
   eventType: 'campaign-created';
   data: { advertiser: string; campaignId: bigint; budget: bigint };
 };
+
+export type ImpressionRecordedEvent = AdStackEvent & {
+  eventType: 'impression-recorded';
+  data: { campaignId: bigint; publisher: string; amount: bigint };
+};
