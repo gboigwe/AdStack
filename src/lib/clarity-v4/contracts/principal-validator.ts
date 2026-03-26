@@ -52,3 +52,8 @@ export function principalToString(parsed: ParsedPrincipal): string {
   }
   return parsed.address;
 }
+
+export function extractContractAddress(contractPrincipal: string): string | null {
+  if (!isContractPrincipal(contractPrincipal)) return null;
+  return contractPrincipal.split('.')[0];
+}
