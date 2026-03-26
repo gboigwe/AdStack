@@ -37,3 +37,15 @@ export type Proposal = {
   quorum: bigint;
   endBlock: bigint;
 };
+
+export function isCampaignActive(c: Campaign): boolean {
+  return c.status === 'active';
+}
+
+export function isCampaignFunded(c: Campaign): boolean {
+  return c.budget > c.spent;
+}
+
+export function getCampaignRemainingBudget(c: Campaign): bigint {
+  return c.budget > c.spent ? c.budget - c.spent : BigInt(0);
+}
