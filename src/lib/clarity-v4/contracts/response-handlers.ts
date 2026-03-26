@@ -4,3 +4,7 @@ export type ContractResponse<T = unknown> = { type: 'ok'; value: T } | { type: '
 
 export type ContractOk<T> = { type: 'ok'; value: T };
 export type ContractErr = { type: 'err'; value: bigint };
+
+export function contractOk<T>(value: T): ContractOk<T> {
+  return { type: 'ok', value };
+}
