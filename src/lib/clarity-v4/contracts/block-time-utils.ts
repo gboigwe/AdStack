@@ -78,3 +78,8 @@ export function progressPercent(expiry: BlockExpiry, currentBlock: bigint): numb
 export function extendExpiry(expiry: BlockExpiry, additionalBlocks: bigint): BlockExpiry {
   return makeBlockExpiry(expiry.startBlock, expiry.durationBlocks + additionalBlocks);
 }
+
+export function blockToApproxDate(blockHeight: bigint, genesisTimestamp: number): Date {
+  const secondsSinceGenesis = Number(blockHeight) * AVERAGE_BLOCK_SECONDS;
+  return new Date((genesisTimestamp + secondsSinceGenesis) * 1000);
+}
