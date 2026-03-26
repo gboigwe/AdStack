@@ -46,3 +46,10 @@ export function useSTXTransfer(defaultParams?: Partial<STXTransferParams>) {
       setState({ txId: null, status: 'error', error: String(e) });
     }
   }, [defaultParams]);
+
+  const reset = useCallback(() => {
+    setState({ txId: null, status: 'idle', error: null });
+  }, []);
+
+  return { ...state, transfer, reset };
+}
