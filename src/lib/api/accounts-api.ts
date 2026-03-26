@@ -278,3 +278,5 @@ export const API_ENDPOINT_VERSION_113 = 'v113';
 export const API_ENDPOINT_VERSION_114 = 'v114';
 
 export const API_ENDPOINT_VERSION_115 = 'v115';
+
+export const API_ENDPOINT_VERSION_116 = 'v116';
