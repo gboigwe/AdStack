@@ -46,3 +46,7 @@ export function mapList<T, U>(list: ClarityList<T>, fn: (item: T) => U): Clarity
 export function filterList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): ClarityList<T> {
   return makeList(list.items.filter(predicate));
 }
+
+export function concatLists<T>(a: ClarityList<T>, b: ClarityList<T>): ClarityList<T> {
+  return makeList([...a.items, ...b.items]);
+}
