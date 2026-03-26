@@ -38,3 +38,19 @@ export type VoteCastEvent = AdStackEvent & {
   eventType: 'vote-cast';
   data: { voter: string; proposalId: bigint; support: boolean; weight: bigint };
 };
+
+export function isCampaignCreatedEvent(e: AdStackEvent): e is CampaignCreatedEvent {
+  return e.eventType === 'campaign-created';
+}
+
+export function isImpressionRecordedEvent(e: AdStackEvent): e is ImpressionRecordedEvent {
+  return e.eventType === 'impression-recorded';
+}
+
+export function isPayoutClaimedEvent(e: AdStackEvent): e is PayoutClaimedEvent {
+  return e.eventType === 'payout-claimed';
+}
+
+export function isVoteCastEvent(e: AdStackEvent): e is VoteCastEvent {
+  return e.eventType === 'vote-cast';
+}
