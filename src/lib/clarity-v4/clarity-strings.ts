@@ -62,3 +62,15 @@ export function trimAscii(s: StringAscii): StringAscii {
 export function trimUtf8(s: StringUtf8): StringUtf8 {
   return makeStringUtf8(s.value.trim(), s.maxLength);
 }
+
+export function asciiIncludes(s: StringAscii, search: string): boolean {
+  return s.value.includes(search);
+}
+
+export function asciiStartsWith(s: StringAscii, prefix: string): boolean {
+  return s.value.startsWith(prefix);
+}
+
+export function asciiEndsWith(s: StringAscii, suffix: string): boolean {
+  return s.value.endsWith(suffix);
+}
