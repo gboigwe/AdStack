@@ -88,3 +88,7 @@ export function sortList<T>(list: ClarityList<T>, compareFn: (a: T, b: T) => num
 export function listToArray<T>(list: ClarityList<T>): T[] {
   return [...list.items];
 }
+
+export function isClarityList<T>(v: unknown): v is ClarityList<T> {
+  return typeof v === 'object' && v !== null && (v as ClarityList<T>).type === 'list';
+}
