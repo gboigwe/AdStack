@@ -42,3 +42,5 @@ export function verifySignatureFormat(sig: string): boolean {
 export const SIGN_REQUEST_VERSION_1 = '1.0';
 
 export const SIGN_REQUEST_VERSION_2 = '2.0';
+
+export const SIGN_REQUEST_VERSION_3 = '3.0';
