@@ -22,3 +22,10 @@ export const ERROR_CODES = {
   VALIDATION_FAILED: 4001,
   AUTH_REQUIRED: 5001,
 } as const;
+
+export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
+
+export function isNetworkError(e: StacksError): boolean { return e.category === 'network'; }
+export function isWalletError(e: StacksError): boolean { return e.category === 'wallet'; }
+export function isContractError(e: StacksError): boolean { return e.category === 'contract'; }
+export function isValidationError(e: StacksError): boolean { return e.category === 'validation'; }
