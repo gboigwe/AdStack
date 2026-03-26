@@ -204,3 +204,8 @@ export function equalUint(a: ClarityUint, b: ClarityUint): boolean {
 export function isTrue(b: ClarityBool): boolean {
   return b.value === true;
 }
+
+/** Create a ClarityUint from a string representation */
+export function makeUintFromString(s: string): ClarityUint {
+  return makeUint(BigInt(s));
+}
