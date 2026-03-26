@@ -62,3 +62,7 @@ export function findInList<T>(list: ClarityList<T>, predicate: (item: T) => bool
 export function someInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): boolean {
   return list.items.some(predicate);
 }
+
+export function everyInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): boolean {
+  return list.items.every(predicate);
+}
