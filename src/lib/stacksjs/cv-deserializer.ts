@@ -12,3 +12,9 @@ export type HiroApiCV = {
   repr?: string;
   hex?: string;
 };
+
+export function parseUintFromRepr(repr: string): bigint {
+  const match = repr.match(/^u(\d+)$/);
+  if (!match) throw new Error(`Invalid uint repr: ${repr}`);
+  return BigInt(match[1]);
+}
