@@ -36,3 +36,7 @@ export function deserializeUint(hex: string): bigint {
 export function encodeBoolCV(value: boolean): string {
   return value ? '03' : '04';
 }
+
+export function encodeNoneCV(): string {
+  return '09';
+}
