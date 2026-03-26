@@ -67,3 +67,9 @@ export function isValidPrincipal(address: string): boolean {
   const standardRegex = /^(SP|ST)[A-Z0-9]{33,39}$/;
   return contractRegex.test(address) || standardRegex.test(address);
 }
+
+/** Create a Clarity principal value */
+export function makePrincipal(address: string): ClarityPrincipal {
+  if (!isValidPrincipal(address)) throw new Error(`Invalid principal: ${address}`);
+  return { type: 'principal', value: address };
+}
