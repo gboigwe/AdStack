@@ -35,3 +35,8 @@ export async function fetchAccountTransactions(address: string, network: Network
   if (!res.ok) throw new Error(`Failed to fetch transactions: ${res.status}`);
   return res.json();
 }
+
+export async function fetchAccountStxBalance(address: string, network: Network = 'mainnet'): Promise<StxBalance> {
+  const balance = await fetchAccountBalance(address, network);
+  return balance.stx;
+}
