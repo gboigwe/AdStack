@@ -9,3 +9,9 @@ export interface SearchResult {
   found: boolean;
   metadata?: Record<string, unknown>;
 }
+
+export interface SearchState {
+  result: SearchResult | null;
+  isLoading: boolean;
+  error: string | null;
+}
