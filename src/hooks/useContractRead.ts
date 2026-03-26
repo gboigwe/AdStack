@@ -32,3 +32,10 @@ async function callReadOnly<T>(params: ContractReadParams): Promise<T> {
   if (!res.ok) throw new Error(`Read-only call failed: ${res.status}`);
   return res.json() as Promise<T>;
 }
+
+export function useContractRead<T>(params: ContractReadParams, enabled = true) {
+  const [state, setState] = useState<ContractReadState<T>>({
+    data: null, isLoading: false, isError: false, error: null, isFetched: false,
+  });
+  const paramsRef = useRef(params);
+  paramsRef.current = params;
