@@ -10,3 +10,4 @@ export const HOOK_RETRY_DELAY_7 = 700;
 export const HOOK_RETRY_DELAY_8 = 800;
 export const HOOK_RETRY_DELAY_9 = 900;
 export const HOOK_RETRY_DELAY_10 = 1000;
+export const HOOK_RETRY_DELAY_11 = 1100;
