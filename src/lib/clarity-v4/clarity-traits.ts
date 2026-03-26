@@ -13,3 +13,7 @@ export function makeTraitRef(contractId: string, traitName: string): TraitRefere
 export function traitRefToString(ref: TraitReference): string {
   return `${ref.contractId}.${ref.traitName}`;
 }
+
+export function isTraitReference(v: unknown): v is TraitReference {
+  return typeof v === 'object' && v !== null && (v as TraitReference).type === 'trait';
+}
