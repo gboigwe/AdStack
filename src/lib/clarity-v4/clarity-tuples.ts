@@ -93,3 +93,14 @@ export function mapTupleValues<T extends Record<string, unknown>>(
   }
   return makeTuple(result);
 }
+
+export function filterTupleFields<T extends Record<string, unknown>>(
+  tuple: ClarityTuple<T>,
+  predicate: (key: string, value: unknown) => boolean
+): ClarityTuple<Record<string, unknown>> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(tuple.data)) {
+    if (predicate(key, value)) result[key] = value;
+  }
+  return makeTuple(result);
+}
