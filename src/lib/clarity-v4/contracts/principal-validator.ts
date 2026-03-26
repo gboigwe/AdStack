@@ -81,3 +81,9 @@ export function areSamePrincipal(a: string, b: string): boolean {
   if (!pa || !pb) return false;
   return principalToString(pa) === principalToString(pb);
 }
+
+export function normalizePrincipal(address: string): string {
+  const parsed = parsePrincipal(address);
+  if (!parsed) return address;
+  return principalToString(parsed);
+}
