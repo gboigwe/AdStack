@@ -7,3 +7,5 @@ export type AppDetails = { name: string; icon: string };
 export type AuthResponsePayload = { authResponseToken: string; appPrivateKey: string; userData: UserData };
 
 export type UserData = { stxAddress: string; appPrivateKey: string; profile: UserProfile };
+
+export type UserProfile = { name?: string; email?: string; image?: string };
