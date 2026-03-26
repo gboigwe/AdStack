@@ -80,3 +80,11 @@ export function compareAscii(a: StringAscii, b: StringAscii): -1 | 0 | 1 {
   if (a.value > b.value) return 1;
   return 0;
 }
+
+export function isStringAscii(v: unknown): v is StringAscii {
+  return typeof v === 'object' && v !== null && (v as StringAscii).type === 'string-ascii';
+}
+
+export function isStringUtf8(v: unknown): v is StringUtf8 {
+  return typeof v === 'object' && v !== null && (v as StringUtf8).type === 'string-utf8';
+}
