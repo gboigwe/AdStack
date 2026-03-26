@@ -19,3 +19,7 @@ export const SIGNATURE_LENGTH = 130;
 export function isValidPrivateKey(key: string): boolean {
   return /^[0-9a-fA-F]{64}(01)?$/.test(key);
 }
+
+export function isValidPublicKey(key: string): boolean {
+  return key.length === COMPRESSED_PUBLIC_KEY_LENGTH || key.length === UNCOMPRESSED_PUBLIC_KEY_LENGTH;
+}
