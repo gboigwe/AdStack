@@ -8,3 +8,6 @@ export * from './clarity-maps';
 export * from './clarity-data-vars';
 export * from './clarity-traits';
 export * from './clarity-events';
+export * from './clarity-arithmetic';
+export * from './clarity-serialization';
+export * from './clarity-contract-calls';
