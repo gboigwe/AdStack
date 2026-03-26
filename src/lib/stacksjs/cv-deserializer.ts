@@ -41,3 +41,10 @@ export function parseStringFromRepr(repr: string): string {
   if (!match) return repr;
   return match[1];
 }
+
+export function parseOptionalFromRepr(repr: string): string | null {
+  if (repr === 'none') return null;
+  const match = repr.match(/^\(some (.*)\)$/);
+  if (!match) return null;
+  return match[1];
+}
