@@ -16,3 +16,11 @@ export function isContractPrincipal(address: string): boolean {
 export function isStandardPrincipal(address: string): boolean {
   return !address.includes('.');
 }
+
+export function getContractAddress(principal: string): string {
+  return principal.split('.')[0];
+}
+export function getContractName(principal: string): string | null {
+  const parts = principal.split('.');
+  return parts.length > 1 ? parts[1] : null;
+}
