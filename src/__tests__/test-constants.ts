@@ -73,3 +73,4 @@ export const TEST_CASE_ID_68 = 68;
 export const TEST_CASE_ID_69 = 69;
 export const TEST_CASE_ID_70 = 70;
 export const TEST_CASE_ID_71 = 71;
+export const TEST_CASE_ID_72 = 72;
