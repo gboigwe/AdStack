@@ -74,3 +74,9 @@ export function asciiStartsWith(s: StringAscii, prefix: string): boolean {
 export function asciiEndsWith(s: StringAscii, suffix: string): boolean {
   return s.value.endsWith(suffix);
 }
+
+export function compareAscii(a: StringAscii, b: StringAscii): -1 | 0 | 1 {
+  if (a.value < b.value) return -1;
+  if (a.value > b.value) return 1;
+  return 0;
+}
