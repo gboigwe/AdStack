@@ -16,3 +16,7 @@ function bigIntToBytes16(n: bigint): Uint8Array {
   }
   return bytes;
 }
+
+export function serializeUintCV(cv: UintCV): string {
+  return '01' + bytesToHex(bigIntToBytes16(cv.value));
+}
