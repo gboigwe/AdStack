@@ -91,3 +91,11 @@ export function blocksToHours(blocks: bigint): number {
 export function blocksToDays(blocks: bigint): number {
   return Number(blocks) / BLOCKS_PER_DAY;
 }
+
+export function formatBlockDuration(duration: BlockDuration): string {
+  const days = blocksToDays(duration.blocks);
+  if (days >= 1) return `${days.toFixed(1)} days`;
+  const hours = blocksToHours(duration.blocks);
+  if (hours >= 1) return `${hours.toFixed(1)} hours`;
+  return `${duration.blocks} blocks`;
+}
