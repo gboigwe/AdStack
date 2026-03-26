@@ -5,3 +5,12 @@ export type StxTransferParams = { recipient: string; amount: bigint; memo?: stri
 export const MIN_STX_TRANSFER_AMOUNT = BigInt(1);
 
 export const MAX_MEMO_LENGTH = 34;
+
+export function buildStxTransferRequest(
+  recipient: string,
+  amount: bigint,
+  memo?: string,
+  network: 'mainnet' | 'testnet' = 'mainnet'
+): StxTransferParams {
+  return { recipient, amount, memo, network };
+}
