@@ -29,3 +29,13 @@ export function openAuth(params: AuthRequestParams): void {
   const event = new CustomEvent('openStacksAuth', { detail: params });
   window.dispatchEvent(event);
 }
+
+export function parseAuthResponse(token: string): AuthResponsePayload | null {
+  try {
+    const [, payload] = token.split('.');
+    const decoded = JSON.parse(atob(payload));
+    return decoded as AuthResponsePayload;
+  } catch {
+    return null;
+  }
+}
