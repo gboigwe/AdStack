@@ -7,3 +7,5 @@ export const ANCHOR_MODE_ON_CHAIN_ONLY = 2;
 export const ANCHOR_MODE_OFF_CHAIN_ONLY = 3;
 
 export type AnchorModeType = 'any' | 'on_chain_only' | 'off_chain_only';
+
+export type AnchorModeCode = 1 | 2 | 3;
