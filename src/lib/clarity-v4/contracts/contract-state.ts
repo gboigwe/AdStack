@@ -3,3 +3,5 @@
 export type CampaignStatus = 'draft' | 'active' | 'paused' | 'closed' | 'completed';
 
 export type PublisherStatus = 'pending' | 'verified' | 'suspended' | 'banned';
+
+export type ProposalStatus = 'active' | 'passed' | 'rejected' | 'executed' | 'cancelled';
