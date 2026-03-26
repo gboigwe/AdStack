@@ -6,3 +6,5 @@ export type FtInfo = { name: string; symbol: string; decimals: number; total_sup
 export type NftInfo = { asset_identifier: string; value: { hex: string; repr: string }; block_height: number; tx_id: string };
 
 export type NftHoldingsResponse = { limit: number; offset: number; total: number; results: NftInfo[] };
+
+export type FtHoldingsResponse = { limit: number; offset: number; total: number; results: FtInfo[] };
