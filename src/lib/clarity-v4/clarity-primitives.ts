@@ -27,3 +27,5 @@ export type ClarityStringAscii = { type: 'string-ascii'; value: string };
 export type ClarityStringUtf8 = { type: 'string-utf8'; value: string };
 
 export const MAX_UINT128 = BigInt('340282366920938463463374607431768211455');
+
+export const MIN_INT128 = BigInt('-170141183460469231731687303715884105728');
