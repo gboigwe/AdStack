@@ -48,3 +48,7 @@ export function mapMerge<K, V>(a: ClarityMap<K, V>, b: ClarityMap<K, V>): Clarit
   const merged = new Map([...a.entries, ...b.entries]);
   return { ...a, entries: merged };
 }
+
+export function mapIsEmpty<K, V>(m: ClarityMap<K, V>): boolean {
+  return m.entries.size === 0;
+}
