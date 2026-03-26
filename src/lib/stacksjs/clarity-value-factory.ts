@@ -105,3 +105,6 @@ export const isListCV = (cv: ClarityValue): cv is ListCV<ClarityValue> => cv.typ
 export const isTupleCV = (cv: ClarityValue): cv is TupleCV => cv.type === 'tuple';
 export const isResponseOkCV = (cv: ClarityValue): cv is ResponseOkCV<ClarityValue> => cv.type === 'ok';
 export const isResponseErrCV = (cv: ClarityValue): cv is ResponseErrCV<ClarityValue> => cv.type === 'error';
+
+// Factory helper 1
+export function makeUint1(): UintCV { return uintCV(1); }
