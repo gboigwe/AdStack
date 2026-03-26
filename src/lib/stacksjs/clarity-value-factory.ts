@@ -37,3 +37,7 @@ export const falseCV = (): BoolCV => boolCV(false);
 export function noneCV(): NoneCV {
   return { type: 'none' };
 }
+
+export function someCV<T extends ClarityValue>(value: T): SomeCV<T> {
+  return { type: 'some', value };
+}
