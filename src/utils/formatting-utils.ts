@@ -12,3 +12,9 @@ export function stxToUstx(stx: string): bigint {
   const fracPadded = frac.padEnd(6, '0').slice(0, 6);
   return BigInt(whole) * USTX_PER_STX + BigInt(fracPadded);
 }
+
+export function formatStxAmount(ustx: bigint, decimals = 2): string {
+  const stxStr = ustxToStx(ustx);
+  const [whole, frac] = stxStr.split('.');
+  return `${Number(whole).toLocaleString()}.${frac.slice(0, decimals)} STX`;
+}
