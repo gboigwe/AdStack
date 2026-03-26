@@ -25,3 +25,18 @@ export class SimpleCache<K, V> {
   clear(): void { this.store.clear(); }
   size(): number { return this.store.size; }
 }
+
+export function memoizeAsync<T>(
+  fn: (...args: unknown[]) => Promise<T>,
+  ttlMs = 30_000
+): (...args: unknown[]) => Promise<T> {
+  const cache = new SimpleCache<string, T>(ttlMs);
+  return async (...args) => {
+    const key = JSON.stringify(args);
+    const cached = cache.get(key);
+    if (cached !== null) return cached;
+    const result = await fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
