@@ -48,3 +48,5 @@ export async function fetchAccountNonce(address: string, network: Network = 'mai
   const data = await res.json();
   return data.nonce as number;
 }
+
+export const API_ENDPOINT_VERSION_1 = 'v1';
