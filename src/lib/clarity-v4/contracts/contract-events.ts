@@ -61,3 +61,12 @@ export function filterEventsByType<T extends AdStackEvent>(
 ): T[] {
   return events.filter(guard);
 }
+
+export function groupEventsByType(events: AdStackEvent[]): Record<AdStackEventType, AdStackEvent[]> {
+  const grouped = {} as Record<AdStackEventType, AdStackEvent[]>;
+  for (const e of events) {
+    if (!grouped[e.eventType]) grouped[e.eventType] = [];
+    grouped[e.eventType].push(e);
+  }
+  return grouped;
+}
