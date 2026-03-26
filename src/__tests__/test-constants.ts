@@ -249,3 +249,4 @@ export const TEST_CASE_ID_244 = 244;
 export const TEST_CASE_ID_245 = 245;
 export const TEST_CASE_ID_246 = 246;
 export const TEST_CASE_ID_247 = 247;
+export const TEST_CASE_ID_248 = 248;
