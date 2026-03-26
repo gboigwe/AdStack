@@ -30,3 +30,7 @@ export function storageMapDelete<K, V>(map: StorageMap<K, V>, key: K): StorageMa
   newEntries.delete(JSON.stringify(key));
   return { ...map, entries: newEntries };
 }
+
+export function storageMapHas<K, V>(map: StorageMap<K, V>, key: K): boolean {
+  return map.entries.has(JSON.stringify(key));
+}
