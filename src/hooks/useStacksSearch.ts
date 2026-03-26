@@ -37,3 +37,10 @@ export function useStacksSearch() {
       setState({ result: null, isLoading: false, error: String(e) });
     }
   }, []);
+
+  const clear = useCallback(() => {
+    setState({ result: null, isLoading: false, error: null });
+  }, []);
+
+  return { ...state, search, clear };
+}
