@@ -6,3 +6,9 @@ export type QueryOptions = {
   functionName: string;
   args: unknown[];
 };
+
+export type QueryResult<T> = {
+  data: T | null;
+  error: string | null;
+  loading: boolean;
+};
