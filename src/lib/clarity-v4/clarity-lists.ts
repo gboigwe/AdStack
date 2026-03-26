@@ -54,3 +54,7 @@ export function concatLists<T>(a: ClarityList<T>, b: ClarityList<T>): ClarityLis
 export function reverseList<T>(list: ClarityList<T>): ClarityList<T> {
   return makeList([...list.items].reverse());
 }
+
+export function findInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): T | null {
+  return list.items.find(predicate) ?? null;
+}
