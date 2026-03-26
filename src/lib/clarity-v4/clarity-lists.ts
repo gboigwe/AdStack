@@ -92,3 +92,7 @@ export function listToArray<T>(list: ClarityList<T>): T[] {
 export function isClarityList<T>(v: unknown): v is ClarityList<T> {
   return typeof v === 'object' && v !== null && (v as ClarityList<T>).type === 'list';
 }
+
+export function headList<T>(list: ClarityList<T>): T | null {
+  return list.items.length > 0 ? list.items[0] : null;
+}
