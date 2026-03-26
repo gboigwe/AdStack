@@ -24,3 +24,5 @@ export type NftPostCondition = {
   tokenId: bigint;
   conditionCode: 'has' | 'not-has';
 };
+
+export type PostCondition = StxPostCondition | FtPostCondition | NftPostCondition;
