@@ -14,3 +14,7 @@ export type StorageDataVar<T> = { name: string; valueType: string; value: T };
 export function makeStorageMap<K, V>(name: string, keyType: string, valueType: string): StorageMap<K, V> {
   return { name, keyType, valueType, entries: new Map() };
 }
+
+export function storageMapGet<K, V>(map: StorageMap<K, V>, key: K): V | null {
+  return map.entries.get(JSON.stringify(key)) ?? null;
+}
