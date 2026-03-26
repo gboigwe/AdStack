@@ -37,3 +37,7 @@ export function getPreferredWallet(): WalletProvider {
   const installed = detectInstalledWallets();
   return installed.length > 0 ? installed[0].id : 'unknown';
 }
+
+export function hasAnyWalletInstalled(): boolean {
+  return detectInstalledWallets().length > 0;
+}
