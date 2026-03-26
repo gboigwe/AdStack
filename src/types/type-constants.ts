@@ -57,3 +57,4 @@ export const TYPE_GUARD_ID_54 = 54;
 export const TYPE_GUARD_ID_55 = 55;
 export const TYPE_GUARD_ID_56 = 56;
 export const TYPE_GUARD_ID_57 = 57;
+export const TYPE_GUARD_ID_58 = 58;
