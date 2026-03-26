@@ -19,3 +19,8 @@ export interface WalletConnectionEvent {
   wallet: ConnectedWallet;
   timestamp: number;
 }
+
+export interface WalletSignatureResult {
+  signature: string;
+  publicKey: string;
+}
