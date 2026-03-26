@@ -19,3 +19,10 @@ export const ERR_INSUFFICIENT_BUDGET = 300n;
 export const ERR_BUDGET_EXHAUSTED = 301n;
 export const ERR_INVALID_BUDGET_AMOUNT = 302n;
 export const ERR_PAYOUT_EXCEEDS_BUDGET = 303n;
+
+// --- Publisher errors ---
+export const ERR_PUBLISHER_NOT_REGISTERED = 400n;
+export const ERR_PUBLISHER_UNVERIFIED = 401n;
+export const ERR_PUBLISHER_BANNED = 402n;
+export const ERR_PAYOUT_ALREADY_CLAIMED = 403n;
+export const ERR_PAYOUT_COOLDOWN = 404n;
