@@ -22,3 +22,9 @@ export function buildSignStructuredDataRequest(
 ): SignStructuredDataParams {
   return { message, domain };
 }
+
+export function openSignMessage(params: SignMessageParams): void {
+  if (typeof window === 'undefined') return;
+  const event = new CustomEvent('openStacksSignMessage', { detail: params });
+  window.dispatchEvent(event);
+}
