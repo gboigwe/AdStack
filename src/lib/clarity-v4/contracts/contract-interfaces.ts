@@ -32,3 +32,7 @@ export function getPublicFunctions(iface: ContractInterface): ContractFunction[]
 export function getReadOnlyFunctions(iface: ContractInterface): ContractFunction[] {
   return iface.functions.filter(f => f.access === 'read_only');
 }
+
+export function findFunction(iface: ContractInterface, name: string): ContractFunction | null {
+  return iface.functions.find(f => f.name === name) ?? null;
+}
