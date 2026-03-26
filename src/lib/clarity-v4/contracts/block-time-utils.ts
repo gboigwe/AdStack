@@ -122,3 +122,5 @@ export function getBlocksInRange(from: bigint, to: bigint): bigint[] {
 }
 
 export const BLOCKS_PER_30_MINUTES = 3;
+
+export const BLOCKS_PER_60_MINUTES = 6;
