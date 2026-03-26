@@ -17,3 +17,5 @@ export const AUTH_VERSION = '1.0.0';
 export const LEATHER_WALLET_ID = 'leather';
 
 export const XVERSE_WALLET_ID = 'xverse';
+
+export const ASIGNA_WALLET_ID = 'asigna';
