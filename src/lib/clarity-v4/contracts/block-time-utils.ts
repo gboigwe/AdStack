@@ -74,3 +74,7 @@ export function progressPercent(expiry: BlockExpiry, currentBlock: bigint): numb
   const elapsed = blocksElapsed(expiry, currentBlock);
   return Math.min(100, Number((elapsed * BigInt(100)) / expiry.durationBlocks));
 }
+
+export function extendExpiry(expiry: BlockExpiry, additionalBlocks: bigint): BlockExpiry {
+  return makeBlockExpiry(expiry.startBlock, expiry.durationBlocks + additionalBlocks);
+}
