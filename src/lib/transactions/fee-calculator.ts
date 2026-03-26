@@ -312,3 +312,5 @@ export const FEE_TIER_135 = BigInt(13500);
 export const FEE_TIER_136 = BigInt(13600);
 
 export const FEE_TIER_137 = BigInt(13700);
+
+export const FEE_TIER_138 = BigInt(13800);
