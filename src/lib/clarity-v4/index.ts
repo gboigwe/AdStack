@@ -13,3 +13,4 @@ export * from './clarity-serialization';
 export * from './clarity-contract-calls';
 export * from './clarity-post-conditions';
 export * from './clarity-access-control';
+export * from './clarity-error-codes';
