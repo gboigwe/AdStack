@@ -7,3 +7,7 @@ export type ContractCallParams = {
   functionArgs: unknown[];
   network: 'mainnet' | 'testnet';
 };
+
+export type ReadOnlyCallParams = Omit<ContractCallParams, 'network'> & {
+  senderAddress: string;
+};
