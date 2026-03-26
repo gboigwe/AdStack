@@ -6,3 +6,8 @@ export interface BaseContractEvent {
   tx_id: string;
   event_type: ContractEventType;
 }
+
+export interface StxAssetEvent extends BaseContractEvent {
+  event_type: 'stx_asset';
+  asset: { asset_event_type: 'transfer' | 'mint' | 'burn'; sender?: string; recipient?: string; amount: string };
+}
