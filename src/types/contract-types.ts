@@ -38,3 +38,13 @@ export interface AbiVariable {
   access: 'constant' | 'variable';
   type: string;
 }
+
+export interface ContractAbi {
+  functions: AbiFunction[];
+  variables: AbiVariable[];
+  maps: AbiMap[];
+  fungible_tokens: Array<{ name: string }>;
+  non_fungible_tokens: Array<{ name: string; type: string }>;
+  epoch: string;
+  clarity_version: string;
+}
