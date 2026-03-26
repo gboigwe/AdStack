@@ -19,3 +19,10 @@ export interface ContractWriteState {
   status: TxStatus;
   error: string | null;
 }
+
+export function useContractWrite(params: ContractWriteParams) {
+  const [state, setState] = useState<ContractWriteState>({
+    txId: null,
+    status: 'idle',
+    error: null,
+  });
