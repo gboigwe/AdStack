@@ -55,3 +55,27 @@ export function getErrorName(code: AdStackErrorCode): string {
   };
   return names[code.toString()] ?? `UNKNOWN_ERROR(${code})`;
 }
+
+export function isAuthError(code: AdStackErrorCode): boolean {
+  return code >= 100n && code < 200n;
+}
+
+export function isCampaignError(code: AdStackErrorCode): boolean {
+  return code >= 200n && code < 300n;
+}
+
+export function isBudgetError(code: AdStackErrorCode): boolean {
+  return code >= 300n && code < 400n;
+}
+
+export function isPublisherError(code: AdStackErrorCode): boolean {
+  return code >= 400n && code < 500n;
+}
+
+export function isGovernanceError(code: AdStackErrorCode): boolean {
+  return code >= 500n && code < 600n;
+}
+
+export function isTokenError(code: AdStackErrorCode): boolean {
+  return code >= 600n && code < 700n;
+}
