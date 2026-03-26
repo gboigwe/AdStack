@@ -22,3 +22,14 @@ describe('buildAuthRequest', () => {
     expect(req.redirectTo).toBe('/dashboard');
   });
 });
+
+describe('extractStxAddress', () => {
+  it('extracts mainnet address', () => {
+    const payload = { profile: { stxAddress: { mainnet: 'SP123', testnet: 'ST123' } } };
+    expect(extractStxAddress(payload as Parameters<typeof extractStxAddress>[0], 'mainnet')).toBe('SP123');
+  });
+  it('extracts testnet address', () => {
+    const payload = { profile: { stxAddress: { mainnet: 'SP123', testnet: 'ST123' } } };
+    expect(extractStxAddress(payload as Parameters<typeof extractStxAddress>[0], 'testnet')).toBe('ST123');
+  });
+});
