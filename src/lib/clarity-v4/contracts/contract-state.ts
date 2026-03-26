@@ -57,3 +57,9 @@ export function isPublisherVerified(p: Publisher): boolean {
 export function isPublisherEligibleForPayout(p: Publisher): boolean {
   return isPublisherVerified(p) && p.pendingPayout > BigInt(0);
 }
+
+export function isProposalPassing(p: Proposal): boolean {
+  const total = p.votesFor + p.votesAgainst;
+  if (total < p.quorum) return false;
+  return p.votesFor * BigInt(2) > total;
+}
