@@ -15,3 +15,7 @@ export function makeNftAsset(contractId: string, assetName: string, tokenId: big
 export function nftAssetId(nft: NftAsset): string {
   return `${nft.contractId}::${nft.assetName}::${nft.tokenId}`;
 }
+
+export function isSameNft(a: NftAsset, b: NftAsset): boolean {
+  return a.contractId === b.contractId && a.assetName === b.assetName && a.tokenId === b.tokenId;
+}
