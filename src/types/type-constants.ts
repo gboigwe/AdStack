@@ -179,3 +179,4 @@ export const TYPE_GUARD_ID_176 = 176;
 export const TYPE_GUARD_ID_177 = 177;
 export const TYPE_GUARD_ID_178 = 178;
 export const TYPE_GUARD_ID_179 = 179;
+export const TYPE_GUARD_ID_180 = 180;
