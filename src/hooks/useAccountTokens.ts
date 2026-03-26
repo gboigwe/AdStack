@@ -13,3 +13,10 @@ export interface NftHolding {
   tx_id: string;
   block_height: number;
 }
+
+export interface AccountTokensState {
+  fungible: Record<string, FtBalance>;
+  nonFungible: NftHolding[];
+  isLoading: boolean;
+  error: string | null;
+}
