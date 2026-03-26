@@ -6,3 +6,4 @@ export const TYPE_GUARD_ID_3 = 3;
 export const TYPE_GUARD_ID_4 = 4;
 export const TYPE_GUARD_ID_5 = 5;
 export const TYPE_GUARD_ID_6 = 6;
+export const TYPE_GUARD_ID_7 = 7;
