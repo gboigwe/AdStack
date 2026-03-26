@@ -40,3 +40,11 @@ export async function fetchAccountStxBalance(address: string, network: Network =
   const balance = await fetchAccountBalance(address, network);
   return balance.stx;
 }
+
+export async function fetchAccountNonce(address: string, network: Network = 'mainnet'): Promise<number> {
+  const url = `${getApiBase(network)}/v2/accounts/${address}?proof=0`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch nonce: ${res.status}`);
+  const data = await res.json();
+  return data.nonce as number;
+}
