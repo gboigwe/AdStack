@@ -17,3 +17,6 @@ export interface ContractReadState<T> {
   error: string | null;
   isFetched: boolean;
 }
+
+const HIRO_MAINNET = 'https://api.hiro.so';
+const HIRO_TESTNET = 'https://api.testnet.hiro.so';
