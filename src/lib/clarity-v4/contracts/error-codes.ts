@@ -100,3 +100,5 @@ export const ERR_NETWORK_ERROR = 900n;
 export const ERR_TIMEOUT = 901n;
 export const ERR_RATE_LIMITED = 902n;
 export const ERR_SERVICE_UNAVAILABLE = 903n;
+
+export const ERR_CUSTOM_1 = 1001n;
