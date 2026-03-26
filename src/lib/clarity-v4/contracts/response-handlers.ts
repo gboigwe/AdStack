@@ -51,3 +51,8 @@ export function matchContractResponse<T, R>(
   if (r.type === 'ok') return onOk(r.value);
   return onErr(r.value);
 }
+
+export function propagateContractErr<T, U>(r: ContractResponse<T>): ContractErr | null {
+  if (r.type === 'err') return r;
+  return null;
+}
