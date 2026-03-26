@@ -35,3 +35,8 @@ export function serializeBoolCV(cv: BoolCV): string {
 export function serializeNoneCV(): string {
   return '09';
 }
+
+export function serializeBufferCV(cv: BufferCV): string {
+  const lengthHex = cv.buffer.length.toString(16).padStart(8, '0');
+  return '02' + lengthHex + bytesToHex(cv.buffer);
+}
