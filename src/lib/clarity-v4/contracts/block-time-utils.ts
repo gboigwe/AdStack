@@ -112,3 +112,11 @@ export function splitExpiryToRanges(
   }
   return result;
 }
+
+export function getBlocksInRange(from: bigint, to: bigint): bigint[] {
+  if (to <= from) return [];
+  const max = from + BigInt(1000); // safety cap
+  const result: bigint[] = [];
+  for (let b = from; b <= (to < max ? to : max); b++) result.push(b);
+  return result;
+}
