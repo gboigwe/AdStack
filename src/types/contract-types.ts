@@ -58,3 +58,8 @@ export interface ContractInfo {
   abi: string;
   clarity_version: number;
 }
+
+export interface ReadOnlyResult {
+  okay: boolean;
+  result: string;
+}
