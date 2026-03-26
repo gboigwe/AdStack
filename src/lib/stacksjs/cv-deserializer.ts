@@ -71,3 +71,9 @@ export function extractUintValue(cv: HiroApiCV): bigint | null {
   if (typeof cv.value === 'string') return BigInt(cv.value);
   return null;
 }
+
+export function extractBoolValue(cv: HiroApiCV): boolean | null {
+  if (cv.type !== 'bool') return null;
+  if (cv.repr) return parseBoolFromRepr(cv.repr);
+  return typeof cv.value === 'boolean' ? cv.value : null;
+}
