@@ -31,3 +31,12 @@ export async function broadcastTransaction(txHex: string, network: Network = 'ma
   });
   return res.json();
 }
+
+export async function fetchMempoolTransactions(address?: string, network: Network = 'mainnet'): Promise<MempoolTransaction[]> {
+  const params = address ? `?sender_address=${address}` : '';
+  const url = `${getBase(network)}/extended/v1/tx/mempool${params}`;
+  const res = await fetch(url);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results ?? [];
+}
