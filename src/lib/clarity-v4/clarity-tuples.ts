@@ -59,3 +59,7 @@ export function tupleHasField<T extends TupleRecord>(tuple: ClarityTuple<T>, key
 export function tupleToObject<T extends TupleRecord>(tuple: ClarityTuple<T>): T {
   return { ...tuple.data };
 }
+
+export function tupleFieldCount<T extends TupleRecord>(tuple: ClarityTuple<T>): number {
+  return Object.keys(tuple.data).length;
+}
