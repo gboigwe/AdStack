@@ -46,3 +46,11 @@ export function clampUint(value: bigint, min: bigint, max: bigint): bigint {
   if (value > max) return max;
   return value;
 }
+
+export function minBigInt(a: bigint, b: bigint): bigint {
+  return a < b ? a : b;
+}
+
+export function maxBigInt(a: bigint, b: bigint): bigint {
+  return a > b ? a : b;
+}
