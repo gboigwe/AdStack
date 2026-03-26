@@ -42,3 +42,5 @@ export function feeInStx(feeUstx: bigint): string {
 export const FEE_TIER_1 = BigInt(100);
 
 export const FEE_TIER_2 = BigInt(200);
+
+export const FEE_TIER_3 = BigInt(300);
