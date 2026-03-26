@@ -51,3 +51,9 @@ export function withNonce(params: ContractCallRequestParams, nonce: bigint): Con
 export function withNetwork(params: ContractCallRequestParams, network: Network): ContractCallRequestParams {
   return { ...params, network };
 }
+
+export function openContractCall(params: ContractCallRequestParams): void {
+  if (typeof window === 'undefined') return;
+  const event = new CustomEvent('openStacksContractCall', { detail: params });
+  window.dispatchEvent(event);
+}
