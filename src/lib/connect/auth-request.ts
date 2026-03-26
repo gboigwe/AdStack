@@ -13,3 +13,5 @@ export type UserProfile = { name?: string; email?: string; image?: string };
 export const DEFAULT_APP_ICON = '/icon.png';
 
 export const AUTH_VERSION = '1.0.0';
+
+export const LEATHER_WALLET_ID = 'leather';
