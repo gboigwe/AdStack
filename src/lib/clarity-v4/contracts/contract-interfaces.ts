@@ -24,3 +24,7 @@ export type ContractInterface = {
   fungibleTokens: string[];
   nonFungibleTokens: string[];
 };
+
+export function getPublicFunctions(iface: ContractInterface): ContractFunction[] {
+  return iface.functions.filter(f => f.access === 'public');
+}
