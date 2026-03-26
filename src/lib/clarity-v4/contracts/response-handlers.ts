@@ -12,3 +12,11 @@ export function contractOk<T>(value: T): ContractOk<T> {
 export function contractErr(code: bigint): ContractErr {
   return { type: 'err', value: code };
 }
+
+export function isContractOk<T>(r: ContractResponse<T>): r is ContractOk<T> {
+  return r.type === 'ok';
+}
+
+export function isContractErr<T>(r: ContractResponse<T>): r is ContractErr {
+  return r.type === 'err';
+}
