@@ -4,3 +4,7 @@ export type ClarityTuple<T extends Record<string, unknown> = Record<string, unkn
   type: 'tuple';
   data: T;
 };
+
+export type TupleKey = string;
+export type TupleValue = unknown;
+export type TupleRecord = Record<TupleKey, TupleValue>;
