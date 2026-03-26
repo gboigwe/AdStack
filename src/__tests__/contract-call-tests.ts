@@ -22,3 +22,14 @@ describe('buildContractCallRequest', () => {
     expect(req.functionArgs).toEqual([]);
   });
 });
+
+describe('withNetwork', () => {
+  it('overrides the network field', () => {
+    const req = buildContractCallRequest({
+      contractAddress: 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7',
+      contractName: 'c', functionName: 'f', functionArgs: [], network: 'mainnet',
+    });
+    const testnetReq = withNetwork(req, 'testnet');
+    expect(testnetReq.network).toBe('testnet');
+  });
+});
