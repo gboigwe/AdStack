@@ -7,3 +7,9 @@ export type MapEntry<K, V> = { key: K; value: V };
 export function makeMap<K, V>(keySerializer: (k: K) => string): ClarityMap<K, V> {
   return { type: 'map', entries: new Map(), keySerializer };
 }
+
+export function mapInsert<K, V>(m: ClarityMap<K, V>, key: K, value: V): ClarityMap<K, V> {
+  const newEntries = new Map(m.entries);
+  newEntries.set(m.keySerializer(key), value);
+  return { ...m, entries: newEntries };
+}
