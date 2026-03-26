@@ -50,3 +50,7 @@ export function padHexTo32Bytes(hex: string): string {
   const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
   return clean.padStart(64, '0');
 }
+
+export function concatHex(...hexStrings: string[]): string {
+  return hexStrings.map(h => h.startsWith('0x') ? h.slice(2) : h).join('');
+}
