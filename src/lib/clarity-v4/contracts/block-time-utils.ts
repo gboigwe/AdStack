@@ -50,3 +50,7 @@ export function isExpiryReached(expiry: BlockExpiry, currentBlock: bigint): bool
 export function hasStarted(expiry: BlockExpiry, currentBlock: bigint): boolean {
   return currentBlock >= expiry.startBlock;
 }
+
+export function isActive(expiry: BlockExpiry, currentBlock: bigint): boolean {
+  return hasStarted(expiry, currentBlock) && !isExpiryReached(expiry, currentBlock);
+}
