@@ -97,3 +97,11 @@ export function sortEventsByBlock(events: AdStackEvent[]): AdStackEvent[] {
     return 0;
   });
 }
+
+export function countEventsByType(events: AdStackEvent[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const e of events) {
+    counts[e.eventType] = (counts[e.eventType] ?? 0) + 1;
+  }
+  return counts;
+}
