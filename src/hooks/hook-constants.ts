@@ -191,3 +191,4 @@ export const HOOK_RETRY_DELAY_188 = 18800;
 export const HOOK_RETRY_DELAY_189 = 18900;
 export const HOOK_RETRY_DELAY_190 = 19000;
 export const HOOK_RETRY_DELAY_191 = 19100;
+export const HOOK_RETRY_DELAY_192 = 19200;
