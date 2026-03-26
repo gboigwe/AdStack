@@ -21,3 +21,4 @@ export const TEST_CASE_ID_16 = 16;
 export const TEST_CASE_ID_17 = 17;
 export const TEST_CASE_ID_18 = 18;
 export const TEST_CASE_ID_19 = 19;
+export const TEST_CASE_ID_20 = 20;
