@@ -12,3 +12,13 @@ describe('buildAuthRequest', () => {
     });
     expect(req.appDetails.name).toBe('TestApp');
   });
+  it('includes redirectTo in request', () => {
+    const req = buildAuthRequest({
+      appDetails: { name: 'App', icon: 'https://example.com/i.png' },
+      redirectTo: '/dashboard',
+      onFinish: () => {},
+      onCancel: () => {},
+    });
+    expect(req.redirectTo).toBe('/dashboard');
+  });
+});
