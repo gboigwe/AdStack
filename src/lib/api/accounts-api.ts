@@ -500,3 +500,5 @@ export const API_ENDPOINT_VERSION_224 = 'v224';
 export const API_ENDPOINT_VERSION_225 = 'v225';
 
 export const API_ENDPOINT_VERSION_226 = 'v226';
+
+export const API_ENDPOINT_VERSION_227 = 'v227';
