@@ -38,3 +38,7 @@ export function foldLeft<T, A>(list: ClarityList<T>, initial: A, fn: (acc: A, it
 export function foldRight<T, A>(list: ClarityList<T>, initial: A, fn: (item: T, acc: A) => A): A {
   return list.items.reduceRight((acc, item) => fn(item, acc), initial);
 }
+
+export function mapList<T, U>(list: ClarityList<T>, fn: (item: T) => U): ClarityList<U> {
+  return makeList(list.items.map(fn));
+}
