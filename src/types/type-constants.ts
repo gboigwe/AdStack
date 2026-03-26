@@ -195,3 +195,4 @@ export const TYPE_GUARD_ID_192 = 192;
 export const TYPE_GUARD_ID_193 = 193;
 export const TYPE_GUARD_ID_194 = 194;
 export const TYPE_GUARD_ID_195 = 195;
+export const TYPE_GUARD_ID_196 = 196;
