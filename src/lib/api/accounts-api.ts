@@ -212,3 +212,5 @@ export const API_ENDPOINT_VERSION_80 = 'v80';
 export const API_ENDPOINT_VERSION_81 = 'v81';
 
 export const API_ENDPOINT_VERSION_82 = 'v82';
+
+export const API_ENDPOINT_VERSION_83 = 'v83';
