@@ -26,3 +26,11 @@ export async function fetchAddressNftHoldings(address: string, network: Network 
   if (!res.ok) return { limit: 0, offset: 0, total: 0, results: [] };
   return res.json();
 }
+
+export async function fetchNftEvents(assetIdentifier: string, network: Network = 'mainnet', limit = 20): Promise<NftInfo[]> {
+  const url = `${getBase(network)}/extended/v1/tokens/nft/history?asset_identifier=${assetIdentifier}&limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results ?? [];
+}
