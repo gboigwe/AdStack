@@ -26,3 +26,10 @@ export interface ContractLogEvent extends BaseContractEvent {
   event_type: 'contract_log';
   contract_log: { contract_id: string; topic: string; value: { hex: string; repr: string } };
 }
+
+export type StacksEvent = StxAssetEvent | FtAssetEvent | NftAssetEvent | ContractLogEvent;
+
+export function isStxEvent(e: StacksEvent): e is StxAssetEvent { return e.event_type === 'stx_asset'; }
+export function isFtEvent(e: StacksEvent): e is FtAssetEvent { return e.event_type === 'fungible_token_asset'; }
+export function isNftEvent(e: StacksEvent): e is NftAssetEvent { return e.event_type === 'non_fungible_token_asset'; }
+export function isLogEvent(e: StacksEvent): e is ContractLogEvent { return e.event_type === 'contract_log'; }
