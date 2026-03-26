@@ -24,3 +24,9 @@ export function makeStringAscii(value: string, maxLength = DEFAULT_MAX_STRING_LE
   if (value.length > maxLength) throw new RangeError(`ASCII string too long: ${value.length}`);
   return { type: 'string-ascii', value, maxLength };
 }
+
+export function makeStringUtf8(value: string, maxLength = DEFAULT_MAX_STRING_LENGTH): StringUtf8 {
+  const byteLen = new TextEncoder().encode(value).length;
+  if (byteLen > maxLength) throw new RangeError(`UTF-8 string too long: ${byteLen} bytes`);
+  return { type: 'string-utf8', value, maxLength };
+}
