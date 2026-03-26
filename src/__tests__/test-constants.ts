@@ -7,3 +7,4 @@ export const TEST_CASE_ID_2 = 2;
 export const TEST_CASE_ID_3 = 3;
 export const TEST_CASE_ID_4 = 4;
 export const TEST_CASE_ID_5 = 5;
+export const TEST_CASE_ID_6 = 6;
