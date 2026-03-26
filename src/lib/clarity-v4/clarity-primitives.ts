@@ -93,3 +93,8 @@ export function makeOptional<T>(value: T | null): ClarityOptional<T> {
 export function isZeroUint(v: ClarityUint): boolean {
   return v.value === BigInt(0);
 }
+
+/** Check if a ClarityInt is negative */
+export function isNegativeInt(v: ClarityInt): boolean {
+  return v.value < BigInt(0);
+}
