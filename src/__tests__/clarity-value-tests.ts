@@ -8,3 +8,7 @@ describe('makeUint', () => {
     expect(v.type).toBe('uint');
     expect(v.value).toBe(42n);
   });
+  it('accepts number input', () => {
+    const v = makeUint(100);
+    expect(v.value).toBe(100n);
+  });
