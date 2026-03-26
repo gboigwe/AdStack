@@ -35,3 +35,13 @@ export function isMainnetPrincipal(address: string): boolean {
 export function isTestnetPrincipal(address: string): boolean {
   return address.startsWith(TESTNET_PREFIX) && isAnyPrincipal(address);
 }
+
+export function parsePrincipal(address: string): ParsedPrincipal | null {
+  if (!isAnyPrincipal(address)) return null;
+  const network = address.startsWith(MAINNET_PREFIX) ? 'mainnet' : 'testnet';
+  if (isContractPrincipal(address)) {
+    const [addr, name] = address.split('.');
+    return { type: 'contract', address: addr, contractName: name, network };
+  }
+  return { type: 'standard', address, network };
+}
