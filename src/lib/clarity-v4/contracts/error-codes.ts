@@ -39,3 +39,19 @@ export const ERR_INVALID_TOKEN = 600n;
 export const ERR_TOKEN_NOT_WHITELISTED = 601n;
 export const ERR_INSUFFICIENT_TOKEN_BALANCE = 602n;
 export const ERR_TOKEN_TRANSFER_FAILED = 603n;
+
+export type AdStackErrorCode = bigint;
+
+export function getErrorName(code: AdStackErrorCode): string {
+  const names: Record<string, string> = {
+    '100': 'ERR_OWNER_ONLY',
+    '101': 'ERR_ADMIN_ONLY',
+    '200': 'ERR_CAMPAIGN_NOT_FOUND',
+    '201': 'ERR_CAMPAIGN_INACTIVE',
+    '300': 'ERR_INSUFFICIENT_BUDGET',
+    '400': 'ERR_PUBLISHER_NOT_REGISTERED',
+    '500': 'ERR_PROPOSAL_NOT_FOUND',
+    '600': 'ERR_INVALID_TOKEN',
+  };
+  return names[code.toString()] ?? `UNKNOWN_ERROR(${code})`;
+}
