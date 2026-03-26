@@ -9,3 +9,7 @@ export const BLOCKS_PER_DAY = BigInt(144);
 export const BLOCKS_PER_WEEK = BLOCKS_PER_DAY * BigInt(7);
 
 export const BLOCKS_PER_YEAR = BLOCKS_PER_DAY * BigInt(365);
+
+export function stxToUstx(stx: bigint): ClarityUint {
+  return makeUint(stx * ONE_STX_IN_USTX);
+}
