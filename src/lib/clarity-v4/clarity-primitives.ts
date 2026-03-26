@@ -38,3 +38,11 @@ export const ZERO_INT: ClarityInt = { type: 'int', value: BigInt(0) };
 
 export const TRUE_BOOL: ClarityBool = { type: 'bool', value: true };
 export const FALSE_BOOL: ClarityBool = { type: 'bool', value: false };
+
+/** Create a Clarity uint value */
+export function makeUint(value: bigint | number): ClarityUint {
+  const v = BigInt(value);
+  if (v < BigInt(0)) throw new RangeError('uint must be non-negative');
+  if (v > MAX_UINT128) throw new RangeError('uint exceeds max uint128');
+  return { type: 'uint', value: v };
+}
