@@ -27,3 +27,7 @@ export function isDataVar<T>(val: unknown): val is DataVar<T> {
 export function resetDataVar<T>(v: DataVar<T>, defaultValue: T): DataVar<T> {
   return setDataVar(v, defaultValue);
 }
+
+export function dataVarEquals<T>(a: DataVar<T>, b: DataVar<T>): boolean {
+  return JSON.stringify(a.value) === JSON.stringify(b.value);
+}
