@@ -56,3 +56,7 @@ export function bufferCVFromString(hex: string): BufferCV {
 export function stringAsciiCV(data: string): StringAsciiCV {
   return { type: 'string-ascii', data };
 }
+
+export function stringUtf8CV(data: string): StringUtf8CV {
+  return { type: 'string-utf8', data };
+}
