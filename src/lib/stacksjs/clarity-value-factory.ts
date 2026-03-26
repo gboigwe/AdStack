@@ -84,3 +84,7 @@ export function listCV<T extends ClarityValue>(list: T[]): ListCV<T> {
 export function tupleCV<T extends Record<string, ClarityValue>>(data: T): TupleCV<T> {
   return { type: 'tuple', data };
 }
+
+export function responseOkCV<T extends ClarityValue>(value: T): ResponseOkCV<T> {
+  return { type: 'ok', value };
+}
