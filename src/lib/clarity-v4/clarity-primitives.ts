@@ -194,3 +194,8 @@ export function isClarityNone(v: unknown): v is ClarityNone {
 export function isClaritySome<T>(v: unknown): v is ClaritySome<T> {
   return typeof v === 'object' && v !== null && (v as ClaritySome<T>).type === 'some';
 }
+
+/** Returns whether two ClarityUint values are equal */
+export function equalUint(a: ClarityUint, b: ClarityUint): boolean {
+  return a.value === b.value;
+}
