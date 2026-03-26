@@ -8,3 +8,14 @@ export type NftInfo = { asset_identifier: string; value: { hex: string; repr: st
 export type NftHoldingsResponse = { limit: number; offset: number; total: number; results: NftInfo[] };
 
 export type FtHoldingsResponse = { limit: number; offset: number; total: number; results: FtInfo[] };
+
+function getBase(network: Network): string {
+  return network === 'mainnet' ? HIRO_API_BASE : HIRO_TESTNET_BASE;
+}
+
+export async function fetchFtInfo(contractId: string, network: Network = 'mainnet'): Promise<FtInfo> {
+  const url = `${getBase(network)}/metadata/v1/ft/${contractId}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`FT not found: ${contractId}`);
+  return res.json();
+}
