@@ -108,3 +108,6 @@ export const isResponseErrCV = (cv: ClarityValue): cv is ResponseErrCV<ClarityVa
 
 // Factory helper 1
 export function makeUint1(): UintCV { return uintCV(1); }
+
+// Factory helper 2
+export function makeUint2(): UintCV { return uintCV(2); }
