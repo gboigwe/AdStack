@@ -102,3 +102,8 @@ export function validateField5(value: unknown): ValidationResult {
   if (value === null || value === undefined) return invalidResult('Field 5 is required');
   return validResult();
 }
+
+// Validator helper 1
+export function isPositiveAmount1(amount: bigint): boolean {
+  return amount > BigInt(0);
+}
