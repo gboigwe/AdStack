@@ -154,3 +154,4 @@ export const TYPE_GUARD_ID_151 = 151;
 export const TYPE_GUARD_ID_152 = 152;
 export const TYPE_GUARD_ID_153 = 153;
 export const TYPE_GUARD_ID_154 = 154;
+export const TYPE_GUARD_ID_155 = 155;
