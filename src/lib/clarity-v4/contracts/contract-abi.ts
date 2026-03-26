@@ -35,3 +35,7 @@ export type ContractAbi = {
 export function getAbiFunctionDef(abi: ContractAbi, name: string): AbiFunctionDef | null {
   return abi.functions.find(f => f.name === name) ?? null;
 }
+
+export function validateAbiArgs(fn: AbiFunctionDef, args: unknown[]): boolean {
+  return args.length === fn.args.length;
+}
