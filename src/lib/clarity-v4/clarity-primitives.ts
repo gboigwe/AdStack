@@ -83,3 +83,8 @@ export function makeSome<T>(value: T): ClaritySome<T> {
 export function makeNone(): ClarityNone {
   return { type: 'none' };
 }
+
+/** Create a Clarity optional from a nullable value */
+export function makeOptional<T>(value: T | null): ClarityOptional<T> {
+  return { type: 'optional', value };
+}
