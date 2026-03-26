@@ -55,3 +55,8 @@ export function useAccountTokens(address: string | null) {
       setState(prev => ({ ...prev, isLoading: false, error: String(e) }));
     }
   }, [address]);
+
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { ...state, refetch };
+}
