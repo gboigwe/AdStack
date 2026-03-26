@@ -20,3 +20,10 @@ function bigIntToBytes16(n: bigint): Uint8Array {
 export function serializeUintCV(cv: UintCV): string {
   return '01' + bytesToHex(bigIntToBytes16(cv.value));
 }
+
+export function serializeIntCV(cv: IntCV): string {
+  const twosComplement = cv.value < BigInt(0)
+    ? BigInt('340282366920938463463374607431768211456') + cv.value
+    : cv.value;
+  return '00' + bytesToHex(bigIntToBytes16(twosComplement));
+}
