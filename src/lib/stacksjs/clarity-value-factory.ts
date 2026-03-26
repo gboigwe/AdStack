@@ -4,3 +4,4 @@ export type CvType = 'uint' | 'int' | 'bool' | 'principal' | 'buffer' | 'string-
 
 export type UintCV = { type: 'uint'; value: bigint };
 export type IntCV = { type: 'int'; value: bigint };
+export type BoolCV = { type: 'bool'; value: boolean };
