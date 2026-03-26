@@ -25,3 +25,7 @@ export type SpendingCondition = { signer: string; nonce: bigint; fee: bigint; si
 export const MAINNET_CHAIN_ID = 1;
 
 export const TESTNET_CHAIN_ID = 2147483648;
+
+export function buildTokenTransferPayload(recipient: string, amount: bigint, memo = ''): TokenTransferPayload {
+  return { type: 'token_transfer', recipient, amount, memo };
+}
