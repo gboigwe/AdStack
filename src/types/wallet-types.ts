@@ -1,3 +1,10 @@
 // Wallet connection and authentication types
 export type WalletType = 'leather' | 'xverse' | 'asigna' | 'unknown';
 export type WalletNetwork = 'mainnet' | 'testnet' | 'devnet';
+
+export interface WalletAccount {
+  address: string;
+  publicKey: string;
+  network: WalletNetwork;
+  label?: string;
+}
