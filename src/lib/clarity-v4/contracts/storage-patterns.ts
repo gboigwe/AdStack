@@ -88,3 +88,11 @@ export function storageMapSize<K, V>(map: StorageMap<K, V>): number {
 export function storageMapClear<K, V>(map: StorageMap<K, V>): StorageMap<K, V> {
   return { ...map, entries: new Map() };
 }
+
+export function storageMapToObject<K, V>(map: StorageMap<K, V>): Record<string, V> {
+  const result: Record<string, V> = {};
+  for (const [k, v] of map.entries) {
+    result[k] = v;
+  }
+  return result;
+}
