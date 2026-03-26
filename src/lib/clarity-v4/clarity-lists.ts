@@ -74,3 +74,9 @@ export function takeList<T>(list: ClarityList<T>, n: number): ClarityList<T> {
 export function dropList<T>(list: ClarityList<T>, n: number): ClarityList<T> {
   return makeList(list.items.slice(n));
 }
+
+export function zipLists<A, B>(a: ClarityList<A>, b: ClarityList<B>): ClarityList<[A, B]> {
+  const len = Math.min(a.items.length, b.items.length);
+  const pairs: [A, B][] = Array.from({ length: len }, (_, i) => [a.items[i], b.items[i]]);
+  return makeList(pairs);
+}
