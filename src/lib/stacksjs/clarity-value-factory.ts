@@ -33,3 +33,7 @@ export function boolCV(value: boolean): BoolCV {
 
 export const trueCV = (): BoolCV => boolCV(true);
 export const falseCV = (): BoolCV => boolCV(false);
+
+export function noneCV(): NoneCV {
+  return { type: 'none' };
+}
