@@ -29,3 +29,9 @@ export function isOk<T, E>(result: ClarityResponse<T, E>): result is OkResult<T>
 export function isErr<T, E>(result: ClarityResponse<T, E>): result is ErrResult<E> {
   return result.type === 'err';
 }
+
+/** Unwrap an OK response, throw if Err */
+export function unwrapOk<T, E>(result: ClarityResponse<T, E>): T {
+  if (result.type !== 'ok') throw new Error('Called unwrapOk on an Err value');
+  return result.value;
+}
