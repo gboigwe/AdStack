@@ -33,3 +33,7 @@ export function formatPrincipal(principal: string, short = false): string {
   }
   return `${principal.slice(0, 6)}...${principal.slice(-4)}`;
 }
+
+export function formatBlockHeight(height: number): string {
+  return `#${height.toLocaleString()}`;
+}
