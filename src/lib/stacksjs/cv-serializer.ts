@@ -40,3 +40,9 @@ export function serializeBufferCV(cv: BufferCV): string {
   const lengthHex = cv.buffer.length.toString(16).padStart(8, '0');
   return '02' + lengthHex + bytesToHex(cv.buffer);
 }
+
+export function serializeStringAsciiCV(cv: StringAsciiCV): string {
+  const bytes = new TextEncoder().encode(cv.data);
+  const lengthHex = bytes.length.toString(16).padStart(8, '0');
+  return '0d' + lengthHex + bytesToHex(bytes);
+}
