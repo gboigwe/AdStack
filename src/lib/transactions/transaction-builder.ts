@@ -29,3 +29,12 @@ export const TESTNET_CHAIN_ID = 2147483648;
 export function buildTokenTransferPayload(recipient: string, amount: bigint, memo = ''): TokenTransferPayload {
   return { type: 'token_transfer', recipient, amount, memo };
 }
+
+export function buildContractCallPayload(
+  contractAddress: string,
+  contractName: string,
+  functionName: string,
+  functionArgs: unknown[]
+): ContractCallPayload {
+  return { type: 'contract_call', contractAddress, contractName, functionName, functionArgs };
+}
