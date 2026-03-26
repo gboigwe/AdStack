@@ -153,3 +153,8 @@ export function toNullable<T, E>(result: { type: 'ok'; value: T } | { type: 'err
 export function collectOk<T, E>(results: Array<{ type: 'ok'; value: T } | { type: 'err'; value: E }>): T[] {
   return results.filter(r => r.type === 'ok').map(r => (r as { type: 'ok'; value: T }).value);
 }
+
+/** Collect all err values from an array of responses */
+export function collectErr<T, E>(results: Array<{ type: 'ok'; value: T } | { type: 'err'; value: E }>): E[] {
+  return results.filter(r => r.type === 'err').map(r => (r as { type: 'err'; value: E }).value);
+}
