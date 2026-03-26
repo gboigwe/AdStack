@@ -49,3 +49,11 @@ export function isCampaignFunded(c: Campaign): boolean {
 export function getCampaignRemainingBudget(c: Campaign): bigint {
   return c.budget > c.spent ? c.budget - c.spent : BigInt(0);
 }
+
+export function isPublisherVerified(p: Publisher): boolean {
+  return p.status === 'verified';
+}
+
+export function isPublisherEligibleForPayout(p: Publisher): boolean {
+  return isPublisherVerified(p) && p.pendingPayout > BigInt(0);
+}
