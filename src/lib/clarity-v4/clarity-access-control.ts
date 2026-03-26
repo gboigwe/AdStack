@@ -4,3 +4,5 @@ export type Principal = string;
 export type ContractOwner = { address: Principal; isSet: boolean };
 
 export type AccessRole = 'owner' | 'admin' | 'operator' | 'viewer';
+
+export type RoleAssignment = { principal: Principal; role: AccessRole };
