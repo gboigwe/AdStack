@@ -17,3 +17,5 @@ export type ContractCallPayload = { type: 'contract_call'; contractAddress: stri
 export type UnsignedTransaction = { version: TransactionVersion; chainId: number; payload: TransactionPayload; nonce: bigint; fee: bigint; postConditions: unknown[] };
 
 export type SignedTransaction = UnsignedTransaction & { auth: TransactionAuth };
+
+export type TransactionAuth = { type: 'standard' | 'sponsored'; spendingCondition: SpendingCondition };
