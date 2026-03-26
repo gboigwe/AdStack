@@ -51,3 +51,10 @@ export function isNftTransferEvent(e: ClarityEvent): e is NftTransferEvent {
 export function isContractEvent(e: ClarityEvent): e is ContractEvent {
   return e.type === 'contract_event';
 }
+
+export function filterEventsByType<T extends ClarityEvent>(
+  events: ClarityEvent[],
+  guard: (e: ClarityEvent) => e is T
+): T[] {
+  return events.filter(guard);
+}
