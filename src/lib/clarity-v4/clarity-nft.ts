@@ -7,3 +7,7 @@ export type NftMintParams = { recipient: string; tokenId: bigint; metadata?: str
 export type NftTransferParams = { tokenId: bigint; sender: string; recipient: string };
 
 export type NftBurnParams = { tokenId: bigint; owner: string };
+
+export function makeNftAsset(contractId: string, assetName: string, tokenId: bigint): NftAsset {
+  return { contractId, assetName, tokenId };
+}
