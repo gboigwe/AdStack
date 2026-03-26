@@ -51,3 +51,7 @@ export function getTupleKeys<T extends TupleRecord>(tuple: ClarityTuple<T>): (ke
 export function getTupleValues<T extends TupleRecord>(tuple: ClarityTuple<T>): T[keyof T][] {
   return Object.values(tuple.data) as T[keyof T][];
 }
+
+export function tupleHasField<T extends TupleRecord>(tuple: ClarityTuple<T>, key: string): boolean {
+  return key in tuple.data;
+}
