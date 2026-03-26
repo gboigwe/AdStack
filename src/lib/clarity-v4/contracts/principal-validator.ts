@@ -8,3 +8,6 @@ export type ParsedPrincipal = {
   contractName?: string;
   network: 'mainnet' | 'testnet';
 };
+
+export const MAINNET_PREFIX = 'SP';
+export const TESTNET_PREFIX = 'ST';
