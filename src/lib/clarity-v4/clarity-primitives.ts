@@ -126,3 +126,10 @@ export function modUint(a: ClarityUint, b: ClarityUint): ClarityUint {
   if (b.value === BigInt(0)) throw new Error('Modulo by zero');
   return makeUint(a.value % b.value);
 }
+
+/** Compare two ClarityUint values, returns -1, 0, or 1 */
+export function compareUint(a: ClarityUint, b: ClarityUint): -1 | 0 | 1 {
+  if (a.value < b.value) return -1;
+  if (a.value > b.value) return 1;
+  return 0;
+}
