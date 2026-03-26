@@ -13,3 +13,8 @@ export function cvCompare(a: ClarityValue, b: ClarityValue): -1 | 0 | 1 {
   if (aStr > bStr) return 1;
   return 0;
 }
+
+export function cvUintEqual(a: ClarityValue, b: ClarityValue): boolean {
+  if (a.type !== 'uint' || b.type !== 'uint') return false;
+  return (a as { type: 'uint'; value: bigint }).value === (b as { type: 'uint'; value: bigint }).value;
+}
