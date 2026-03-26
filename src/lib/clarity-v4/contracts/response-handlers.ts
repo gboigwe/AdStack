@@ -77,3 +77,13 @@ export async function fromAsyncContractCall<T>(
     return contractErr(BigInt(500));
   }
 }
+
+export function retryContractResponse<T>(
+  responses: ContractResponse<T>[],
+  maxRetries: number
+): ContractResponse<T> {
+  for (let i = 0; i < Math.min(responses.length, maxRetries); i++) {
+    if (responses[i].type === 'ok') return responses[i];
+  }
+  return responses[responses.length - 1] ?? contractErr(500n);
+}
