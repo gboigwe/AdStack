@@ -128,3 +128,5 @@ export const API_ENDPOINT_VERSION_38 = 'v38';
 export const API_ENDPOINT_VERSION_39 = 'v39';
 
 export const API_ENDPOINT_VERSION_40 = 'v40';
+
+export const API_ENDPOINT_VERSION_41 = 'v41';
