@@ -94,3 +94,4 @@ export const HOOK_RETRY_DELAY_91 = 9100;
 export const HOOK_RETRY_DELAY_92 = 9200;
 export const HOOK_RETRY_DELAY_93 = 9300;
 export const HOOK_RETRY_DELAY_94 = 9400;
+export const HOOK_RETRY_DELAY_95 = 9500;
