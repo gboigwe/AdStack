@@ -13,3 +13,7 @@ export function mapInsert<K, V>(m: ClarityMap<K, V>, key: K, value: V): ClarityM
   newEntries.set(m.keySerializer(key), value);
   return { ...m, entries: newEntries };
 }
+
+export function mapGet<K, V>(m: ClarityMap<K, V>, key: K): V | null {
+  return m.entries.get(m.keySerializer(key)) ?? null;
+}
