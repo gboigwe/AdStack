@@ -56,3 +56,14 @@ export function propagateContractErr<T, U>(r: ContractResponse<T>): ContractErr 
   if (r.type === 'err') return r;
   return null;
 }
+
+export function combineContractResponses<T>(
+  responses: ContractResponse<T>[]
+): ContractResponse<T[]> {
+  const values: T[] = [];
+  for (const r of responses) {
+    if (r.type === 'err') return r;
+    values.push(r.value);
+  }
+  return contractOk(values);
+}
