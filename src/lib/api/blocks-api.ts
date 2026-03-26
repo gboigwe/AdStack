@@ -18,3 +18,10 @@ export async function fetchLatestBlock(network: Network = 'mainnet'): Promise<Bl
   const data = await res.json() as BlocksResponse;
   return data.results[0];
 }
+
+export async function fetchBlock(hashOrHeight: string | number, network: Network = 'mainnet'): Promise<Block> {
+  const url = `${getBase(network)}/extended/v1/block/${hashOrHeight}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Block not found: ${hashOrHeight}`);
+  return res.json();
+}
