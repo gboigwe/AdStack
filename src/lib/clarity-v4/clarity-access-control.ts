@@ -33,3 +33,11 @@ export function getPrincipalRoles(acl: AccessControlList, principal: Principal):
 export function getRolePrincipals(acl: AccessControlList, role: AccessRole): Principal[] {
   return acl.assignments.filter(a => a.role === role).map(a => a.principal);
 }
+
+export function isOwner(acl: AccessControlList, principal: Principal): boolean {
+  return hasRole(acl, principal, 'owner');
+}
+
+export function isAdmin(acl: AccessControlList, principal: Principal): boolean {
+  return hasRole(acl, principal, 'admin') || hasRole(acl, principal, 'owner');
+}
