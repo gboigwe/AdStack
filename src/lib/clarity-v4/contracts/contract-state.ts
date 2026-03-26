@@ -69,3 +69,17 @@ export function getVoteParticipation(p: Proposal): number {
   if (p.quorum === BigInt(0)) return 100;
   return Math.min(100, Number((total * BigInt(100)) / p.quorum));
 }
+
+export function canTransitionCampaign(
+  from: CampaignStatus,
+  to: CampaignStatus
+): boolean {
+  const transitions: Record<CampaignStatus, CampaignStatus[]> = {
+    draft: ['active'],
+    active: ['paused', 'closed'],
+    paused: ['active', 'closed'],
+    closed: ['completed'],
+    completed: [],
+  };
+  return transitions[from].includes(to);
+}
