@@ -17,3 +17,5 @@ export type ClaritySome<T> = { type: 'some'; value: T };
 export type ClarityResponseOk<T> = { type: 'ok'; value: T };
 
 export type ClarityResponseErr<E> = { type: 'err'; value: E };
+
+export type ClarityResponse<T, E> = ClarityResponseOk<T> | ClarityResponseErr<E>;
