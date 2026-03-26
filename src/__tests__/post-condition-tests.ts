@@ -9,3 +9,8 @@ describe('makeStxCondition', () => {
     expect(cond.amount).toBe(1000000n);
     expect(cond.conditionCode).toBe(FungibleConditionCode.Equal);
   });
+  it('stores principal address', () => {
+    const cond = makeStxCondition('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7', FungibleConditionCode.GreaterEqual, 500000n);
+    expect(cond.principal).toBe('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7');
+  });
+});
