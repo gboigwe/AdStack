@@ -224,3 +224,4 @@ export const HOOK_RETRY_DELAY_221 = 22100;
 export const HOOK_RETRY_DELAY_222 = 22200;
 export const HOOK_RETRY_DELAY_223 = 22300;
 export const HOOK_RETRY_DELAY_224 = 22400;
+export const HOOK_RETRY_DELAY_225 = 22500;
