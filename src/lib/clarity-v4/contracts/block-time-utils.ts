@@ -1,3 +1,10 @@
 // Clarity v4 Block Time Helpers
 
 export const AVERAGE_BLOCK_SECONDS = 600;
+
+export const BLOCKS_PER_MINUTE = 0.1;
+export const BLOCKS_PER_HOUR = 6;
+export const BLOCKS_PER_DAY = 144;
+export const BLOCKS_PER_WEEK = 1008;
+export const BLOCKS_PER_MONTH = 4320;
+export const BLOCKS_PER_YEAR = 52560;
