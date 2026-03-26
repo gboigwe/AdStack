@@ -75,3 +75,10 @@ export function getTotalPayouts(events: AdStackEvent[]): bigint {
   return filterEventsByType(events, isPayoutClaimedEvent)
     .reduce((sum, e) => sum + e.data.amount, BigInt(0));
 }
+
+export function getCampaignEvents(events: AdStackEvent[], campaignId: bigint): AdStackEvent[] {
+  return events.filter(e => {
+    const data = e.data as Record<string, unknown>;
+    return data.campaignId === campaignId;
+  });
+}
