@@ -8,3 +8,5 @@ export type ClarityTuple<T extends Record<string, unknown> = Record<string, unkn
 export type TupleKey = string;
 export type TupleValue = unknown;
 export type TupleRecord = Record<TupleKey, TupleValue>;
+
+export type MergeTuples<A extends TupleRecord, B extends TupleRecord> = ClarityTuple<A & B>;
