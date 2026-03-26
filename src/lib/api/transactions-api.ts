@@ -40,3 +40,13 @@ export async function fetchMempoolTransactions(address?: string, network: Networ
   const data = await res.json();
   return data.results ?? [];
 }
+
+export async function estimateTransactionFee(txHex: string, network: Network = 'mainnet'): Promise<FeeEstimateResponse> {
+  const url = `${getBase(network)}/v2/fees/transaction`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transaction_payload: txHex }),
+  });
+  return res.json();
+}
