@@ -104,3 +104,8 @@ export function isCallablePrincipal(address: string, caller: string): boolean {
   if (!parsedAddr || !parsedCaller) return false;
   return parsedAddr.network === parsedCaller.network;
 }
+
+export function buildContractPrincipal(address: string, contractName: string): string {
+  if (!isStandardPrincipal(address)) throw new Error(`Invalid address: ${address}`);
+  return `${address}.${contractName}`;
+}
