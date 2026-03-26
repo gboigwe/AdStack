@@ -21,3 +21,11 @@ export function validateStxTransferParams(params: StxTransferParams): string | n
   if (!params.recipient) return 'Recipient required';
   return null;
 }
+
+export function openSTXTransfer(params: StxTransferParams): void {
+  const error = validateStxTransferParams(params);
+  if (error) throw new Error(error);
+  if (typeof window === 'undefined') return;
+  const event = new CustomEvent('openStacksSTXTransfer', { detail: params });
+  window.dispatchEvent(event);
+}
