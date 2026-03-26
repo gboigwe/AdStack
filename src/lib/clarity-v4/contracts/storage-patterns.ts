@@ -136,3 +136,6 @@ export const STORAGE_PATTERN_VERSION_3 = '3.0.0';
 
 // Additional map pattern utility 4
 export const STORAGE_PATTERN_VERSION_4 = '4.0.0';
+
+// Additional map pattern utility 5
+export const STORAGE_PATTERN_VERSION_5 = '5.0.0';
