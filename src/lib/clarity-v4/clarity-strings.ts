@@ -18,3 +18,9 @@ export function isAsciiString(str: string): boolean {
   }
   return true;
 }
+
+export function makeStringAscii(value: string, maxLength = DEFAULT_MAX_STRING_LENGTH): StringAscii {
+  if (!isAsciiString(value)) throw new Error('Non-ASCII characters found');
+  if (value.length > maxLength) throw new RangeError(`ASCII string too long: ${value.length}`);
+  return { type: 'string-ascii', value, maxLength };
+}
