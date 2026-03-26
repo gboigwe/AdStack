@@ -28,3 +28,9 @@ export function openSignMessage(params: SignMessageParams): void {
   const event = new CustomEvent('openStacksSignMessage', { detail: params });
   window.dispatchEvent(event);
 }
+
+export function openStructuredDataSignature(params: SignStructuredDataParams): void {
+  if (typeof window === 'undefined') return;
+  const event = new CustomEvent('openStacksStructuredDataSignature', { detail: params });
+  window.dispatchEvent(event);
+}
