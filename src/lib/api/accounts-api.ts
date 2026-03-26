@@ -402,3 +402,5 @@ export const API_ENDPOINT_VERSION_175 = 'v175';
 export const API_ENDPOINT_VERSION_176 = 'v176';
 
 export const API_ENDPOINT_VERSION_177 = 'v177';
+
+export const API_ENDPOINT_VERSION_178 = 'v178';
