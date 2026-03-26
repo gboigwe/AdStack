@@ -56,3 +56,11 @@ export function parseResponseFromRepr(repr: string): { ok: boolean; inner: strin
   if (errMatch) return { ok: false, inner: errMatch[1] };
   throw new Error(`Invalid response repr: ${repr}`);
 }
+
+export function deserializeHiroApiCV(cv: HiroApiCV): DeserializedCV {
+  return {
+    type: cv.type,
+    value: cv.value,
+    repr: cv.repr,
+  };
+}
