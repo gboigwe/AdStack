@@ -21,3 +21,20 @@ export const ERR_INVALID_PRINCIPAL = 400n;
 export const ERR_INVALID_CONTRACT = 401n;
 export const ERR_INVALID_TOKEN = 402n;
 export const ERR_INVALID_PARAMETER = 403n;
+
+export type ClarityErrorCode = bigint;
+
+export function errorCodeToString(code: ClarityErrorCode): string {
+  const known: Record<string, string> = {
+    '100': 'UNAUTHORIZED',
+    '101': 'NOT_FOUND',
+    '102': 'ALREADY_EXISTS',
+    '103': 'INVALID_AMOUNT',
+    '104': 'INSUFFICIENT_BALANCE',
+    '200': 'EXPIRED',
+    '201': 'NOT_STARTED',
+    '300': 'OVERFLOW',
+    '400': 'INVALID_PRINCIPAL',
+  };
+  return known[code.toString()] ?? `UNKNOWN_ERROR(${code})`;
+}
