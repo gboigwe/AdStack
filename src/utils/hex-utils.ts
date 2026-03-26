@@ -1,0 +1,43 @@
+// Hex encoding/decoding utilities
+
+export function hexToBytes(hex: string): Uint8Array {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  if (clean.length % 2 !== 0) throw new Error('Invalid hex: odd length');
+  const bytes = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+
+export function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+export function addHexPrefix(hex: string): string {
+  return hex.startsWith('0x') ? hex : `0x${hex}`;
+}
+export function removeHexPrefix(hex: string): string {
+  return hex.startsWith('0x') ? hex.slice(2) : hex;
+}
+
+export function isValidHex(hex: string): boolean {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  return /^[0-9a-fA-F]*$/.test(clean) && clean.length % 2 === 0;
+}
+
+export function hexToUtf8(hex: string): string {
+  return new TextDecoder().decode(hexToBytes(hex));
+}
+export function utf8ToHex(str: string): string {
+  return bytesToHex(new TextEncoder().encode(str));
+}
+
+export function hexToBigInt(hex: string): bigint {
+  const clean = removeHexPrefix(hex);
+  return BigInt(`0x${clean}`);
+}
+export function bigIntToHex(n: bigint): string {
+  const h = n.toString(16);
+  return h.length % 2 === 0 ? `0x${h}` : `0x0${h}`;
+}
