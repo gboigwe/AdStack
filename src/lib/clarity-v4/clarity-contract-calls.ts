@@ -11,3 +11,9 @@ export type ContractCallParams = {
 export type ReadOnlyCallParams = Omit<ContractCallParams, 'network'> & {
   senderAddress: string;
 };
+
+export type ContractCallResult<T> = {
+  success: boolean;
+  result: T | null;
+  errorMessage?: string;
+};
