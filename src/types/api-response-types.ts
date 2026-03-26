@@ -12,3 +12,5 @@ export interface ApiError {
   message: string;
   code?: number;
 }
+
+export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiError };
