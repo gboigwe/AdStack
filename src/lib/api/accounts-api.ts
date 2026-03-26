@@ -21,3 +21,10 @@ export type AccountTransactionsResponse = { limit: number; offset: number; total
 export function getApiBase(network: Network = 'mainnet'): string {
   return network === 'mainnet' ? HIRO_API_BASE : HIRO_TESTNET_BASE;
 }
+
+export async function fetchAccountBalance(address: string, network: Network = 'mainnet'): Promise<AccountBalance> {
+  const url = `${getApiBase(network)}/v2/accounts/${address}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch balance: ${res.status}`);
+  return res.json();
+}
