@@ -41,3 +41,8 @@ export function unwrapErr<T, E>(result: ClarityResponse<T, E>): E {
   if (result.type !== 'err') throw new Error('Called unwrapErr on an Ok value');
   return result.value;
 }
+
+/** Unwrap OK or return a fallback */
+export function unwrapOr<T, E>(result: ClarityResponse<T, E>, fallback: T): T {
+  return result.type === 'ok' ? result.value : fallback;
+}
