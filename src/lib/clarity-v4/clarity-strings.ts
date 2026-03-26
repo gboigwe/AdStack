@@ -88,3 +88,12 @@ export function isStringAscii(v: unknown): v is StringAscii {
 export function isStringUtf8(v: unknown): v is StringUtf8 {
   return typeof v === 'object' && v !== null && (v as StringUtf8).type === 'string-utf8';
 }
+
+export function asciiToUtf8(s: StringAscii): StringUtf8 {
+  return makeStringUtf8(s.value, s.maxLength);
+}
+
+export function utf8ToAscii(s: StringUtf8): StringAscii | null {
+  if (!isAsciiString(s.value)) return null;
+  return makeStringAscii(s.value, s.maxLength);
+}
