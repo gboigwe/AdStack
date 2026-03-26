@@ -11,3 +11,7 @@ export type SignStructuredDataParams = { message: unknown; domain: StructuredDat
 export const MAINNET_CHAIN_ID = 1;
 
 export const TESTNET_CHAIN_ID = 2147483648;
+
+export function buildSignMessageRequest(message: string): SignMessageParams {
+  return { message };
+}
