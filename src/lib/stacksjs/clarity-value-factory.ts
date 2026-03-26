@@ -76,3 +76,7 @@ export function principalCV(addressOrContractId: string): PrincipalCV {
   }
   return standardPrincipalCV(addressOrContractId);
 }
+
+export function listCV<T extends ClarityValue>(list: T[]): ListCV<T> {
+  return { type: 'list', list };
+}
