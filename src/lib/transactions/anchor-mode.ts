@@ -17,3 +17,11 @@ export function anchorModeToCode(mode: AnchorModeType): AnchorModeCode {
     case 'off_chain_only': return ANCHOR_MODE_OFF_CHAIN_ONLY;
   }
 }
+
+export function anchorModeFromCode(code: AnchorModeCode): AnchorModeType {
+  switch (code) {
+    case 1: return 'any';
+    case 2: return 'on_chain_only';
+    case 3: return 'off_chain_only';
+  }
+}
