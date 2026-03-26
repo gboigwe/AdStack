@@ -16,3 +16,8 @@ export const ERR_OVERFLOW = 300n;
 export const ERR_UNDERFLOW = 301n;
 export const ERR_DIVIDE_BY_ZERO = 302n;
 export const ERR_OUT_OF_BOUNDS = 303n;
+
+export const ERR_INVALID_PRINCIPAL = 400n;
+export const ERR_INVALID_CONTRACT = 401n;
+export const ERR_INVALID_TOKEN = 402n;
+export const ERR_INVALID_PARAMETER = 403n;
