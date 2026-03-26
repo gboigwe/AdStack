@@ -37,3 +37,10 @@ export function combineValidations(...results: ValidationResult[]): ValidationRe
   }
   return validResult();
 }
+
+export function validateCampaignBudget(budget: bigint): ValidationResult {
+  return combineValidations(
+    validateNonZero(budget, 'budget'),
+    validateUintRange(budget, BigInt(1_000_000), BigInt('1000000000000'))
+  );
+}
