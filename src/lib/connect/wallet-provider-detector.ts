@@ -85,3 +85,5 @@ export const WALLET_PROVIDER_VERSION_20 = '20';
 export const WALLET_PROVIDER_VERSION_21 = '21';
 
 export const WALLET_PROVIDER_VERSION_22 = '22';
+
+export const WALLET_PROVIDER_VERSION_23 = '23';
