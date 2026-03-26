@@ -71,3 +71,8 @@ export function groupEventsByBlock(events: ClarityEvent[]): Record<number, Clari
 export function getEventsAfterBlock(events: ClarityEvent[], blockHeight: number): ClarityEvent[] {
   return events.filter(e => e.blockHeight > blockHeight);
 }
+
+export function getTotalStxTransferred(events: ClarityEvent[]): bigint {
+  return filterEventsByType(events, isStxTransferEvent)
+    .reduce((sum, e) => sum + e.amount, BigInt(0));
+}
