@@ -17,3 +17,7 @@ export function stxToUstx(stx: bigint): ClarityUint {
 export function ustxToStx(ustx: bigint): bigint {
   return ustx / ONE_STX_IN_USTX;
 }
+
+export function blocksToSeconds(blocks: bigint): bigint {
+  return blocks * BigInt(600); // ~10 min per block
+}
