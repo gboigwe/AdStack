@@ -73,3 +73,12 @@ export function mapErr<T, E, F>(
   if (result.type === 'err') return makeErr(fn(result.value));
   return result as unknown as OkResult<T>;
 }
+
+/** FlatMap over the OK value of a response */
+export function flatMapOk<T, U, E>(
+  result: ClarityResponse<T, E>,
+  fn: (value: T) => ClarityResponse<U, E>
+): ClarityResponse<U, E> {
+  if (result.type === 'ok') return fn(result.value);
+  return result as unknown as ErrResult<E>;
+}
