@@ -6,3 +6,10 @@ export interface FtBalance {
   total_sent: string;
   total_received: string;
 }
+
+export interface NftHolding {
+  asset_identifier: string;
+  value: { hex: string; repr: string };
+  tx_id: string;
+  block_height: number;
+}
