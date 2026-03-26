@@ -46,3 +46,11 @@ export function makeUint(value: bigint | number): ClarityUint {
   if (v > MAX_UINT128) throw new RangeError('uint exceeds max uint128');
   return { type: 'uint', value: v };
 }
+
+/** Create a Clarity int value */
+export function makeInt(value: bigint | number): ClarityInt {
+  const v = BigInt(value);
+  if (v < MIN_INT128) throw new RangeError('int below min int128');
+  if (v > MAX_INT128) throw new RangeError('int exceeds max int128');
+  return { type: 'int', value: v };
+}
