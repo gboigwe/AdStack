@@ -10,3 +10,16 @@ export interface ClaimPayoutArgs {
   publisherAddress: string;
   expectedAmountUstx: bigint;
 }
+
+export function buildClaimPayoutParams(args: ClaimPayoutArgs): ContractWriteParams {
+  const [addr, name] = ESCROW_CONTRACT.split('.');
+  const postCondition = makeStxEqCondition(addr, args.expectedAmountUstx);
+  return {
+    contractAddress: addr,
+    contractName: name,
+    functionName: 'claim-payout',
+    functionArgs: [makeUint(args.campaignId)] as unknown[],
+    postConditions: [postCondition],
+    network: 'mainnet',
+  };
+}
