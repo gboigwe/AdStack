@@ -142,3 +142,9 @@ export function swapResponse<T, E>(result: { type: 'ok'; value: T } | { type: 'e
   if (result.type === 'ok') return makeErr(result.value) as unknown as { type: 'ok'; value: E };
   return makeOk(result.value) as unknown as { type: 'err'; value: T };
 }
+
+/** Convert a response to a nullable value */
+export function toNullable<T, E>(result: { type: 'ok'; value: T } | { type: 'err'; value: E }): T | null {
+  if (result.type === 'ok') return result.value;
+  return null;
+}
