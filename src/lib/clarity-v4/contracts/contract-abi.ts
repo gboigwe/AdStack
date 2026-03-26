@@ -23,3 +23,11 @@ export type AbiFunctionDef = {
   args: AbiParam[];
   outputs: { type: AbiType | AbiTypeComplex };
 };
+
+export type ContractAbi = {
+  functions: AbiFunctionDef[];
+  variables: Array<{ name: string; access: 'variable' | 'constant'; type: AbiType }>;
+  maps: Array<{ name: string; key: AbiType; value: AbiType }>;
+  fungibleTokens: Array<{ name: string }>;
+  nonFungibleTokens: Array<{ name: string; type: AbiType }>;
+};
