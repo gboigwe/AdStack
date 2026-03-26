@@ -64,3 +64,12 @@ export function mapOk<T, U, E>(
   if (result.type === 'ok') return makeOk(fn(result.value));
   return result as unknown as ErrResult<E>;
 }
+
+/** Map over the Err value of a response */
+export function mapErr<T, E, F>(
+  result: ClarityResponse<T, E>,
+  fn: (error: E) => F
+): ClarityResponse<T, F> {
+  if (result.type === 'err') return makeErr(fn(result.value));
+  return result as unknown as OkResult<T>;
+}
