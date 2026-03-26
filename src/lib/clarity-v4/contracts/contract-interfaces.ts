@@ -12,3 +12,5 @@ export type ContractFunction = {
   args: FunctionArg[];
   outputs: FunctionOutput;
 };
+
+export type ContractVariable = { name: string; type: string; access: 'variable' | 'constant' };
