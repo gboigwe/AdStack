@@ -8,3 +8,10 @@ export interface SessionUser {
   network: StacksNetwork;
   publicKey?: string;
 }
+
+export interface StacksSessionState {
+  user: SessionUser | null;
+  isConnected: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
