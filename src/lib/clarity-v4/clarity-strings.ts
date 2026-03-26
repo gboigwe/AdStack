@@ -30,3 +30,11 @@ export function makeStringUtf8(value: string, maxLength = DEFAULT_MAX_STRING_LEN
   if (byteLen > maxLength) throw new RangeError(`UTF-8 string too long: ${byteLen} bytes`);
   return { type: 'string-utf8', value, maxLength };
 }
+
+export function asciiLength(s: StringAscii): number {
+  return s.value.length;
+}
+
+export function utf8ByteLength(s: StringUtf8): number {
+  return new TextEncoder().encode(s.value).length;
+}
