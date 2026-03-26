@@ -65,3 +65,7 @@ export function serializeClarityValue(cv: ClarityValue): string {
     default: return '';
   }
 }
+
+export function cvToHex(cv: ClarityValue): string {
+  return '0x' + serializeClarityValue(cv);
+}
