@@ -115,3 +115,12 @@ export function fromNullable<T, E>(value: T | null | undefined, errorValue: E): 
   if (value == null) return makeErr(errorValue);
   return makeOk(value);
 }
+
+/** Convert a Promise to a ClarityResponse */
+export async function fromPromise<T>(promise: Promise<T>): Promise<ClarityResponse<T, string>> {
+  try {
+    return makeOk(await promise);
+  } catch (e) {
+    return makeErr(e instanceof Error ? e.message : String(e));
+  }
+}
