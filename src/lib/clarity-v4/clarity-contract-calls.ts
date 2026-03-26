@@ -48,3 +48,20 @@ export function makeContractCallParams(
     network,
   };
 }
+
+export function makeReadOnlyCallParams(
+  contractId: string,
+  functionName: string,
+  args: unknown[],
+  senderAddress: string
+): ReadOnlyCallParams | null {
+  const parsed = parseContractId(contractId);
+  if (!parsed) return null;
+  return {
+    contractAddress: parsed.address,
+    contractName: parsed.name,
+    functionName,
+    functionArgs: args,
+    senderAddress,
+  };
+}
