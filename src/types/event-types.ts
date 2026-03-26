@@ -21,3 +21,8 @@ export interface NftAssetEvent extends BaseContractEvent {
   event_type: 'non_fungible_token_asset';
   asset: { asset_event_type: string; asset_id: string; sender?: string; recipient?: string; value: { hex: string; repr: string } };
 }
+
+export interface ContractLogEvent extends BaseContractEvent {
+  event_type: 'contract_log';
+  contract_log: { contract_id: string; topic: string; value: { hex: string; repr: string } };
+}
