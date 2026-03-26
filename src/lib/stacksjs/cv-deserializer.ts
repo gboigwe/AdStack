@@ -24,3 +24,9 @@ export function parseIntFromRepr(repr: string): bigint {
   if (!match) throw new Error(`Invalid int repr: ${repr}`);
   return BigInt(match[1]);
 }
+
+export function parseBoolFromRepr(repr: string): boolean {
+  if (repr === 'true') return true;
+  if (repr === 'false') return false;
+  throw new Error(`Invalid bool repr: ${repr}`);
+}
