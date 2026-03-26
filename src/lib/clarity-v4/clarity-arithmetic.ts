@@ -13,3 +13,7 @@ export const BLOCKS_PER_YEAR = BLOCKS_PER_DAY * BigInt(365);
 export function stxToUstx(stx: bigint): ClarityUint {
   return makeUint(stx * ONE_STX_IN_USTX);
 }
+
+export function ustxToStx(ustx: bigint): bigint {
+  return ustx / ONE_STX_IN_USTX;
+}
