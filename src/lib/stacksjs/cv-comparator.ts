@@ -34,3 +34,8 @@ export function cvStringEqual(a: ClarityValue, b: ClarityValue): boolean {
   if (a.type !== 'string-ascii' && a.type !== 'string-utf8') return false;
   return (a as { type: string; data: string }).data === (b as { type: string; data: string }).data;
 }
+
+export function cvBoolEqual(a: ClarityValue, b: ClarityValue): boolean {
+  if (a.type !== 'bool' || b.type !== 'bool') return false;
+  return (a as { type: 'bool'; value: boolean }).value === (b as { type: 'bool'; value: boolean }).value;
+}
