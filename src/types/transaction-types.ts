@@ -20,3 +20,12 @@ export interface BaseTransaction {
   block_height?: BlockHeight;
   burn_block_time?: number;
 }
+
+export interface TokenTransferTransaction extends BaseTransaction {
+  tx_type: 'token_transfer';
+  token_transfer: {
+    recipient_address: StxAddress;
+    amount: MicroStx;
+    memo: string;
+  };
+}
