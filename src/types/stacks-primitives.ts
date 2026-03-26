@@ -19,3 +19,6 @@ export type Stx = Brand<number, 'Stx'>;
 export type BlockHeight = Brand<number, 'BlockHeight'>;
 export type BurnBlockHeight = Brand<number, 'BurnBlockHeight'>;
 export type Nonce = Brand<number, 'Nonce'>;
+
+export type HexString = Brand<string, 'HexString'>;
+export type Bytes = Brand<Uint8Array, 'Bytes'>;
