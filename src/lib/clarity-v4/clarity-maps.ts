@@ -31,3 +31,7 @@ export function mapHas<K, V>(m: ClarityMap<K, V>, key: K): boolean {
 export function mapSize<K, V>(m: ClarityMap<K, V>): number {
   return m.entries.size;
 }
+
+export function mapKeys<K, V>(m: ClarityMap<K, V>): string[] {
+  return Array.from(m.entries.keys());
+}
