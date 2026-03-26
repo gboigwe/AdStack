@@ -39,3 +39,13 @@ export function useContractRead<T>(params: ContractReadParams, enabled = true) {
   });
   const paramsRef = useRef(params);
   paramsRef.current = params;
+
+  const fetch = useCallback(async () => {
+    setState(prev => ({ ...prev, isLoading: true, isError: false, error: null }));
+    try {
+      const data = await callReadOnly<T>(paramsRef.current);
+      setState({ data, isLoading: false, isError: false, error: null, isFetched: true });
+    } catch (e) {
+      setState({ data: null, isLoading: false, isError: true, error: String(e), isFetched: true });
+    }
+  }, []);
