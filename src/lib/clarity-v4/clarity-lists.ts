@@ -66,3 +66,7 @@ export function someInList<T>(list: ClarityList<T>, predicate: (item: T) => bool
 export function everyInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): boolean {
   return list.items.every(predicate);
 }
+
+export function takeList<T>(list: ClarityList<T>, n: number): ClarityList<T> {
+  return makeList(list.items.slice(0, n));
+}
