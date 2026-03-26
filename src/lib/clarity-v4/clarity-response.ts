@@ -97,3 +97,15 @@ export function tryResponse<T>(fn: () => T): ClarityResponse<T, string> {
     return makeErr(e instanceof Error ? e.message : String(e));
   }
 }
+
+/** Combine multiple responses into one */
+export function combineResponses<T, E>(
+  results: ClarityResponse<T, E>[]
+): ClarityResponse<T[], E> {
+  const values: T[] = [];
+  for (const r of results) {
+    if (r.type === 'err') return r;
+    values.push(r.value);
+  }
+  return makeOk(values);
+}
