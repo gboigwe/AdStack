@@ -47,3 +47,15 @@ export function isPublicFunction(fn: AbiFunctionDef): boolean {
 export function isReadOnlyFunction(fn: AbiFunctionDef): boolean {
   return fn.access === 'read_only';
 }
+
+export function abiTypeToString(type: AbiType): string {
+  return type;
+}
+
+export function getPublicFunctionsFromAbi(abi: ContractAbi): AbiFunctionDef[] {
+  return abi.functions.filter(isPublicFunction);
+}
+
+export function getReadOnlyFunctionsFromAbi(abi: ContractAbi): AbiFunctionDef[] {
+  return abi.functions.filter(isReadOnlyFunction);
+}
