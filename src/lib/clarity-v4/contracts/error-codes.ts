@@ -91,3 +91,7 @@ export const ERROR_CODE_MAP: Record<string, string> = {
   '500': 'Proposal not found',
   '600': 'Invalid token',
 };
+
+export function getErrorDescription(code: AdStackErrorCode): string {
+  return ERROR_CODE_MAP[code.toString()] ?? 'Unknown error occurred';
+}
