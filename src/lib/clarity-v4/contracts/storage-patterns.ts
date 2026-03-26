@@ -96,3 +96,11 @@ export function storageMapToObject<K, V>(map: StorageMap<K, V>): Record<string, 
   }
   return result;
 }
+
+export function storageMapKeys<K, V>(map: StorageMap<K, V>): string[] {
+  return Array.from(map.entries.keys());
+}
+
+export function storageMapValues<K, V>(map: StorageMap<K, V>): V[] {
+  return Array.from(map.entries.values());
+}
