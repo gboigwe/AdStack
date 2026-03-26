@@ -41,3 +41,17 @@ export function useAccountTokens(address: string | null) {
   const [state, setState] = useState<AccountTokensState>({
     fungible: {}, nonFungible: [], isLoading: false, error: null,
   });
+
+  const refetch = useCallback(async () => {
+    if (!address) return;
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    try {
+      const [fungible, nonFungible] = await Promise.all([
+        fetchFtBalances(address),
+        fetchNftHoldings(address),
+      ]);
+      setState({ fungible, nonFungible, isLoading: false, error: null });
+    } catch (e) {
+      setState(prev => ({ ...prev, isLoading: false, error: String(e) }));
+    }
+  }, [address]);
