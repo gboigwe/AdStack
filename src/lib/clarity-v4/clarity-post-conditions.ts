@@ -34,3 +34,13 @@ export function makeStxPostCondition(
 ): StxPostCondition {
   return { type: 'stx', principal, conditionCode, amount };
 }
+
+export function makeFtPostCondition(
+  principal: string,
+  contractId: string,
+  assetName: string,
+  conditionCode: PostConditionCode,
+  amount: bigint
+): FtPostCondition {
+  return { type: 'ft', principal, assetInfo: { contractId, assetName }, conditionCode, amount };
+}
