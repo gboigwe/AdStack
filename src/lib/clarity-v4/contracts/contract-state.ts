@@ -91,3 +91,8 @@ export function transitionCampaignStatus(
   if (!canTransitionCampaign(campaign.status, newStatus)) return null;
   return { ...campaign, status: newStatus };
 }
+
+export function calculateCampaignROI(campaign: Campaign): number {
+  if (campaign.spent === BigInt(0)) return 0;
+  return Number((campaign.budget - campaign.spent) * BigInt(100) / campaign.budget);
+}
