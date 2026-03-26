@@ -96,3 +96,7 @@ export function isClarityList<T>(v: unknown): v is ClarityList<T> {
 export function headList<T>(list: ClarityList<T>): T | null {
   return list.items.length > 0 ? list.items[0] : null;
 }
+
+export function tailList<T>(list: ClarityList<T>): ClarityList<T> {
+  return makeList(list.items.slice(1));
+}
