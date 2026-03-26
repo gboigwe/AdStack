@@ -124,3 +124,11 @@ export function resetPublisherPayout(publisher: Publisher): Publisher {
 export function incrementPublisherImpressions(publisher: Publisher, count: bigint): Publisher {
   return { ...publisher, impressionCount: publisher.impressionCount + count };
 }
+
+export function addPublisherPayout(publisher: Publisher, amount: bigint): Publisher {
+  return {
+    ...publisher,
+    pendingPayout: publisher.pendingPayout + amount,
+    totalEarned: publisher.totalEarned + amount,
+  };
+}
