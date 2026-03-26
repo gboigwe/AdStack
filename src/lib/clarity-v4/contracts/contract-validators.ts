@@ -56,3 +56,9 @@ export function validateVotingPower(power: bigint, minimum: bigint): ValidationR
   if (power < minimum) return invalidResult(`Insufficient voting power: ${power} < ${minimum}`);
   return validResult();
 }
+
+export function throwIfInvalid(result: ValidationResult): void {
+  if (!result.valid) {
+    throw new Error(result.error ?? 'Validation failed');
+  }
+}
