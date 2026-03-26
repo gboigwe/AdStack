@@ -45,3 +45,10 @@ export function parsePrincipal(address: string): ParsedPrincipal | null {
   }
   return { type: 'standard', address, network };
 }
+
+export function principalToString(parsed: ParsedPrincipal): string {
+  if (parsed.type === 'contract' && parsed.contractName) {
+    return `${parsed.address}.${parsed.contractName}`;
+  }
+  return parsed.address;
+}
