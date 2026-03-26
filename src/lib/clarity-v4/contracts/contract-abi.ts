@@ -13,3 +13,6 @@ export type AbiType =
   | 'optional'
   | 'response'
   | 'none';
+
+export type AbiParam = { name: string; type: AbiType | AbiTypeComplex };
+export type AbiTypeComplex = { list: { type: AbiType } } | { tuple: AbiParam[] } | { optional: AbiType } | { response: { ok: AbiType; error: AbiType } };
