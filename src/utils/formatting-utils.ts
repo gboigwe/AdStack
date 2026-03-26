@@ -49,3 +49,8 @@ export function formatRelativeTime(unixSeconds: number): string {
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return `${Math.floor(diff / 86400)}d ago`;
 }
+
+export function truncateString(s: string, maxLen: number): string {
+  if (s.length <= maxLen) return s;
+  return `${s.slice(0, maxLen - 3)}...`;
+}
