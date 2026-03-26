@@ -12,3 +12,15 @@ export type QueryResult<T> = {
   error: string | null;
   loading: boolean;
 };
+
+export function loadingQuery<T>(): QueryResult<T> {
+  return { data: null, error: null, loading: true };
+}
+
+export function successQuery<T>(data: T): QueryResult<T> {
+  return { data, error: null, loading: false };
+}
+
+export function errorQuery<T>(error: string): QueryResult<T> {
+  return { data: null, error, loading: false };
+}
