@@ -50,3 +50,5 @@ export async function fetchAccountNonce(address: string, network: Network = 'mai
 }
 
 export const API_ENDPOINT_VERSION_1 = 'v1';
+
+export const API_ENDPOINT_VERSION_2 = 'v2';
