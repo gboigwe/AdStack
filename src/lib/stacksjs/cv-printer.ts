@@ -27,3 +27,20 @@ export function cvToString(cv: ClarityValue): string {
     default: return JSON.stringify(cv);
   }
 }
+
+export function cvToPrettyString(cv: ClarityValue, indent = 0): string {
+  const pad = ' '.repeat(indent * 2);
+  switch (cv.type) {
+    case 'tuple': {
+      const entries = Object.entries((cv as { type: 'tuple'; data: Record<string, ClarityValue> }).data)
+        .map(([k, v]) => `${pad}  ${k}: ${cvToPrettyString(v, indent + 1)}`).join(',\n');
+      return `{\n${entries}\n${pad}}`;
+    }
+    case 'list': {
+      const items = (cv as { type: 'list'; list: ClarityValue[] }).list
+        .map(item => `${pad}  ${cvToPrettyString(item, indent + 1)}`).join(',\n');
+      return `[\n${items}\n${pad}]`;
+    }
+    default: return cvToString(cv);
+  }
+}
