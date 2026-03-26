@@ -102,3 +102,5 @@ export const ERR_RATE_LIMITED = 902n;
 export const ERR_SERVICE_UNAVAILABLE = 903n;
 
 export const ERR_CUSTOM_1 = 1001n;
+
+export const ERR_CUSTOM_2 = 1002n;
