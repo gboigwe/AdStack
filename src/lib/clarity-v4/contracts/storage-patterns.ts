@@ -34,3 +34,7 @@ export function storageMapDelete<K, V>(map: StorageMap<K, V>, key: K): StorageMa
 export function storageMapHas<K, V>(map: StorageMap<K, V>, key: K): boolean {
   return map.entries.has(JSON.stringify(key));
 }
+
+export function makeStorageDataVar<T>(name: string, valueType: string, initial: T): StorageDataVar<T> {
+  return { name, valueType, value: initial };
+}
