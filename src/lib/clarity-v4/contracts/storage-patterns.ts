@@ -80,3 +80,11 @@ export function calculateStorageStats(
     totalEntries,
   };
 }
+
+export function storageMapSize<K, V>(map: StorageMap<K, V>): number {
+  return map.entries.size;
+}
+
+export function storageMapClear<K, V>(map: StorageMap<K, V>): StorageMap<K, V> {
+  return { ...map, entries: new Map() };
+}
