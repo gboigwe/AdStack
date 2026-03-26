@@ -14,3 +14,14 @@ describe('makeStxCondition', () => {
     expect(cond.principal).toBe('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7');
   });
 });
+
+describe('makeStxEqCondition', () => {
+  it('sets condition code to Equal', () => {
+    const cond = makeStxEqCondition('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7', 1000000n);
+    expect(cond.conditionCode).toBe(FungibleConditionCode.Equal);
+  });
+  it('sets amount correctly', () => {
+    const cond = makeStxEqCondition('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7', 2000000n);
+    expect(cond.amount).toBe(2000000n);
+  });
+});
