@@ -11,3 +11,7 @@ export function makeDataVar<T>(name: string, initialValue: T): DataVar<T> {
 export function getDataVar<T>(v: DataVar<T>): T {
   return v.value;
 }
+
+export function setDataVar<T>(v: DataVar<T>, newValue: T): DataVar<T> {
+  return { ...v, value: newValue };
+}
