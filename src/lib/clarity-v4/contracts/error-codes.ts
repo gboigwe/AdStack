@@ -1,0 +1,1 @@
+// AdStack Contract Error Codes
