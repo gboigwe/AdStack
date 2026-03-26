@@ -5,3 +5,10 @@ export type DeserializedCV = {
   value?: unknown;
   repr?: string;
 };
+
+export type HiroApiCV = {
+  type: string;
+  value?: unknown;
+  repr?: string;
+  hex?: string;
+};
