@@ -5,3 +5,5 @@ export type SignMessageParams = { message: string; onFinish?: (data: SignatureDa
 export type SignatureData = { signature: string; publicKey: string };
 
 export type StructuredDataDomain = { name: string; version: string; chainId: number };
+
+export type SignStructuredDataParams = { message: unknown; domain: StructuredDataDomain; onFinish?: (data: SignatureData) => void; onCancel?: () => void };
