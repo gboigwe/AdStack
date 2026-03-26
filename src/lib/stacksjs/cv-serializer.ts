@@ -46,3 +46,9 @@ export function serializeStringAsciiCV(cv: StringAsciiCV): string {
   const lengthHex = bytes.length.toString(16).padStart(8, '0');
   return '0d' + lengthHex + bytesToHex(bytes);
 }
+
+export function serializeStringUtf8CV(cv: { type: 'string-utf8'; data: string }): string {
+  const bytes = new TextEncoder().encode(cv.data);
+  const lengthHex = bytes.length.toString(16).padStart(8, '0');
+  return '0e' + lengthHex + bytesToHex(bytes);
+}
