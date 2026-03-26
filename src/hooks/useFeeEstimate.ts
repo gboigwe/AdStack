@@ -27,3 +27,22 @@ export function useFeeEstimate(byteLength = 250) {
   const [state, setState] = useState<FeeEstimateState>({
     estimate: null, isLoading: false, error: null,
   });
+
+  const estimate = useCallback(async () => {
+    setState({ estimate: null, isLoading: true, error: null });
+    try {
+      const feeRate = await fetchFeeRate();
+      const base = feeRate * BigInt(byteLength);
+      const result: FeeEstimate = {
+        low: base < MIN_FEE ? MIN_FEE : base * FEE_MULTIPLIERS.low,
+        medium: base < MIN_FEE ? MIN_FEE * 2n : base * FEE_MULTIPLIERS.medium,
+        high: base < MIN_FEE ? MIN_FEE * 5n : base * FEE_MULTIPLIERS.high,
+      };
+      setState({ estimate: result, isLoading: false, error: null });
+    } catch (e) {
+      setState({ estimate: null, isLoading: false, error: String(e) });
+    }
+  }, [byteLength]);
+
+  return { ...state, estimate };
+}
