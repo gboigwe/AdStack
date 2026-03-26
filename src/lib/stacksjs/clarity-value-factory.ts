@@ -240,3 +240,6 @@ export function makeUint44(): UintCV { return uintCV(44); }
 
 // Factory helper 45
 export function makeUint45(): UintCV { return uintCV(45); }
+
+// Factory helper 46
+export function makeUint46(): UintCV { return uintCV(46); }
