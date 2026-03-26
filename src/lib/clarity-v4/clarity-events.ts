@@ -39,3 +39,7 @@ export type ContractEvent = ClarityEvent & {
 export function isStxTransferEvent(e: ClarityEvent): e is StxTransferEvent {
   return e.type === 'stx_transfer';
 }
+
+export function isFtTransferEvent(e: ClarityEvent): e is FtTransferEvent {
+  return e.type === 'ft_transfer';
+}
