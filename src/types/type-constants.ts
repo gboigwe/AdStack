@@ -92,3 +92,4 @@ export const TYPE_GUARD_ID_89 = 89;
 export const TYPE_GUARD_ID_90 = 90;
 export const TYPE_GUARD_ID_91 = 91;
 export const TYPE_GUARD_ID_92 = 92;
+export const TYPE_GUARD_ID_93 = 93;
