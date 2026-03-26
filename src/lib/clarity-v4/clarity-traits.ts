@@ -5,3 +5,7 @@ export type TraitReference = { type: 'trait'; contractId: string; traitName: str
 export type TraitMethod = { name: string; inputs: string[]; output: string };
 
 export type TraitDefinition = { name: string; methods: TraitMethod[] };
+
+export function makeTraitRef(contractId: string, traitName: string): TraitReference {
+  return { type: 'trait', contractId, traitName };
+}
