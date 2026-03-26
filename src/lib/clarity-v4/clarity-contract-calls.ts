@@ -21,3 +21,9 @@ export type ContractCallResult<T> = {
 export function buildContractId(address: string, name: string): string {
   return `${address}.${name}`;
 }
+
+export function parseContractId(contractId: string): { address: string; name: string } | null {
+  const parts = contractId.split('.');
+  if (parts.length !== 2) return null;
+  return { address: parts[0], name: parts[1] };
+}
