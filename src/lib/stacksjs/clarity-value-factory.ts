@@ -64,3 +64,7 @@ export function stringUtf8CV(data: string): StringUtf8CV {
 export function standardPrincipalCV(address: string): StandardPrincipalCV {
   return { type: 'standard_principal', address };
 }
+
+export function contractPrincipalCV(address: string, contractName: string): ContractPrincipalCV {
+  return { type: 'contract_principal', address, contractName };
+}
