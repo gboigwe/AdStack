@@ -30,3 +30,8 @@ export function parseBoolFromRepr(repr: string): boolean {
   if (repr === 'false') return false;
   throw new Error(`Invalid bool repr: ${repr}`);
 }
+
+export function parsePrincipalFromRepr(repr: string): string {
+  if (repr.startsWith("'")) return repr.slice(1);
+  return repr;
+}
