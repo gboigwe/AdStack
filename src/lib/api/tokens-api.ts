@@ -19,3 +19,10 @@ export async function fetchFtInfo(contractId: string, network: Network = 'mainne
   if (!res.ok) throw new Error(`FT not found: ${contractId}`);
   return res.json();
 }
+
+export async function fetchAddressNftHoldings(address: string, network: Network = 'mainnet'): Promise<NftHoldingsResponse> {
+  const url = `${getBase(network)}/extended/v1/tokens/nft/holdings?principal=${address}`;
+  const res = await fetch(url);
+  if (!res.ok) return { limit: 0, offset: 0, total: 0, results: [] };
+  return res.json();
+}
