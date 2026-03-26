@@ -39,3 +39,7 @@ export function withPostConditions(
 ): ContractCallRequestParams {
   return { ...params, postConditions, postConditionMode: mode ?? params.postConditionMode };
 }
+
+export function withFee(params: ContractCallRequestParams, fee: bigint): ContractCallRequestParams {
+  return { ...params, fee };
+}
