@@ -224,3 +224,8 @@ export function negateBool(b: ClarityBool): ClarityBool {
 export function andBool(a: ClarityBool, b: ClarityBool): ClarityBool {
   return { type: 'bool', value: a.value && b.value };
 }
+
+/** Logical OR of two ClarityBool values */
+export function orBool(a: ClarityBool, b: ClarityBool): ClarityBool {
+  return { type: 'bool', value: a.value || b.value };
+}
