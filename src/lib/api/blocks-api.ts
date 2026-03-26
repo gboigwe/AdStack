@@ -32,3 +32,8 @@ export async function fetchRecentBlocks(limit = 10, network: Network = 'mainnet'
   if (!res.ok) throw new Error('Failed to fetch blocks');
   return res.json();
 }
+
+export async function fetchBlockHeight(network: Network = 'mainnet'): Promise<number> {
+  const block = await fetchLatestBlock(network);
+  return block.height;
+}
