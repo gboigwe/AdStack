@@ -21,3 +21,7 @@ export function appendToList<T>(list: ClarityList<T>, item: T): ClarityList<T> {
 export function listLength<T>(list: ClarityList<T>): number {
   return list.items.length;
 }
+
+export function isEmptyList<T>(list: ClarityList<T>): boolean {
+  return list.items.length === 0;
+}
