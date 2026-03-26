@@ -37,3 +37,12 @@ export function makeStxCondition(
 ): StxCondition {
   return { type: 'stx', principal, code, amount };
 }
+
+export function makeFtCondition(
+  principal: PrincipalDetail,
+  asset: AssetInfo,
+  code: FungibleConditionCode,
+  amount: bigint
+): FtCondition {
+  return { type: 'ft', principal, asset, code, amount };
+}
