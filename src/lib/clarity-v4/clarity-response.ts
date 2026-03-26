@@ -124,3 +124,9 @@ export async function fromPromise<T>(promise: Promise<T>): Promise<ClarityRespon
     return makeErr(e instanceof Error ? e.message : String(e));
   }
 }
+
+/** Tap into a response for side effects (ok branch) */
+export function tapOk<T, E>(result: ClarityResponse<T, E>, fn: (v: T) => void): ClarityResponse<T, E> {
+  if (result.type === 'ok') fn(result.value);
+  return result;
+}
