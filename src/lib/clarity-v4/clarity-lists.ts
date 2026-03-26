@@ -80,3 +80,7 @@ export function zipLists<A, B>(a: ClarityList<A>, b: ClarityList<B>): ClarityLis
   const pairs: [A, B][] = Array.from({ length: len }, (_, i) => [a.items[i], b.items[i]]);
   return makeList(pairs);
 }
+
+export function sortList<T>(list: ClarityList<T>, compareFn: (a: T, b: T) => number): ClarityList<T> {
+  return makeList([...list.items].sort(compareFn));
+}
