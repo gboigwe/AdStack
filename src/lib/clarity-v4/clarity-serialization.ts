@@ -69,3 +69,13 @@ export function reverseHex(hex: string): string {
   const pairs = clean.match(/.{2}/g) ?? [];
   return pairs.reverse().join('');
 }
+
+export function intToBytes(n: number, byteCount: number): Uint8Array {
+  const buf = new ArrayBuffer(byteCount);
+  const view = new DataView(buf);
+  for (let i = byteCount - 1; i >= 0; i--) {
+    view.setUint8(i, n & 0xff);
+    n >>= 8;
+  }
+  return new Uint8Array(buf);
+}
