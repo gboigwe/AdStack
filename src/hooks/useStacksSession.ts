@@ -58,3 +58,7 @@ export function useStacksSession() {
     clearSessionFromStorage();
     setState({ user: null, isConnected: false, isLoading: false, error: null });
   }, []);
+
+  const setError = useCallback((msg: string) => {
+    setState(prev => ({ ...prev, error: msg }));
+  }, []);
