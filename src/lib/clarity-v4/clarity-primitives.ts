@@ -88,3 +88,8 @@ export function makeNone(): ClarityNone {
 export function makeOptional<T>(value: T | null): ClarityOptional<T> {
   return { type: 'optional', value };
 }
+
+/** Check if a ClarityUint is zero */
+export function isZeroUint(v: ClarityUint): boolean {
+  return v.value === BigInt(0);
+}
