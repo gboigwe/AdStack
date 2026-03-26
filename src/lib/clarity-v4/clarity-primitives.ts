@@ -19,3 +19,5 @@ export type ClarityResponseOk<T> = { type: 'ok'; value: T };
 export type ClarityResponseErr<E> = { type: 'err'; value: E };
 
 export type ClarityResponse<T, E> = ClarityResponseOk<T> | ClarityResponseErr<E>;
+
+export type ClarityBuffer = { type: 'buffer'; value: Uint8Array };
