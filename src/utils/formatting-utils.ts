@@ -24,3 +24,12 @@ export function formatTxId(txId: string, short = false): string {
   if (short) return `${txId.slice(0, 8)}...${txId.slice(-6)}`;
   return txId;
 }
+
+export function formatPrincipal(principal: string, short = false): string {
+  if (!short) return principal;
+  if (principal.includes('.')) {
+    const [addr, name] = principal.split('.');
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}.${name}`;
+  }
+  return `${principal.slice(0, 6)}...${principal.slice(-4)}`;
+}
