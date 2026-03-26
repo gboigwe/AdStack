@@ -39,3 +39,8 @@ export function validateContractPrincipal(principal: string): boolean {
   const regex = /^(SP|ST)[A-Z0-9]{1,40}\.[a-zA-Z0-9_-]{1,128}$/;
   return regex.test(principal);
 }
+
+export function shortenAddress(address: string, chars = 6): string {
+  if (address.length <= chars * 2) return address;
+  return `${address.slice(0, chars)}...${address.slice(-4)}`;
+}
