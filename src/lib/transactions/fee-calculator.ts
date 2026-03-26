@@ -126,3 +126,5 @@ export const FEE_TIER_42 = BigInt(4200);
 export const FEE_TIER_43 = BigInt(4300);
 
 export const FEE_TIER_44 = BigInt(4400);
+
+export const FEE_TIER_45 = BigInt(4500);
