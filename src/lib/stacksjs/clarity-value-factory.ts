@@ -41,3 +41,7 @@ export function noneCV(): NoneCV {
 export function someCV<T extends ClarityValue>(value: T): SomeCV<T> {
   return { type: 'some', value };
 }
+
+export function bufferCV(buffer: Uint8Array): BufferCV {
+  return { type: 'buffer', buffer };
+}
