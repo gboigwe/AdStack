@@ -35,3 +35,11 @@ function saveSessionToStorage(user: SessionUser): void {
 function clearSessionFromStorage(): void {
   localStorage.removeItem(SESSION_KEY);
 }
+
+export function useStacksSession() {
+  const [state, setState] = useState<StacksSessionState>({
+    user: null,
+    isConnected: false,
+    isLoading: true,
+    error: null,
+  });
