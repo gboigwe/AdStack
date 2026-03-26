@@ -24,3 +24,8 @@ export interface WalletSignatureResult {
   signature: string;
   publicKey: string;
 }
+
+export function isLeatherWallet(w: ConnectedWallet): boolean { return w.type === 'leather'; }
+export function isXverseWallet(w: ConnectedWallet): boolean { return w.type === 'xverse'; }
+export function isMainnet(account: WalletAccount): boolean { return account.network === 'mainnet'; }
+export function getActiveAddress(wallet: ConnectedWallet): string { return wallet.activeAccount.address; }
