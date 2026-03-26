@@ -19,3 +19,5 @@ export type UnsignedTransaction = { version: TransactionVersion; chainId: number
 export type SignedTransaction = UnsignedTransaction & { auth: TransactionAuth };
 
 export type TransactionAuth = { type: 'standard' | 'sponsored'; spendingCondition: SpendingCondition };
+
+export type SpendingCondition = { signer: string; nonce: bigint; fee: bigint; signature?: string };
