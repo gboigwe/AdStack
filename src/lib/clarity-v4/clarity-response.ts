@@ -88,3 +88,12 @@ export function propagateError<T, E>(result: ClarityResponse<T, E>): ErrResult<E
   if (result.type === 'err') return result;
   return null;
 }
+
+/** Try to execute a function and wrap result in a response */
+export function tryResponse<T>(fn: () => T): ClarityResponse<T, string> {
+  try {
+    return makeOk(fn());
+  } catch (e) {
+    return makeErr(e instanceof Error ? e.message : String(e));
+  }
+}
