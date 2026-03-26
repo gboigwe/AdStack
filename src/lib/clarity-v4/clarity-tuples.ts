@@ -17,3 +17,7 @@ export type OmitTuple<T extends TupleRecord, K extends keyof T> = ClarityTuple<O
 export function makeTuple<T extends TupleRecord>(data: T): ClarityTuple<T> {
   return { type: 'tuple', data: { ...data } };
 }
+
+export function makeEmptyTuple(): ClarityTuple<Record<string, never>> {
+  return { type: 'tuple', data: {} as Record<string, never> };
+}
