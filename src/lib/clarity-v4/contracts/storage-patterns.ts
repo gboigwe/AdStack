@@ -127,3 +127,6 @@ export function storageMapFilter<K, V>(
 
 // Additional map pattern utility 1
 export const STORAGE_PATTERN_VERSION_1 = '1.0.0';
+
+// Additional map pattern utility 2
+export const STORAGE_PATTERN_VERSION_2 = '2.0.0';
