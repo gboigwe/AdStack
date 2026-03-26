@@ -9,3 +9,14 @@ describe('apiOk', () => {
     if (r.ok) expect(r.data).toEqual({ foo: 'bar' });
   });
 });
+
+describe('apiErr', () => {
+  it('creates error result', () => {
+    const r = apiErr({ error: 'not_found', message: 'Resource not found', code: 404 });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error.code).toBe(404);
+      expect(r.error.error).toBe('not_found');
+    }
+  });
+});
