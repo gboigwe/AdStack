@@ -120,3 +120,5 @@ export function getBlocksInRange(from: bigint, to: bigint): bigint[] {
   for (let b = from; b <= (to < max ? to : max); b++) result.push(b);
   return result;
 }
+
+export const BLOCKS_PER_30_MINUTES = 3;
