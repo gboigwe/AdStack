@@ -68,3 +68,9 @@ export function blocksElapsed(expiry: BlockExpiry, currentBlock: bigint): bigint
 function minBigInt(a: bigint, b: bigint): bigint {
   return a < b ? a : b;
 }
+
+export function progressPercent(expiry: BlockExpiry, currentBlock: bigint): number {
+  if (expiry.durationBlocks === BigInt(0)) return 100;
+  const elapsed = blocksElapsed(expiry, currentBlock);
+  return Math.min(100, Number((elapsed * BigInt(100)) / expiry.durationBlocks));
+}
