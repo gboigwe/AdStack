@@ -113,3 +113,14 @@ export function storageMapUpdate<K, V>(
   const current = storageMapGet(map, key);
   return storageMapSet(map, key, fn(current));
 }
+
+export function storageMapFilter<K, V>(
+  map: StorageMap<K, V>,
+  predicate: (value: V) => boolean
+): StorageMap<K, V> {
+  const filtered = new Map<string, V>();
+  for (const [k, v] of map.entries) {
+    if (predicate(v)) filtered.set(k, v);
+  }
+  return { ...map, entries: filtered };
+}
