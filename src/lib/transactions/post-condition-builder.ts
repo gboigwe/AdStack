@@ -17,3 +17,15 @@ export type PostCondition = StxCondition | FtCondition | NftCondition;
 export type PrincipalDetail = { type: PrincipalType; address?: string; contractName?: string };
 
 export type AssetInfo = { contractId: string; assetName: string };
+
+export function originPrincipal(): PrincipalDetail {
+  return { type: 'origin' };
+}
+
+export function standardPrincipalDetail(address: string): PrincipalDetail {
+  return { type: 'standard', address };
+}
+
+export function contractPrincipalDetail(address: string, contractName: string): PrincipalDetail {
+  return { type: 'contract', address, contractName };
+}
