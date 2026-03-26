@@ -13,3 +13,7 @@ export type MergeTuples<A extends TupleRecord, B extends TupleRecord> = ClarityT
 
 export type PickTuple<T extends TupleRecord, K extends keyof T> = ClarityTuple<Pick<T, K>>;
 export type OmitTuple<T extends TupleRecord, K extends keyof T> = ClarityTuple<Omit<T, K>>;
+
+export function makeTuple<T extends TupleRecord>(data: T): ClarityTuple<T> {
+  return { type: 'tuple', data: { ...data } };
+}
