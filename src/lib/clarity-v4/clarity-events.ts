@@ -28,3 +28,10 @@ export type NftTransferEvent = ClarityEvent & {
   sender: string;
   recipient: string;
 };
+
+export type ContractEvent = ClarityEvent & {
+  type: 'contract_event';
+  contractId: string;
+  topic: string;
+  value: unknown;
+};
