@@ -15,3 +15,9 @@ export interface SearchState {
   isLoading: boolean;
   error: string | null;
 }
+
+async function searchStacksById(id: string): Promise<SearchResult> {
+  const res = await fetch(`https://api.hiro.so/extended/v1/search/${id}`);
+  if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+  return res.json() as Promise<SearchResult>;
+}
