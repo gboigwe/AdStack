@@ -3,3 +3,7 @@
 export type ClarityList<T> = { type: 'list'; items: T[] };
 
 export const MAX_LIST_LENGTH = 2000;
+
+export function emptyList<T>(): ClarityList<T> {
+  return { type: 'list', items: [] };
+}
