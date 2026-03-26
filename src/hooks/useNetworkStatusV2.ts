@@ -43,3 +43,12 @@ export function useNetworkStatusV2(network: 'mainnet' | 'testnet' = 'mainnet') {
       setState(prev => ({ ...prev, isOnline: false, isLoading: false, error: String(e) }));
     }
   }, [base]);
+
+  useEffect(() => {
+    poll();
+    intervalRef.current = setInterval(poll, POLL_INTERVAL);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [poll]);
+
+  return { ...state, refresh: poll };
+}
