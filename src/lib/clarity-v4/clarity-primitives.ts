@@ -23,3 +23,5 @@ export type ClarityResponse<T, E> = ClarityResponseOk<T> | ClarityResponseErr<E>
 export type ClarityBuffer = { type: 'buffer'; value: Uint8Array };
 
 export type ClarityStringAscii = { type: 'string-ascii'; value: string };
+
+export type ClarityStringUtf8 = { type: 'string-utf8'; value: string };
