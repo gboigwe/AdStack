@@ -31,3 +31,10 @@ export function buildCreateCampaignParams(args: CreateCampaignArgs): ContractWri
     network: 'mainnet',
   };
 }
+
+export const EXAMPLE_CAMPAIGN: CreateCampaignArgs = {
+  title: 'My First Campaign',
+  budgetUstx: 10_000_000n,
+  durationBlocks: 1008,
+  targetAudience: 'defi-users',
+};
