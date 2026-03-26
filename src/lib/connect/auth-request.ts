@@ -39,3 +39,7 @@ export function parseAuthResponse(token: string): AuthResponsePayload | null {
     return null;
   }
 }
+
+export function isValidAuthResponse(payload: AuthResponsePayload): boolean {
+  return !!(payload.authResponseToken && payload.appPrivateKey && payload.userData);
+}
