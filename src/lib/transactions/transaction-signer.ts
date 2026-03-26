@@ -27,3 +27,8 @@ export function isValidPublicKey(key: string): boolean {
 export function isValidSignature(sig: string): boolean {
   return sig.length === SIGNATURE_LENGTH && /^[0-9a-fA-F]+$/.test(sig);
 }
+
+export function makeMultiSigConfig(publicKeys: PublicKey[], requiredSignatures: number): MultiSigConfig {
+  if (requiredSignatures > publicKeys.length) throw new Error('Required signatures exceeds key count');
+  return { requiredSignatures, publicKeys };
+}
