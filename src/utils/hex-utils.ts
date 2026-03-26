@@ -25,3 +25,10 @@ export function isValidHex(hex: string): boolean {
   const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
   return /^[0-9a-fA-F]*$/.test(clean) && clean.length % 2 === 0;
 }
+
+export function hexToUtf8(hex: string): string {
+  return new TextDecoder().decode(hexToBytes(hex));
+}
+export function utf8ToHex(str: string): string {
+  return bytesToHex(new TextEncoder().encode(str));
+}
