@@ -72,3 +72,5 @@ export const SIGN_REQUEST_VERSION_15 = '15.0';
 export const SIGN_REQUEST_VERSION_16 = '16.0';
 
 export const SIGN_REQUEST_VERSION_17 = '17.0';
+
+export const SIGN_REQUEST_VERSION_18 = '18.0';
