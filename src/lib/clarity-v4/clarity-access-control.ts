@@ -25,3 +25,7 @@ export function revokeRole(acl: AccessControlList, principal: Principal, role: A
 export function hasRole(acl: AccessControlList, principal: Principal, role: AccessRole): boolean {
   return acl.assignments.some(a => a.principal === principal && a.role === role);
 }
+
+export function getPrincipalRoles(acl: AccessControlList, principal: Principal): AccessRole[] {
+  return acl.assignments.filter(a => a.principal === principal).map(a => a.role);
+}
