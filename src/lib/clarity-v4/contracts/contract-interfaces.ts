@@ -16,3 +16,11 @@ export type ContractFunction = {
 export type ContractVariable = { name: string; type: string; access: 'variable' | 'constant' };
 
 export type ContractMap = { name: string; key: string; value: string };
+
+export type ContractInterface = {
+  functions: ContractFunction[];
+  variables: ContractVariable[];
+  maps: ContractMap[];
+  fungibleTokens: string[];
+  nonFungibleTokens: string[];
+};
