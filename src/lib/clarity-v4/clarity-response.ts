@@ -14,3 +14,8 @@ export type ResultHandler<T, E, R> = {
 export function makeOk<T>(value: T): OkResult<T> {
   return { type: 'ok', value };
 }
+
+/** Create an Err response */
+export function makeErr<E>(error: E): ErrResult<E> {
+  return { type: 'err', value: error };
+}
