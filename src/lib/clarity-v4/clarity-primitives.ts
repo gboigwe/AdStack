@@ -189,3 +189,8 @@ export function isClarityPrincipal(v: unknown): v is ClarityPrincipal {
 export function isClarityNone(v: unknown): v is ClarityNone {
   return typeof v === 'object' && v !== null && (v as ClarityNone).type === 'none';
 }
+
+/** Guard: check if value is ClaritySome */
+export function isClaritySome<T>(v: unknown): v is ClaritySome<T> {
+  return typeof v === 'object' && v !== null && (v as ClaritySome<T>).type === 'some';
+}
