@@ -67,3 +67,13 @@ export function combineContractResponses<T>(
   }
   return contractOk(values);
 }
+
+export async function fromAsyncContractCall<T>(
+  fn: () => Promise<T>
+): Promise<ContractResponse<T>> {
+  try {
+    return contractOk(await fn());
+  } catch (e) {
+    return contractErr(BigInt(500));
+  }
+}
