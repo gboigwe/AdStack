@@ -14,3 +14,8 @@ export type ClarityTypeString =
   | `(string-ascii ${string})`
   | `(string-utf8 ${string})`
   | `(buff ${string})`;
+
+export interface AbiArg {
+  name: string;
+  type: string;
+}
