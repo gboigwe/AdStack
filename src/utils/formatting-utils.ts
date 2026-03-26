@@ -37,3 +37,7 @@ export function formatPrincipal(principal: string, short = false): string {
 export function formatBlockHeight(height: number): string {
   return `#${height.toLocaleString()}`;
 }
+
+export function formatTimestamp(unixSeconds: number): string {
+  return new Date(unixSeconds * 1000).toLocaleString();
+}
