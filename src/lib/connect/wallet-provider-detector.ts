@@ -7,3 +7,5 @@ export type WalletInfo = { id: WalletProvider; name: string; icon: string; insta
 export const LEATHER_PROVIDER_KEY = 'LeatherProvider';
 
 export const XVERSE_PROVIDER_KEY = 'XverseProviders';
+
+export const ASIGNA_PROVIDER_KEY = 'AsignaProvider';
