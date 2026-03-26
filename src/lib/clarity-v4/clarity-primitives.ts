@@ -159,3 +159,8 @@ export function makeStringAscii(value: string): ClarityStringAscii {
   if (!/^[\x00-\x7F]*$/.test(value)) throw new Error('String contains non-ASCII characters');
   return { type: 'string-ascii', value };
 }
+
+/** Create a Clarity string-utf8 value */
+export function makeStringUtf8(value: string): ClarityStringUtf8 {
+  return { type: 'string-utf8', value };
+}
