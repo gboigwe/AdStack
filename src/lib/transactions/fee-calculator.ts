@@ -9,3 +9,7 @@ export const FEE_RATE = BigInt(180);
 export type FeeEstimate = { low: bigint; medium: bigint; high: bigint };
 
 export type TxSize = { bytes: number };
+
+export function calculateFee(txSizeBytes: number, feeRate = FEE_RATE): bigint {
+  return BigInt(txSizeBytes) * feeRate;
+}
