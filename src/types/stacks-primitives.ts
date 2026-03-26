@@ -35,3 +35,10 @@ export function asHexString(s: string): HexString { return s as HexString; }
 export const MAX_UINT128 = 340282366920938463463374607431768211455n as Uint128;
 export const MIN_INT128 = -170141183460469231731687303715884105728n as Int128;
 export const MAX_INT128 = 170141183460469231731687303715884105727n as Int128;
+
+export function isUint128Safe(n: bigint): n is Uint128 {
+  return n >= 0n && n <= MAX_UINT128;
+}
+export function isInt128Safe(n: bigint): n is Int128 {
+  return n >= MIN_INT128 && n <= MAX_INT128;
+}
