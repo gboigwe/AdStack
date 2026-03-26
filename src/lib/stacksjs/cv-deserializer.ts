@@ -35,3 +35,9 @@ export function parsePrincipalFromRepr(repr: string): string {
   if (repr.startsWith("'")) return repr.slice(1);
   return repr;
 }
+
+export function parseStringFromRepr(repr: string): string {
+  const match = repr.match(/^"(.*)"$/);
+  if (!match) return repr;
+  return match[1];
+}
