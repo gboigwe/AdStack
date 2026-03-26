@@ -11,3 +11,5 @@ export type ContractCallRequestParams = { contractAddress: string; contractName:
 export type TxBroadcastResult = { txId: string; txRaw: string };
 
 export const DEFAULT_POST_CONDITION_MODE: PostConditionMode = 'deny';
+
+export const DEFAULT_ANCHOR_MODE: AnchorMode = 'any';
