@@ -6,3 +6,4 @@ export type UintCV = { type: 'uint'; value: bigint };
 export type IntCV = { type: 'int'; value: bigint };
 export type BoolCV = { type: 'bool'; value: boolean };
 export type NoneCV = { type: 'none' };
+export type SomeCV<T> = { type: 'some'; value: T };
