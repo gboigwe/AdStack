@@ -98,3 +98,8 @@ export function isZeroUint(v: ClarityUint): boolean {
 export function isNegativeInt(v: ClarityInt): boolean {
   return v.value < BigInt(0);
 }
+
+/** Add two ClarityUint values */
+export function addUint(a: ClarityUint, b: ClarityUint): ClarityUint {
+  return makeUint(a.value + b.value);
+}
