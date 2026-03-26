@@ -17,3 +17,7 @@ export type ContractCallResult<T> = {
   result: T | null;
   errorMessage?: string;
 };
+
+export function buildContractId(address: string, name: string): string {
+  return `${address}.${name}`;
+}
