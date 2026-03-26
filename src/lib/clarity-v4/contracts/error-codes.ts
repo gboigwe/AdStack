@@ -33,3 +33,9 @@ export const ERR_ALREADY_VOTED = 501n;
 export const ERR_VOTING_CLOSED = 502n;
 export const ERR_INSUFFICIENT_VOTING_POWER = 503n;
 export const ERR_PROPOSAL_NOT_PASSED = 504n;
+
+// --- Token errors ---
+export const ERR_INVALID_TOKEN = 600n;
+export const ERR_TOKEN_NOT_WHITELISTED = 601n;
+export const ERR_INSUFFICIENT_TOKEN_BALANCE = 602n;
+export const ERR_TOKEN_TRANSFER_FAILED = 603n;
