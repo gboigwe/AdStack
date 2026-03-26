@@ -22,3 +22,8 @@ async function fetchFeeRate(): Promise<bigint> {
   const data = await res.json() as { fee_rate?: string | number };
   return BigInt(data.fee_rate ?? 180);
 }
+
+export function useFeeEstimate(byteLength = 250) {
+  const [state, setState] = useState<FeeEstimateState>({
+    estimate: null, isLoading: false, error: null,
+  });
