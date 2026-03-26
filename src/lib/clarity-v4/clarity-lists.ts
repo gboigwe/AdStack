@@ -100,3 +100,7 @@ export function headList<T>(list: ClarityList<T>): T | null {
 export function tailList<T>(list: ClarityList<T>): ClarityList<T> {
   return makeList(list.items.slice(1));
 }
+
+export function lastList<T>(list: ClarityList<T>): T | null {
+  return list.items.length > 0 ? list.items[list.items.length - 1] : null;
+}
