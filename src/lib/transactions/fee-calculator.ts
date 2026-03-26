@@ -30,3 +30,7 @@ export function estimateContractCallFee(numArgs: number): FeeEstimate {
 export function estimateTokenTransferFee(): FeeEstimate {
   return makeFeeEstimate(calculateFee(200));
 }
+
+export function clampFee(fee: bigint, min = MIN_FEE): bigint {
+  return fee < min ? min : fee;
+}
