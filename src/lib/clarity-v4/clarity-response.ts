@@ -148,3 +148,8 @@ export function toNullable<T, E>(result: { type: 'ok'; value: T } | { type: 'err
   if (result.type === 'ok') return result.value;
   return null;
 }
+
+/** Collect all ok values from an array of responses, ignoring errors */
+export function collectOk<T, E>(results: Array<{ type: 'ok'; value: T } | { type: 'err'; value: E }>): T[] {
+  return results.filter(r => r.type === 'ok').map(r => (r as { type: 'ok'; value: T }).value);
+}
