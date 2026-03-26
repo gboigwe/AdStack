@@ -28,3 +28,11 @@ export function getTupleField<T extends TupleRecord, K extends keyof T>(
 ): T[K] {
   return tuple.data[key];
 }
+
+export function setTupleField<T extends TupleRecord, K extends string, V>(
+  tuple: ClarityTuple<T>,
+  key: K,
+  value: V
+): ClarityTuple<T & Record<K, V>> {
+  return makeTuple({ ...tuple.data, [key]: value } as T & Record<K, V>);
+}
