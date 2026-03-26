@@ -23,3 +23,5 @@ export type TransactionAuth = { type: 'standard' | 'sponsored'; spendingConditio
 export type SpendingCondition = { signer: string; nonce: bigint; fee: bigint; signature?: string };
 
 export const MAINNET_CHAIN_ID = 1;
+
+export const TESTNET_CHAIN_ID = 2147483648;
