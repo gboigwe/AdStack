@@ -136,3 +136,9 @@ export function tapErr<T, E>(result: ClarityResponse<T, E>, fn: (e: E) => void):
   if (result.type === 'err') fn(result.value);
   return result;
 }
+
+/** Swap ok and err in a response */
+export function swapResponse<T, E>(result: { type: 'ok'; value: T } | { type: 'err'; value: E }): { type: 'ok'; value: E } | { type: 'err'; value: T } {
+  if (result.type === 'ok') return makeErr(result.value) as unknown as { type: 'ok'; value: E };
+  return makeOk(result.value) as unknown as { type: 'err'; value: T };
+}
