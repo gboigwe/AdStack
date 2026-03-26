@@ -9,3 +9,8 @@ export type ResultHandler<T, E, R> = {
   ok: (value: T) => R;
   err: (error: E) => R;
 };
+
+/** Create an OK response */
+export function makeOk<T>(value: T): OkResult<T> {
+  return { type: 'ok', value };
+}
