@@ -48,3 +48,8 @@ export function useStacksSession() {
     const stored = loadSessionFromStorage();
     setState({ user: stored, isConnected: !!stored, isLoading: false, error: null });
   }, []);
+
+  const connect = useCallback((user: SessionUser) => {
+    saveSessionToStorage(user);
+    setState({ user, isConnected: true, isLoading: false, error: null });
+  }, []);
