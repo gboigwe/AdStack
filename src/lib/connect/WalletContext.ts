@@ -5,3 +5,20 @@ export type WalletState = { connected: boolean; address: string | null; provider
 export const INITIAL_WALLET_STATE: WalletState = { connected: false, address: null, provider: null, network: 'mainnet', loading: false, error: null };
 
 export type WalletAction = { type: 'CONNECT'; address: string; provider: string } | { type: 'DISCONNECT' } | { type: 'SET_LOADING'; loading: boolean } | { type: 'SET_ERROR'; error: string } | { type: 'SET_NETWORK'; network: 'mainnet' | 'testnet' };
+
+export function walletReducer(state: WalletState, action: WalletAction): WalletState {
+  switch (action.type) {
+    case 'CONNECT':
+      return { ...state, connected: true, address: action.address, provider: action.provider, loading: false, error: null };
+    case 'DISCONNECT':
+      return { ...INITIAL_WALLET_STATE };
+    case 'SET_LOADING':
+      return { ...state, loading: action.loading };
+    case 'SET_ERROR':
+      return { ...state, error: action.error, loading: false };
+    case 'SET_NETWORK':
+      return { ...state, network: action.network };
+    default:
+      return state;
+  }
+}
