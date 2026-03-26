@@ -27,3 +27,7 @@ export function isContractPrincipal(address: string): boolean {
 export function isAnyPrincipal(address: string): boolean {
   return isStandardPrincipal(address) || isContractPrincipal(address);
 }
+
+export function isMainnetPrincipal(address: string): boolean {
+  return address.startsWith(MAINNET_PREFIX) && isAnyPrincipal(address);
+}
