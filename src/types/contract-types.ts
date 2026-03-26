@@ -32,3 +32,9 @@ export interface AbiMap {
   key: string;
   value: string;
 }
+
+export interface AbiVariable {
+  name: string;
+  access: 'constant' | 'variable';
+  type: string;
+}
