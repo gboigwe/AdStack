@@ -29,3 +29,7 @@ export function hasRole(acl: AccessControlList, principal: Principal, role: Acce
 export function getPrincipalRoles(acl: AccessControlList, principal: Principal): AccessRole[] {
   return acl.assignments.filter(a => a.principal === principal).map(a => a.role);
 }
+
+export function getRolePrincipals(acl: AccessControlList, role: AccessRole): Principal[] {
+  return acl.assignments.filter(a => a.role === role).map(a => a.principal);
+}
