@@ -54,3 +54,15 @@ export function makeNftPostCondition(
 ): NftPostCondition {
   return { type: 'nft', principal, assetInfo: { contractId, assetName }, tokenId, conditionCode };
 }
+
+export function isStxPostCondition(pc: PostCondition): pc is StxPostCondition {
+  return pc.type === 'stx';
+}
+
+export function isFtPostCondition(pc: PostCondition): pc is FtPostCondition {
+  return pc.type === 'ft';
+}
+
+export function isNftPostCondition(pc: PostCondition): pc is NftPostCondition {
+  return pc.type === 'nft';
+}
