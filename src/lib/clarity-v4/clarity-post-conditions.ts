@@ -26,3 +26,11 @@ export type NftPostCondition = {
 };
 
 export type PostCondition = StxPostCondition | FtPostCondition | NftPostCondition;
+
+export function makeStxPostCondition(
+  principal: string,
+  conditionCode: PostConditionCode,
+  amount: bigint
+): StxPostCondition {
+  return { type: 'stx', principal, conditionCode, amount };
+}
