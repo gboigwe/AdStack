@@ -51,3 +51,8 @@ export function validatePayoutAmount(amount: bigint, budget: bigint): Validation
     amount > budget ? invalidResult('Payout amount exceeds campaign budget') : validResult()
   );
 }
+
+export function validateVotingPower(power: bigint, minimum: bigint): ValidationResult {
+  if (power < minimum) return invalidResult(`Insufficient voting power: ${power} < ${minimum}`);
+  return validResult();
+}
