@@ -45,3 +45,7 @@ describe('makePrincipal', () => {
     expect(p.type).toBe('principal');
     expect(p.value).toBe('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7');
   });
+  it('rejects invalid principal', () => {
+    expect(() => makePrincipal('invalid-address')).toThrow();
+  });
+});
