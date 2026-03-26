@@ -50,3 +50,7 @@ export function filterList<T>(list: ClarityList<T>, predicate: (item: T) => bool
 export function concatLists<T>(a: ClarityList<T>, b: ClarityList<T>): ClarityList<T> {
   return makeList([...a.items, ...b.items]);
 }
+
+export function reverseList<T>(list: ClarityList<T>): ClarityList<T> {
+  return makeList([...list.items].reverse());
+}
