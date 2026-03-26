@@ -73,3 +73,13 @@ export function makePrincipal(address: string): ClarityPrincipal {
   if (!isValidPrincipal(address)) throw new Error(`Invalid principal: ${address}`);
   return { type: 'principal', value: address };
 }
+
+/** Create a Clarity some value */
+export function makeSome<T>(value: T): ClaritySome<T> {
+  return { type: 'some', value };
+}
+
+/** Create a Clarity none value */
+export function makeNone(): ClarityNone {
+  return { type: 'none' };
+}
