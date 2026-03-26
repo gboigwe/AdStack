@@ -38,3 +38,7 @@ export function durationFromHours(hours: number): BlockDuration {
 export function durationFromWeeks(weeks: number): BlockDuration {
   return makeBlockDuration(BigInt(Math.round(weeks * BLOCKS_PER_WEEK)));
 }
+
+export function makeBlockExpiry(startBlock: bigint, durationBlocks: bigint): BlockExpiry {
+  return { startBlock, durationBlocks, expiryBlock: startBlock + durationBlocks };
+}
