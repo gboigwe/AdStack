@@ -54,3 +54,7 @@ export function padHexTo32Bytes(hex: string): string {
 export function concatHex(...hexStrings: string[]): string {
   return hexStrings.map(h => h.startsWith('0x') ? h.slice(2) : h).join('');
 }
+
+export function encodeLength(n: number): string {
+  return n.toString(16).padStart(8, '0');
+}
