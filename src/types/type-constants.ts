@@ -29,3 +29,4 @@ export const TYPE_GUARD_ID_26 = 26;
 export const TYPE_GUARD_ID_27 = 27;
 export const TYPE_GUARD_ID_28 = 28;
 export const TYPE_GUARD_ID_29 = 29;
+export const TYPE_GUARD_ID_30 = 30;
