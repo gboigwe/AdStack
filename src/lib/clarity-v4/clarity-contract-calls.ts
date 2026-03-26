@@ -27,3 +27,7 @@ export function parseContractId(contractId: string): { address: string; name: st
   if (parts.length !== 2) return null;
   return { address: parts[0], name: parts[1] };
 }
+
+export function isValidContractId(id: string): boolean {
+  return parseContractId(id) !== null;
+}
