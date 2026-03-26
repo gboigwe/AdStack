@@ -6,3 +6,9 @@ export interface FeeEstimate {
   medium: bigint;
   high: bigint;
 }
+
+export interface FeeEstimateState {
+  estimate: FeeEstimate | null;
+  isLoading: boolean;
+  error: string | null;
+}
