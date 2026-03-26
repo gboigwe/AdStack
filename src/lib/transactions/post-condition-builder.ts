@@ -11,3 +11,5 @@ export type StxCondition = { type: 'stx'; principal: PrincipalDetail; code: Fung
 export type FtCondition = { type: 'ft'; principal: PrincipalDetail; asset: AssetInfo; code: FungibleConditionCode; amount: bigint };
 
 export type NftCondition = { type: 'nft'; principal: PrincipalDetail; asset: AssetInfo; tokenId: bigint; code: NonFungibleConditionCode };
+
+export type PostCondition = StxCondition | FtCondition | NftCondition;
