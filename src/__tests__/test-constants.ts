@@ -99,3 +99,4 @@ export const TEST_CASE_ID_94 = 94;
 export const TEST_CASE_ID_95 = 95;
 export const TEST_CASE_ID_96 = 96;
 export const TEST_CASE_ID_97 = 97;
+export const TEST_CASE_ID_98 = 98;
