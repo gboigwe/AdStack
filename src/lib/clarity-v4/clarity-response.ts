@@ -55,3 +55,12 @@ export function matchResponse<T, E, R>(
   if (result.type === 'ok') return handlers.ok(result.value);
   return handlers.err(result.value);
 }
+
+/** Map over the OK value of a response */
+export function mapOk<T, U, E>(
+  result: ClarityResponse<T, E>,
+  fn: (value: T) => U
+): ClarityResponse<U, E> {
+  if (result.type === 'ok') return makeOk(fn(result.value));
+  return result as unknown as ErrResult<E>;
+}
