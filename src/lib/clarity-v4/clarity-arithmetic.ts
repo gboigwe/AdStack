@@ -21,3 +21,7 @@ export function ustxToStx(ustx: bigint): bigint {
 export function blocksToSeconds(blocks: bigint): bigint {
   return blocks * BigInt(600); // ~10 min per block
 }
+
+export function secondsToBlocks(seconds: bigint): bigint {
+  return seconds / BigInt(600);
+}
