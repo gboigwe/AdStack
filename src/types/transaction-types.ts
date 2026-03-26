@@ -51,3 +51,13 @@ export type StacksTransaction =
   | TokenTransferTransaction
   | ContractCallTransaction
   | SmartContractTransaction;
+
+export function isTokenTransfer(tx: StacksTransaction): tx is TokenTransferTransaction {
+  return tx.tx_type === 'token_transfer';
+}
+export function isContractCall(tx: StacksTransaction): tx is ContractCallTransaction {
+  return tx.tx_type === 'contract_call';
+}
+export function isSmartContract(tx: StacksTransaction): tx is SmartContractTransaction {
+  return tx.tx_type === 'smart_contract';
+}
