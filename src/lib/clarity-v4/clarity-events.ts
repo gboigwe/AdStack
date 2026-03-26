@@ -20,3 +20,11 @@ export type FtTransferEvent = ClarityEvent & {
   recipient: string;
   amount: bigint;
 };
+
+export type NftTransferEvent = ClarityEvent & {
+  type: 'nft_transfer';
+  assetId: string;
+  tokenId: bigint;
+  sender: string;
+  recipient: string;
+};
