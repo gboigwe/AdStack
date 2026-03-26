@@ -68,3 +68,9 @@ export function switchPrincipalNetwork(address: string): string | null {
   if (address.startsWith(MAINNET_PREFIX)) return TESTNET_PREFIX + address.slice(2);
   return MAINNET_PREFIX + address.slice(2);
 }
+
+export function validatePrincipalOrThrow(address: string): void {
+  if (!isAnyPrincipal(address)) {
+    throw new Error(`Invalid Stacks principal: ${address}`);
+  }
+}
