@@ -20,3 +20,15 @@ export interface ContractReadState<T> {
 
 const HIRO_MAINNET = 'https://api.hiro.so';
 const HIRO_TESTNET = 'https://api.testnet.hiro.so';
+
+async function callReadOnly<T>(params: ContractReadParams): Promise<T> {
+  const base = params.network === 'testnet' ? HIRO_TESTNET : HIRO_MAINNET;
+  const url = `${base}/v2/contracts/call-read/${params.contractAddress}/${params.contractName}/${params.functionName}`;
+  const body = {
+    sender: params.senderAddress ?? params.contractAddress,
+    arguments: params.functionArgs ?? [],
+  };
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error(`Read-only call failed: ${res.status}`);
+  return res.json() as Promise<T>;
+}
