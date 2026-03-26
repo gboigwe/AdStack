@@ -31,3 +31,7 @@ export function serializeIntCV(cv: IntCV): string {
 export function serializeBoolCV(cv: BoolCV): string {
   return cv.value ? '03' : '04';
 }
+
+export function serializeNoneCV(): string {
+  return '09';
+}
