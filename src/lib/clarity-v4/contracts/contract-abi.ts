@@ -31,3 +31,7 @@ export type ContractAbi = {
   fungibleTokens: Array<{ name: string }>;
   nonFungibleTokens: Array<{ name: string; type: AbiType }>;
 };
+
+export function getAbiFunctionDef(abi: ContractAbi, name: string): AbiFunctionDef | null {
+  return abi.functions.find(f => f.name === name) ?? null;
+}
