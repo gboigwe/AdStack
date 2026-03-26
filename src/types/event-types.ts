@@ -16,3 +16,8 @@ export interface FtAssetEvent extends BaseContractEvent {
   event_type: 'fungible_token_asset';
   asset: { asset_event_type: string; asset_id: string; sender?: string; recipient?: string; amount: string };
 }
+
+export interface NftAssetEvent extends BaseContractEvent {
+  event_type: 'non_fungible_token_asset';
+  asset: { asset_event_type: string; asset_id: string; sender?: string; recipient?: string; value: { hex: string; repr: string } };
+}
