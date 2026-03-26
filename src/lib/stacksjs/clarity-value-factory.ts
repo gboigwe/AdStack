@@ -15,3 +15,4 @@ export type ContractPrincipalCV = { type: 'contract_principal'; address: string;
 export type PrincipalCV = StandardPrincipalCV | ContractPrincipalCV;
 export type ListCV<T> = { type: 'list'; list: T[] };
 export type TupleCV<T extends Record<string, ClarityValue> = Record<string, ClarityValue>> = { type: 'tuple'; data: T };
+export type ResponseOkCV<T> = { type: 'ok'; value: T };
