@@ -50,3 +50,8 @@ export function isFtContract(iface: ContractInterface): boolean {
 export function isNftContract(iface: ContractInterface): boolean {
   return iface.nonFungibleTokens.length > 0;
 }
+
+export function getSip10Functions(iface: ContractInterface): ContractFunction[] {
+  const sip10Names = ['transfer', 'get-name', 'get-symbol', 'get-decimals', 'get-balance', 'get-total-supply'];
+  return iface.functions.filter(f => sip10Names.includes(f.name));
+}
