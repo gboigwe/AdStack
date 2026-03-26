@@ -209,3 +209,8 @@ export function isTrue(b: ClarityBool): boolean {
 export function makeUintFromString(s: string): ClarityUint {
   return makeUint(BigInt(s));
 }
+
+/** Create a ClarityInt from a string representation */
+export function makeIntFromString(s: string): ClarityInt {
+  return makeInt(BigInt(s));
+}
