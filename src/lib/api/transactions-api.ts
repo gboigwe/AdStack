@@ -2,3 +2,5 @@
 import { HIRO_API_BASE, HIRO_TESTNET_BASE, Network } from './accounts-api';
 
 export type Transaction = { tx_id: string; tx_type: string; tx_status: string; block_height: number; sender_address: string; fee_rate: string; nonce: number };
+
+export type MempoolTransaction = { tx_id: string; tx_type: string; receipt_time: number; sender_address: string; fee_rate: string };
