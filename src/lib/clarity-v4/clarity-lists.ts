@@ -42,3 +42,7 @@ export function foldRight<T, A>(list: ClarityList<T>, initial: A, fn: (item: T, 
 export function mapList<T, U>(list: ClarityList<T>, fn: (item: T) => U): ClarityList<U> {
   return makeList(list.items.map(fn));
 }
+
+export function filterList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): ClarityList<T> {
+  return makeList(list.items.filter(predicate));
+}
