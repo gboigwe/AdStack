@@ -43,3 +43,7 @@ export function isStxTransferEvent(e: ClarityEvent): e is StxTransferEvent {
 export function isFtTransferEvent(e: ClarityEvent): e is FtTransferEvent {
   return e.type === 'ft_transfer';
 }
+
+export function isNftTransferEvent(e: ClarityEvent): e is NftTransferEvent {
+  return e.type === 'nft_transfer';
+}
