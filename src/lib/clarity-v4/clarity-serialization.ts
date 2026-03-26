@@ -45,3 +45,8 @@ export function validateHexString(hex: string): boolean {
   const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
   return /^[0-9a-fA-F]*$/.test(clean) && clean.length % 2 === 0;
 }
+
+export function padHexTo32Bytes(hex: string): string {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  return clean.padStart(64, '0');
+}
