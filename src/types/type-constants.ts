@@ -98,3 +98,4 @@ export const TYPE_GUARD_ID_95 = 95;
 export const TYPE_GUARD_ID_96 = 96;
 export const TYPE_GUARD_ID_97 = 97;
 export const TYPE_GUARD_ID_98 = 98;
+export const TYPE_GUARD_ID_99 = 99;
