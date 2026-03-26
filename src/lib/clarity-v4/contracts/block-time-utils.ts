@@ -46,3 +46,7 @@ export function makeBlockExpiry(startBlock: bigint, durationBlocks: bigint): Blo
 export function isExpiryReached(expiry: BlockExpiry, currentBlock: bigint): boolean {
   return currentBlock >= expiry.expiryBlock;
 }
+
+export function hasStarted(expiry: BlockExpiry, currentBlock: bigint): boolean {
+  return currentBlock >= expiry.startBlock;
+}
