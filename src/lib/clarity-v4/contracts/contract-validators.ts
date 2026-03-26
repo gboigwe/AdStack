@@ -107,3 +107,8 @@ export function validateField5(value: unknown): ValidationResult {
 export function isPositiveAmount1(amount: bigint): boolean {
   return amount > BigInt(0);
 }
+
+// Validator helper 2
+export function isPositiveAmount2(amount: bigint): boolean {
+  return amount > BigInt(0);
+}
