@@ -14,3 +14,6 @@ export interface ApiError {
 }
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiError };
+
+export function apiOk<T>(data: T): ApiResult<T> { return { ok: true, data }; }
+export function apiErr(error: ApiError): ApiResult<never> { return { ok: false, error }; }
