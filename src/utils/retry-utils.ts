@@ -40,3 +40,7 @@ export async function withRetry<T>(
   }
   throw lastError;
 }
+
+export function isRetryableHttpStatus(status: number): boolean {
+  return status === 429 || status === 502 || status === 503 || status === 504;
+}
