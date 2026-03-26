@@ -360,3 +360,5 @@ export const API_ENDPOINT_VERSION_154 = 'v154';
 export const API_ENDPOINT_VERSION_155 = 'v155';
 
 export const API_ENDPOINT_VERSION_156 = 'v156';
+
+export const API_ENDPOINT_VERSION_157 = 'v157';
