@@ -43,3 +43,8 @@ export function mapValues<K, V>(m: ClarityMap<K, V>): V[] {
 export function mapToEntries<K, V>(m: ClarityMap<K, V>): [string, V][] {
   return Array.from(m.entries.entries());
 }
+
+export function mapMerge<K, V>(a: ClarityMap<K, V>, b: ClarityMap<K, V>): ClarityMap<K, V> {
+  const merged = new Map([...a.entries, ...b.entries]);
+  return { ...a, entries: merged };
+}
