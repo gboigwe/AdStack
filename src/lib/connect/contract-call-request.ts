@@ -43,3 +43,7 @@ export function withPostConditions(
 export function withFee(params: ContractCallRequestParams, fee: bigint): ContractCallRequestParams {
   return { ...params, fee };
 }
+
+export function withNonce(params: ContractCallRequestParams, nonce: bigint): ContractCallRequestParams {
+  return { ...params, nonce };
+}
