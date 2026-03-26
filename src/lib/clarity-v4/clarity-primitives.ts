@@ -133,3 +133,13 @@ export function compareUint(a: ClarityUint, b: ClarityUint): -1 | 0 | 1 {
   if (a.value > b.value) return 1;
   return 0;
 }
+
+/** Convert ClarityUint to JS number */
+export function uintToNumber(v: ClarityUint): number {
+  return Number(v.value);
+}
+
+/** Convert ClarityUint to string */
+export function uintToString(v: ClarityUint): string {
+  return v.value.toString();
+}
