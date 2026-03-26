@@ -17,3 +17,13 @@ export interface StacksSessionState {
 }
 
 const SESSION_KEY = 'stacks_session_user';
+
+function loadSessionFromStorage(): SessionUser | null {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as SessionUser;
+  } catch {
+    return null;
+  }
+}
