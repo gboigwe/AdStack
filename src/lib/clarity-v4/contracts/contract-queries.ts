@@ -51,3 +51,12 @@ export type PaginatedQuery<T> = {
   pageSize: number;
   hasMore: boolean;
 };
+
+export function makePaginatedQuery<T>(
+  items: T[],
+  total: number,
+  page: number,
+  pageSize: number
+): PaginatedQuery<T> {
+  return { items, total, page, pageSize, hasMore: page * pageSize < total };
+}
