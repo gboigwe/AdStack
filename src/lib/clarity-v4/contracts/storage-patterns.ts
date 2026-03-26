@@ -18,3 +18,9 @@ export function makeStorageMap<K, V>(name: string, keyType: string, valueType: s
 export function storageMapGet<K, V>(map: StorageMap<K, V>, key: K): V | null {
   return map.entries.get(JSON.stringify(key)) ?? null;
 }
+
+export function storageMapSet<K, V>(map: StorageMap<K, V>, key: K, value: V): StorageMap<K, V> {
+  const newEntries = new Map(map.entries);
+  newEntries.set(JSON.stringify(key), value);
+  return { ...map, entries: newEntries };
+}
