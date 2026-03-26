@@ -74,3 +74,10 @@ export function validatePrincipalOrThrow(address: string): void {
     throw new Error(`Invalid Stacks principal: ${address}`);
   }
 }
+
+export function areSamePrincipal(a: string, b: string): boolean {
+  const pa = parsePrincipal(a);
+  const pb = parsePrincipal(b);
+  if (!pa || !pb) return false;
+  return principalToString(pa) === principalToString(pb);
+}
