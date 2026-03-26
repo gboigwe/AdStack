@@ -80,3 +80,7 @@ export function principalCV(addressOrContractId: string): PrincipalCV {
 export function listCV<T extends ClarityValue>(list: T[]): ListCV<T> {
   return { type: 'list', list };
 }
+
+export function tupleCV<T extends Record<string, ClarityValue>>(data: T): TupleCV<T> {
+  return { type: 'tuple', data };
+}
