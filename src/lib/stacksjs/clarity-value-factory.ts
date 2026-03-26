@@ -17,3 +17,4 @@ export type ListCV<T> = { type: 'list'; list: T[] };
 export type TupleCV<T extends Record<string, ClarityValue> = Record<string, ClarityValue>> = { type: 'tuple'; data: T };
 export type ResponseOkCV<T> = { type: 'ok'; value: T };
 export type ResponseErrCV<E> = { type: 'error'; value: E };
+export type ClarityValue = UintCV | IntCV | BoolCV | NoneCV | SomeCV<ClarityValue> | BufferCV | StringAsciiCV | StringUtf8CV | PrincipalCV | ListCV<ClarityValue> | TupleCV | ResponseOkCV<ClarityValue> | ResponseErrCV<ClarityValue>;
