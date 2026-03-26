@@ -27,3 +27,7 @@ export function serializeIntCV(cv: IntCV): string {
     : cv.value;
   return '00' + bytesToHex(bigIntToBytes16(twosComplement));
 }
+
+export function serializeBoolCV(cv: BoolCV): string {
+  return cv.value ? '03' : '04';
+}
