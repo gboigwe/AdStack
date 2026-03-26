@@ -114,3 +114,9 @@ export function subUint(a: ClarityUint, b: ClarityUint): ClarityUint {
 export function mulUint(a: ClarityUint, b: ClarityUint): ClarityUint {
   return makeUint(a.value * b.value);
 }
+
+/** Divide two ClarityUint values */
+export function divUint(a: ClarityUint, b: ClarityUint): ClarityUint {
+  if (b.value === BigInt(0)) throw new Error('Division by zero');
+  return makeUint(a.value / b.value);
+}
