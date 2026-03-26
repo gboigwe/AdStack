@@ -58,3 +58,8 @@ export function maxBigInt(a: bigint, b: bigint): bigint {
 export function absDiffUint(a: bigint, b: bigint): bigint {
   return a > b ? a - b : b - a;
 }
+
+export function isPowerOfTwo(n: bigint): boolean {
+  if (n <= BigInt(0)) return false;
+  return (n & (n - BigInt(1))) === BigInt(0);
+}
