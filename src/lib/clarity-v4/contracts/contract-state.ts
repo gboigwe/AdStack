@@ -96,3 +96,9 @@ export function calculateCampaignROI(campaign: Campaign): number {
   if (campaign.spent === BigInt(0)) return 0;
   return Number((campaign.budget - campaign.spent) * BigInt(100) / campaign.budget);
 }
+
+export function getTopPublishers(publishers: Publisher[], limit = 10): Publisher[] {
+  return [...publishers]
+    .sort((a, b) => (b.totalEarned > a.totalEarned ? 1 : -1))
+    .slice(0, limit);
+}
