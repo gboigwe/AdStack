@@ -19,3 +19,10 @@ export type BlockExpiry = {
   durationBlocks: bigint;
   expiryBlock: bigint;
 };
+
+export function makeBlockDuration(blocks: bigint): BlockDuration {
+  return {
+    blocks,
+    approximateSeconds: blocks * BigInt(AVERAGE_BLOCK_SECONDS),
+  };
+}
