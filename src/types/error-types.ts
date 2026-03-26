@@ -7,3 +7,7 @@ export interface StacksError {
   message: string;
   raw?: unknown;
 }
+
+export function makeError(category: ErrorCategory, code: number, message: string, raw?: unknown): StacksError {
+  return { category, code, message, raw };
+}
