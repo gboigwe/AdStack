@@ -49,3 +49,10 @@ export function useContractRead<T>(params: ContractReadParams, enabled = true) {
       setState({ data: null, isLoading: false, isError: true, error: String(e), isFetched: true });
     }
   }, []);
+
+  useEffect(() => {
+    if (enabled) fetch();
+  }, [enabled, fetch]);
+
+  return { ...state, refetch: fetch };
+}
