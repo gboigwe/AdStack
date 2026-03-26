@@ -222,3 +222,5 @@ export const FEE_TIER_90 = BigInt(9000);
 export const FEE_TIER_91 = BigInt(9100);
 
 export const FEE_TIER_92 = BigInt(9200);
+
+export const FEE_TIER_93 = BigInt(9300);
