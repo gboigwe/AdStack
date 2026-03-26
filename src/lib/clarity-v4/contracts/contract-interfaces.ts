@@ -28,3 +28,7 @@ export type ContractInterface = {
 export function getPublicFunctions(iface: ContractInterface): ContractFunction[] {
   return iface.functions.filter(f => f.access === 'public');
 }
+
+export function getReadOnlyFunctions(iface: ContractInterface): ContractFunction[] {
+  return iface.functions.filter(f => f.access === 'read_only');
+}
