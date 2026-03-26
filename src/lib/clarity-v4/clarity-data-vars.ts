@@ -15,3 +15,7 @@ export function getDataVar<T>(v: DataVar<T>): T {
 export function setDataVar<T>(v: DataVar<T>, newValue: T): DataVar<T> {
   return { ...v, value: newValue };
 }
+
+export function updateDataVar<T>(v: DataVar<T>, fn: (current: T) => T): DataVar<T> {
+  return setDataVar(v, fn(v.value));
+}
