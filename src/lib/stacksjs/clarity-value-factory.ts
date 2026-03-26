@@ -60,3 +60,7 @@ export function stringAsciiCV(data: string): StringAsciiCV {
 export function stringUtf8CV(data: string): StringUtf8CV {
   return { type: 'string-utf8', data };
 }
+
+export function standardPrincipalCV(address: string): StandardPrincipalCV {
+  return { type: 'standard_principal', address };
+}
