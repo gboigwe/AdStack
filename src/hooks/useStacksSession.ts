@@ -31,3 +31,7 @@ function loadSessionFromStorage(): SessionUser | null {
 function saveSessionToStorage(user: SessionUser): void {
   localStorage.setItem(SESSION_KEY, JSON.stringify(user));
 }
+
+function clearSessionFromStorage(): void {
+  localStorage.removeItem(SESSION_KEY);
+}
