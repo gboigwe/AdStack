@@ -36,3 +36,8 @@ async function fetchNftHoldings(address: string): Promise<NftHolding[]> {
   const data = await res.json() as { results?: NftHolding[] };
   return data.results ?? [];
 }
+
+export function useAccountTokens(address: string | null) {
+  const [state, setState] = useState<AccountTokensState>({
+    fungible: {}, nonFungible: [], isLoading: false, error: null,
+  });
