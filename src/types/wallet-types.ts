@@ -14,3 +14,8 @@ export interface ConnectedWallet {
   accounts: WalletAccount[];
   activeAccount: WalletAccount;
 }
+
+export interface WalletConnectionEvent {
+  wallet: ConnectedWallet;
+  timestamp: number;
+}
