@@ -34,3 +34,8 @@ export function validateStxAddress(address: string): boolean {
   const regex = /^(SP|ST)[A-Z0-9]{33,39}$/;
   return regex.test(address);
 }
+
+export function validateContractPrincipal(principal: string): boolean {
+  const regex = /^(SP|ST)[A-Z0-9]{1,40}\.[a-zA-Z0-9_-]{1,128}$/;
+  return regex.test(principal);
+}
