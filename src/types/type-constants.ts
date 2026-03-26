@@ -171,3 +171,4 @@ export const TYPE_GUARD_ID_168 = 168;
 export const TYPE_GUARD_ID_169 = 169;
 export const TYPE_GUARD_ID_170 = 170;
 export const TYPE_GUARD_ID_171 = 171;
+export const TYPE_GUARD_ID_172 = 172;
