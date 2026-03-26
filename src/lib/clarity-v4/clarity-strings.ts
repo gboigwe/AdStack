@@ -54,3 +54,11 @@ export function asciiToUpper(s: StringAscii): StringAscii {
 export function asciiToLower(s: StringAscii): StringAscii {
   return makeStringAscii(s.value.toLowerCase(), s.maxLength);
 }
+
+export function trimAscii(s: StringAscii): StringAscii {
+  return makeStringAscii(s.value.trim(), s.maxLength);
+}
+
+export function trimUtf8(s: StringUtf8): StringUtf8 {
+  return makeStringUtf8(s.value.trim(), s.maxLength);
+}
