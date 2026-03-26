@@ -1,3 +1,5 @@
 // Stacks Transactions SDK builder patterns
 
 export type TransactionVersion = 0 | 1;
+
+export const MAINNET_VERSION: TransactionVersion = 0;
