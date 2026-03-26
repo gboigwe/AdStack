@@ -8,3 +8,9 @@ export interface WalletAccount {
   network: WalletNetwork;
   label?: string;
 }
+
+export interface ConnectedWallet {
+  type: WalletType;
+  accounts: WalletAccount[];
+  activeAccount: WalletAccount;
+}
