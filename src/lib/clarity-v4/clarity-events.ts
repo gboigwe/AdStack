@@ -35,3 +35,7 @@ export type ContractEvent = ClarityEvent & {
   topic: string;
   value: unknown;
 };
+
+export function isStxTransferEvent(e: ClarityEvent): e is StxTransferEvent {
+  return e.type === 'stx_transfer';
+}
