@@ -39,3 +39,10 @@ export function cvBoolEqual(a: ClarityValue, b: ClarityValue): boolean {
   if (a.type !== 'bool' || b.type !== 'bool') return false;
   return (a as { type: 'bool'; value: boolean }).value === (b as { type: 'bool'; value: boolean }).value;
 }
+
+export function cvPrincipalEqual(a: ClarityValue, b: ClarityValue): boolean {
+  const aIsP = a.type === 'standard_principal' || a.type === 'contract_principal';
+  const bIsP = b.type === 'standard_principal' || b.type === 'contract_principal';
+  if (!aIsP || !bIsP) return false;
+  return JSON.stringify(a) === JSON.stringify(b);
+}
