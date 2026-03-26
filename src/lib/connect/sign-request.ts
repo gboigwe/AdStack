@@ -44,3 +44,5 @@ export const SIGN_REQUEST_VERSION_1 = '1.0';
 export const SIGN_REQUEST_VERSION_2 = '2.0';
 
 export const SIGN_REQUEST_VERSION_3 = '3.0';
+
+export const SIGN_REQUEST_VERSION_4 = '4.0';
