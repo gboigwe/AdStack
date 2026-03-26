@@ -16,3 +16,12 @@ export type Campaign = {
   endBlock: bigint;
   impressionRate: bigint;
 };
+
+export type Publisher = {
+  address: string;
+  status: PublisherStatus;
+  pendingPayout: bigint;
+  totalEarned: bigint;
+  impressionCount: bigint;
+  registeredAt: bigint;
+};
