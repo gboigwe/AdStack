@@ -29,3 +29,8 @@ export function switchNetwork(address: string, to: 'mainnet' | 'testnet'): strin
   const prefix = to === 'mainnet' ? MAINNET_PREFIX : TESTNET_PREFIX;
   return prefix + address.slice(2);
 }
+
+export function validateStxAddress(address: string): boolean {
+  const regex = /^(SP|ST)[A-Z0-9]{33,39}$/;
+  return regex.test(address);
+}
