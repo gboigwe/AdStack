@@ -66,3 +66,14 @@ export function isFtPostCondition(pc: PostCondition): pc is FtPostCondition {
 export function isNftPostCondition(pc: PostCondition): pc is NftPostCondition {
   return pc.type === 'nft';
 }
+
+export function evaluateConditionCode(actual: bigint, expected: bigint, code: PostConditionCode): boolean {
+  switch (code) {
+    case 'eq': return actual === expected;
+    case 'gt': return actual > expected;
+    case 'gte': return actual >= expected;
+    case 'lt': return actual < expected;
+    case 'lte': return actual <= expected;
+    case 'not': return actual !== expected;
+  }
+}
