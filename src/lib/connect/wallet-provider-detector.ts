@@ -1,3 +1,5 @@
 // Stacks wallet provider detection utilities
 
 export type WalletProvider = 'leather' | 'xverse' | 'asigna' | 'unknown';
+
+export type WalletInfo = { id: WalletProvider; name: string; icon: string; installed: boolean };
