@@ -23,3 +23,7 @@ export function isValidPrivateKey(key: string): boolean {
 export function isValidPublicKey(key: string): boolean {
   return key.length === COMPRESSED_PUBLIC_KEY_LENGTH || key.length === UNCOMPRESSED_PUBLIC_KEY_LENGTH;
 }
+
+export function isValidSignature(sig: string): boolean {
+  return sig.length === SIGNATURE_LENGTH && /^[0-9a-fA-F]+$/.test(sig);
+}
