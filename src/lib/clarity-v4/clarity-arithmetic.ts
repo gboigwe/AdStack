@@ -36,3 +36,7 @@ export function safeSubUint(a: ClarityUint, b: ClarityUint): ClarityUint | null 
   if (b.value > a.value) return null;
   return makeUint(a.value - b.value);
 }
+
+export function percentOf(amount: bigint, basisPoints: bigint): bigint {
+  return (amount * basisPoints) / BigInt(10000);
+}
