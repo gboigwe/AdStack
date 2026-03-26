@@ -19,3 +19,7 @@ export const LEATHER_WALLET_ID = 'leather';
 export const XVERSE_WALLET_ID = 'xverse';
 
 export const ASIGNA_WALLET_ID = 'asigna';
+
+export function buildAuthRequest(appDetails: AppDetails, redirectTo = '/'): AuthRequestParams {
+  return { appDetails, redirectTo };
+}
