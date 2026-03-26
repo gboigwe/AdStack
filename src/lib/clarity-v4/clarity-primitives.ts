@@ -59,3 +59,11 @@ export function makeInt(value: bigint | number): ClarityInt {
 export function makeBool(value: boolean): ClarityBool {
   return { type: 'bool', value };
 }
+
+/** Validate a Stacks principal address */
+export function isValidPrincipal(address: string): boolean {
+  if (!address) return false;
+  const contractRegex = /^(SP|ST)[A-Z0-9]{1,40}\.[a-zA-Z0-9_-]{1,128}$/;
+  const standardRegex = /^(SP|ST)[A-Z0-9]{33,39}$/;
+  return contractRegex.test(address) || standardRegex.test(address);
+}
