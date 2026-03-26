@@ -15,3 +15,5 @@ export type NftCondition = { type: 'nft'; principal: PrincipalDetail; asset: Ass
 export type PostCondition = StxCondition | FtCondition | NftCondition;
 
 export type PrincipalDetail = { type: PrincipalType; address?: string; contractName?: string };
+
+export type AssetInfo = { contractId: string; assetName: string };
