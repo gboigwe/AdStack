@@ -27,3 +27,8 @@ export function isSameBlock(a: BlockInfo, b: BlockInfo): boolean {
 export function blocksBetween(from: BlockInfo, to: BlockInfo): bigint {
   return to.height > from.height ? to.height - from.height : BigInt(0);
 }
+
+export function estimateTimeBetweenBlocks(fromHeight: bigint, toHeight: bigint, avgBlockSeconds = 600): number {
+  const diff = toHeight > fromHeight ? Number(toHeight - fromHeight) : 0;
+  return diff * avgBlockSeconds;
+}
