@@ -13,3 +13,11 @@ export type TxSize = { bytes: number };
 export function calculateFee(txSizeBytes: number, feeRate = FEE_RATE): bigint {
   return BigInt(txSizeBytes) * feeRate;
 }
+
+export function makeFeeEstimate(baseFee: bigint): FeeEstimate {
+  return {
+    low: baseFee,
+    medium: (baseFee * BigInt(15)) / BigInt(10),
+    high: baseFee * BigInt(2),
+  };
+}
