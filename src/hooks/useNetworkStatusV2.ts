@@ -33,3 +33,13 @@ export function useNetworkStatusV2(network: 'mainnet' | 'testnet' = 'mainnet') {
     info: null, isOnline: true, isLoading: false, lastUpdated: null, error: null,
   });
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const poll = useCallback(async () => {
+    setState(prev => ({ ...prev, isLoading: true }));
+    try {
+      const info = await fetchNetworkInfo(base);
+      setState({ info, isOnline: true, isLoading: false, lastUpdated: Date.now(), error: null });
+    } catch (e) {
+      setState(prev => ({ ...prev, isOnline: false, isLoading: false, error: String(e) }));
+    }
+  }, [base]);
