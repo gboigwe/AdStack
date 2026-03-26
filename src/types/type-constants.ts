@@ -61,3 +61,4 @@ export const TYPE_GUARD_ID_58 = 58;
 export const TYPE_GUARD_ID_59 = 59;
 export const TYPE_GUARD_ID_60 = 60;
 export const TYPE_GUARD_ID_61 = 61;
+export const TYPE_GUARD_ID_62 = 62;
