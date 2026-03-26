@@ -52,3 +52,7 @@ export function bufferCVFromString(hex: string): BufferCV {
   for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
   return bufferCV(bytes);
 }
+
+export function stringAsciiCV(data: string): StringAsciiCV {
+  return { type: 'string-ascii', data };
+}
