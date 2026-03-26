@@ -372,3 +372,6 @@ export function makeUint88(): UintCV { return uintCV(88); }
 
 // Factory helper 89
 export function makeUint89(): UintCV { return uintCV(89); }
+
+// Factory helper 90
+export function makeUint90(): UintCV { return uintCV(90); }
