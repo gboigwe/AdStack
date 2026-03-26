@@ -15,3 +15,5 @@ export type FtBalance = { balance: string; total_sent: string; total_received: s
 export type NftHolding = { count: string; total_sent: string; total_received: string };
 
 export type AccountTransaction = { tx_id: string; tx_type: string; block_height: number; burn_block_time: number };
+
+export type AccountTransactionsResponse = { limit: number; offset: number; total: number; results: AccountTransaction[] };
