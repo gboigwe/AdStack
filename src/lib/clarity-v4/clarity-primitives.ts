@@ -219,3 +219,8 @@ export function makeIntFromString(s: string): ClarityInt {
 export function negateBool(b: ClarityBool): ClarityBool {
   return { type: 'bool', value: !b.value };
 }
+
+/** Logical AND of two ClarityBool values */
+export function andBool(a: ClarityBool, b: ClarityBool): ClarityBool {
+  return { type: 'bool', value: a.value && b.value };
+}
