@@ -7,3 +7,8 @@ export const MAX_LIST_LENGTH = 2000;
 export function emptyList<T>(): ClarityList<T> {
   return { type: 'list', items: [] };
 }
+
+export function makeList<T>(items: T[]): ClarityList<T> {
+  if (items.length > MAX_LIST_LENGTH) throw new RangeError(`List too long: ${items.length}`);
+  return { type: 'list', items: [...items] };
+}
