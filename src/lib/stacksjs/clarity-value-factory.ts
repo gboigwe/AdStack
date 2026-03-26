@@ -92,3 +92,16 @@ export function responseOkCV<T extends ClarityValue>(value: T): ResponseOkCV<T> 
 export function responseErrCV<E extends ClarityValue>(value: E): ResponseErrCV<E> {
   return { type: 'error', value };
 }
+
+export const isUintCV = (cv: ClarityValue): cv is UintCV => cv.type === 'uint';
+export const isIntCV = (cv: ClarityValue): cv is IntCV => cv.type === 'int';
+export const isBoolCV = (cv: ClarityValue): cv is BoolCV => cv.type === 'bool';
+export const isNoneCV = (cv: ClarityValue): cv is NoneCV => cv.type === 'none';
+export const isSomeCV = (cv: ClarityValue): cv is SomeCV<ClarityValue> => cv.type === 'some';
+export const isBufferCV = (cv: ClarityValue): cv is BufferCV => cv.type === 'buffer';
+export const isStringAsciiCV = (cv: ClarityValue): cv is StringAsciiCV => cv.type === 'string-ascii';
+export const isStringUtf8CV = (cv: ClarityValue): cv is StringUtf8CV => cv.type === 'string-utf8';
+export const isListCV = (cv: ClarityValue): cv is ListCV<ClarityValue> => cv.type === 'list';
+export const isTupleCV = (cv: ClarityValue): cv is TupleCV => cv.type === 'tuple';
+export const isResponseOkCV = (cv: ClarityValue): cv is ResponseOkCV<ClarityValue> => cv.type === 'ok';
+export const isResponseErrCV = (cv: ClarityValue): cv is ResponseErrCV<ClarityValue> => cv.type === 'error';
