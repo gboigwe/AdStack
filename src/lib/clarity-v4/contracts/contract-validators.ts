@@ -82,3 +82,8 @@ export function validateField1(value: unknown): ValidationResult {
   if (value === null || value === undefined) return invalidResult('Field 1 is required');
   return validResult();
 }
+
+export function validateField2(value: unknown): ValidationResult {
+  if (value === null || value === undefined) return invalidResult('Field 2 is required');
+  return validResult();
+}
