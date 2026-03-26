@@ -15,3 +15,8 @@ export function validateUintRange(value: bigint, min: bigint, max: bigint): Vali
   if (value > max) return invalidResult(`Value ${value} exceeds maximum ${max}`);
   return validResult();
 }
+
+export function validateNonZero(value: bigint, fieldName: string): ValidationResult {
+  if (value === BigInt(0)) return invalidResult(`${fieldName} must be non-zero`);
+  return validResult();
+}
