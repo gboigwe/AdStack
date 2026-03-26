@@ -8,3 +8,11 @@ export type StxPostCondition = {
   conditionCode: PostConditionCode;
   amount: bigint;
 };
+
+export type FtPostCondition = {
+  type: 'ft';
+  principal: string;
+  assetInfo: { contractId: string; assetName: string };
+  conditionCode: PostConditionCode;
+  amount: bigint;
+};
