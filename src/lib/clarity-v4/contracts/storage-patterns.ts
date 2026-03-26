@@ -104,3 +104,12 @@ export function storageMapKeys<K, V>(map: StorageMap<K, V>): string[] {
 export function storageMapValues<K, V>(map: StorageMap<K, V>): V[] {
   return Array.from(map.entries.values());
 }
+
+export function storageMapUpdate<K, V>(
+  map: StorageMap<K, V>,
+  key: K,
+  fn: (current: V | null) => V
+): StorageMap<K, V> {
+  const current = storageMapGet(map, key);
+  return storageMapSet(map, key, fn(current));
+}
