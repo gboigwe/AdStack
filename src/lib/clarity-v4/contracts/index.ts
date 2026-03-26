@@ -5,3 +5,4 @@ export * from './response-handlers';
 export * from './error-codes';
 export * from './storage-patterns';
 export * from './contract-interfaces';
+export * from './contract-validators';
