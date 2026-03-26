@@ -34,3 +34,11 @@ export function mapContractOk<T, U>(r: ContractResponse<T>, fn: (v: T) => U): Co
   if (r.type === 'ok') return contractOk(fn(r.value));
   return r;
 }
+
+export function flatMapContractOk<T, U>(
+  r: ContractResponse<T>,
+  fn: (v: T) => ContractResponse<U>
+): ContractResponse<U> {
+  if (r.type === 'ok') return fn(r.value);
+  return r;
+}
