@@ -17,3 +17,9 @@ export function mapInsert<K, V>(m: ClarityMap<K, V>, key: K, value: V): ClarityM
 export function mapGet<K, V>(m: ClarityMap<K, V>, key: K): V | null {
   return m.entries.get(m.keySerializer(key)) ?? null;
 }
+
+export function mapDelete<K, V>(m: ClarityMap<K, V>, key: K): ClarityMap<K, V> {
+  const newEntries = new Map(m.entries);
+  newEntries.delete(m.keySerializer(key));
+  return { ...m, entries: newEntries };
+}
