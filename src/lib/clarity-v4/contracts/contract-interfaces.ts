@@ -36,3 +36,9 @@ export function getReadOnlyFunctions(iface: ContractInterface): ContractFunction
 export function findFunction(iface: ContractInterface, name: string): ContractFunction | null {
   return iface.functions.find(f => f.name === name) ?? null;
 }
+
+export function hasFunction(iface: ContractInterface, name: string, access?: FunctionAccess): boolean {
+  const fn = findFunction(iface, name);
+  if (!fn) return false;
+  return access ? fn.access === access : true;
+}
