@@ -125,3 +125,4 @@ export const TYPE_GUARD_ID_122 = 122;
 export const TYPE_GUARD_ID_123 = 123;
 export const TYPE_GUARD_ID_124 = 124;
 export const TYPE_GUARD_ID_125 = 125;
+export const TYPE_GUARD_ID_126 = 126;
