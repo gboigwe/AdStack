@@ -23,3 +23,7 @@ export function mapDelete<K, V>(m: ClarityMap<K, V>, key: K): ClarityMap<K, V> {
   newEntries.delete(m.keySerializer(key));
   return { ...m, entries: newEntries };
 }
+
+export function mapHas<K, V>(m: ClarityMap<K, V>, key: K): boolean {
+  return m.entries.has(m.keySerializer(key));
+}
