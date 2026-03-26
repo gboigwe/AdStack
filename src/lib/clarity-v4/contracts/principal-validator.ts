@@ -31,3 +31,7 @@ export function isAnyPrincipal(address: string): boolean {
 export function isMainnetPrincipal(address: string): boolean {
   return address.startsWith(MAINNET_PREFIX) && isAnyPrincipal(address);
 }
+
+export function isTestnetPrincipal(address: string): boolean {
+  return address.startsWith(TESTNET_PREFIX) && isAnyPrincipal(address);
+}
