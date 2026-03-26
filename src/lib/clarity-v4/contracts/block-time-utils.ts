@@ -30,3 +30,7 @@ export function makeBlockDuration(blocks: bigint): BlockDuration {
 export function durationFromDays(days: number): BlockDuration {
   return makeBlockDuration(BigInt(Math.round(days * BLOCKS_PER_DAY)));
 }
+
+export function durationFromHours(hours: number): BlockDuration {
+  return makeBlockDuration(BigInt(Math.round(hours * BLOCKS_PER_HOUR)));
+}
