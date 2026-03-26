@@ -17,3 +17,7 @@ export function grantRole(acl: AccessControlList, principal: Principal, role: Ac
   const filtered = acl.assignments.filter(a => !(a.principal === principal && a.role === role));
   return { assignments: [...filtered, { principal, role }] };
 }
+
+export function revokeRole(acl: AccessControlList, principal: Principal, role: AccessRole): AccessControlList {
+  return { assignments: acl.assignments.filter(a => !(a.principal === principal && a.role === role)) };
+}
