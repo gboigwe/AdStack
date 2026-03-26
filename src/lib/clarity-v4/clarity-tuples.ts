@@ -47,3 +47,7 @@ export function mergeTuples<A extends TupleRecord, B extends TupleRecord>(
 export function getTupleKeys<T extends TupleRecord>(tuple: ClarityTuple<T>): (keyof T)[] {
   return Object.keys(tuple.data) as (keyof T)[];
 }
+
+export function getTupleValues<T extends TupleRecord>(tuple: ClarityTuple<T>): T[keyof T][] {
+  return Object.values(tuple.data) as T[keyof T][];
+}
