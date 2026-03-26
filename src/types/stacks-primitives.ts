@@ -15,3 +15,7 @@ export type ContractName = Brand<string, 'ContractName'>;
 
 export type MicroStx = Brand<bigint, 'MicroStx'>;
 export type Stx = Brand<number, 'Stx'>;
+
+export type BlockHeight = Brand<number, 'BlockHeight'>;
+export type BurnBlockHeight = Brand<number, 'BurnBlockHeight'>;
+export type Nonce = Brand<number, 'Nonce'>;
