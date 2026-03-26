@@ -20,3 +20,12 @@ export interface AccountTokensState {
   isLoading: boolean;
   error: string | null;
 }
+
+const BASE = 'https://api.hiro.so';
+
+async function fetchFtBalances(address: string): Promise<Record<string, FtBalance>> {
+  const res = await fetch(`${BASE}/v2/accounts/${address}/balances`);
+  if (!res.ok) throw new Error(`FT fetch failed: ${res.status}`);
+  const data = await res.json() as { fungible_tokens?: Record<string, FtBalance> };
+  return data.fungible_tokens ?? {};
+}
