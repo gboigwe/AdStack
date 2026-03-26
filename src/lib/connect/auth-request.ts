@@ -43,3 +43,7 @@ export function parseAuthResponse(token: string): AuthResponsePayload | null {
 export function isValidAuthResponse(payload: AuthResponsePayload): boolean {
   return !!(payload.authResponseToken && payload.appPrivateKey && payload.userData);
 }
+
+export function extractStxAddress(payload: AuthResponsePayload): string | null {
+  return payload.userData?.stxAddress ?? null;
+}
