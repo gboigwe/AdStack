@@ -29,3 +29,10 @@ async function fetchFtBalances(address: string): Promise<Record<string, FtBalanc
   const data = await res.json() as { fungible_tokens?: Record<string, FtBalance> };
   return data.fungible_tokens ?? {};
 }
+
+async function fetchNftHoldings(address: string): Promise<NftHolding[]> {
+  const res = await fetch(`${BASE}/extended/v1/tokens/nft/holdings?principal=${address}&limit=50`);
+  if (!res.ok) throw new Error(`NFT fetch failed: ${res.status}`);
+  const data = await res.json() as { results?: NftHolding[] };
+  return data.results ?? [];
+}
