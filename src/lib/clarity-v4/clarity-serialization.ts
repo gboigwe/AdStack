@@ -58,3 +58,8 @@ export function concatHex(...hexStrings: string[]): string {
 export function encodeLength(n: number): string {
   return n.toString(16).padStart(8, '0');
 }
+
+export function encodeString(s: string): string {
+  const bytes = new TextEncoder().encode(s);
+  return encodeLength(bytes.length) + bytesToHex(bytes);
+}
