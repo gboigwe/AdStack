@@ -322,3 +322,5 @@ export const API_ENDPOINT_VERSION_135 = 'v135';
 export const API_ENDPOINT_VERSION_136 = 'v136';
 
 export const API_ENDPOINT_VERSION_137 = 'v137';
+
+export const API_ENDPOINT_VERSION_138 = 'v138';
