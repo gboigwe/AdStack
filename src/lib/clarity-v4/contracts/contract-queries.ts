@@ -36,3 +36,10 @@ export function isQuerySuccess<T>(r: QueryResult<T>): boolean {
 export function isQueryError<T>(r: QueryResult<T>): boolean {
   return !r.loading && r.error !== null;
 }
+
+export function mapQueryResult<T, U>(r: QueryResult<T>, fn: (data: T) => U): QueryResult<U> {
+  if (r.loading) return loadingQuery<U>();
+  if (r.error) return errorQuery<U>(r.error);
+  if (r.data === null) return errorQuery<U>('No data');
+  return successQuery(fn(r.data));
+}
