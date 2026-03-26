@@ -34,3 +34,7 @@ export function getListItem<T>(list: ClarityList<T>, index: number): T | null {
 export function foldLeft<T, A>(list: ClarityList<T>, initial: A, fn: (acc: A, item: T) => A): A {
   return list.items.reduce(fn, initial);
 }
+
+export function foldRight<T, A>(list: ClarityList<T>, initial: A, fn: (item: T, acc: A) => A): A {
+  return list.items.reduceRight((acc, item) => fn(item, acc), initial);
+}
