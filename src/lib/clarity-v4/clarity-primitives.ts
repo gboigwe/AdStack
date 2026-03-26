@@ -35,3 +35,6 @@ export const MAX_INT128 = BigInt('170141183460469231731687303715884105727');
 export const ZERO_UINT: ClarityUint = { type: 'uint', value: BigInt(0) };
 
 export const ZERO_INT: ClarityInt = { type: 'int', value: BigInt(0) };
+
+export const TRUE_BOOL: ClarityBool = { type: 'bool', value: true };
+export const FALSE_BOOL: ClarityBool = { type: 'bool', value: false };
