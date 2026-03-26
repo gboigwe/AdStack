@@ -22,3 +22,7 @@ export type ClarityValue = UintCV | IntCV | BoolCV | NoneCV | SomeCV<ClarityValu
 export function uintCV(value: bigint | number | string): UintCV {
   return { type: 'uint', value: BigInt(value) };
 }
+
+export function intCV(value: bigint | number | string): IntCV {
+  return { type: 'int', value: BigInt(value) };
+}
