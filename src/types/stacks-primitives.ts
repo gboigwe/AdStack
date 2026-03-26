@@ -22,3 +22,12 @@ export type Nonce = Brand<number, 'Nonce'>;
 
 export type HexString = Brand<string, 'HexString'>;
 export type Bytes = Brand<Uint8Array, 'Bytes'>;
+
+export function asUint128(n: bigint): Uint128 { return n as Uint128; }
+export function asInt128(n: bigint): Int128 { return n as Int128; }
+export function asTxId(s: string): TxId { return s as TxId; }
+export function asBlockHash(s: string): BlockHash { return s as BlockHash; }
+export function asStxAddress(s: string): StxAddress { return s as StxAddress; }
+export function asMicroStx(n: bigint): MicroStx { return n as MicroStx; }
+export function asBlockHeight(n: number): BlockHeight { return n as BlockHeight; }
+export function asHexString(s: string): HexString { return s as HexString; }
