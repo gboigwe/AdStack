@@ -9,3 +9,10 @@ export function isMainnetAddress(address: string): boolean {
 export function isTestnetAddress(address: string): boolean {
   return address.startsWith(TESTNET_PREFIX);
 }
+
+export function isContractPrincipal(address: string): boolean {
+  return address.includes('.');
+}
+export function isStandardPrincipal(address: string): boolean {
+  return !address.includes('.');
+}
