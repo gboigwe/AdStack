@@ -34,3 +34,8 @@ export async function callReadOnlyFunction(
   });
   return res.json();
 }
+
+export async function fetchContractSource(contractId: string, network: Network = 'mainnet'): Promise<string> {
+  const info = await fetchContractInfo(contractId, network);
+  return info.source_code;
+}
