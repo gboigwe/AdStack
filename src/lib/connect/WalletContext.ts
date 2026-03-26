@@ -22,3 +22,15 @@ export function walletReducer(state: WalletState, action: WalletAction): WalletS
       return state;
   }
 }
+
+export function isWalletConnected(state: WalletState): boolean {
+  return state.connected && state.address !== null;
+}
+
+export function getWalletAddress(state: WalletState): string | null {
+  return state.connected ? state.address : null;
+}
+
+export function getWalletNetwork(state: WalletState): 'mainnet' | 'testnet' {
+  return state.network;
+}
