@@ -63,3 +63,7 @@ export function tupleToObject<T extends TupleRecord>(tuple: ClarityTuple<T>): T 
 export function tupleFieldCount<T extends TupleRecord>(tuple: ClarityTuple<T>): number {
   return Object.keys(tuple.data).length;
 }
+
+export function areTuplesEqual<T extends TupleRecord>(a: ClarityTuple<T>, b: ClarityTuple<T>): boolean {
+  return JSON.stringify(a.data) === JSON.stringify(b.data);
+}
