@@ -42,3 +42,11 @@ export function hasFunction(iface: ContractInterface, name: string, access?: Fun
   if (!fn) return false;
   return access ? fn.access === access : true;
 }
+
+export function isFtContract(iface: ContractInterface): boolean {
+  return iface.fungibleTokens.length > 0;
+}
+
+export function isNftContract(iface: ContractInterface): boolean {
+  return iface.nonFungibleTokens.length > 0;
+}
