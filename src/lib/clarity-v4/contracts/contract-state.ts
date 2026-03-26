@@ -137,3 +137,8 @@ export function deductCampaignBudget(campaign: Campaign, amount: bigint): Campai
   if (campaign.spent + amount > campaign.budget) return null;
   return { ...campaign, spent: campaign.spent + amount };
 }
+
+export function castVote(proposal: Proposal, weight: bigint, support: boolean): Proposal {
+  if (support) return { ...proposal, votesFor: proposal.votesFor + weight };
+  return { ...proposal, votesAgainst: proposal.votesAgainst + weight };
+}
