@@ -62,3 +62,11 @@ export function throwIfInvalid(result: ValidationResult): void {
     throw new Error(result.error ?? 'Validation failed');
   }
 }
+
+export function validateCampaignDuration(startBlock: bigint, endBlock: bigint): ValidationResult {
+  if (endBlock <= startBlock) return invalidResult('End block must be after start block');
+  const durationBlocks = endBlock - startBlock;
+  if (durationBlocks < BigInt(144)) return invalidResult('Campaign must be at least 1 day');
+  if (durationBlocks > BigInt(52560)) return invalidResult('Campaign cannot exceed 1 year');
+  return validResult();
+}
