@@ -65,3 +65,11 @@ export function makeReadOnlyCallParams(
     senderAddress,
   };
 }
+
+export function successResult<T>(result: T): ContractCallResult<T> {
+  return { success: true, result };
+}
+
+export function errorResult<T>(message: string): ContractCallResult<T> {
+  return { success: false, result: null, errorMessage: message };
+}
