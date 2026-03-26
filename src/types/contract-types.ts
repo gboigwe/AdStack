@@ -48,3 +48,13 @@ export interface ContractAbi {
   epoch: string;
   clarity_version: string;
 }
+
+export interface ContractInfo {
+  tx_id: string;
+  canonical: boolean;
+  contract_id: string;
+  block_height: number;
+  source_code: string;
+  abi: string;
+  clarity_version: number;
+}
