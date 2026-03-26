@@ -13,3 +13,9 @@ export type BlockDuration = {
   blocks: bigint;
   approximateSeconds: bigint;
 };
+
+export type BlockExpiry = {
+  startBlock: bigint;
+  durationBlocks: bigint;
+  expiryBlock: bigint;
+};
