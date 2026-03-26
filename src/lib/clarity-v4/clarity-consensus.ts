@@ -7,3 +7,5 @@ export type BlockInfo = {
   miner: string;
   time: bigint;
 };
+
+export type StacksEpoch = 'epoch-2.0' | 'epoch-2.1' | 'epoch-2.2' | 'epoch-2.3' | 'epoch-2.4' | 'epoch-2.5' | 'epoch-3.0';
