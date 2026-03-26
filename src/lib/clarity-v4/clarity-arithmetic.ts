@@ -40,3 +40,9 @@ export function safeSubUint(a: ClarityUint, b: ClarityUint): ClarityUint | null 
 export function percentOf(amount: bigint, basisPoints: bigint): bigint {
   return (amount * basisPoints) / BigInt(10000);
 }
+
+export function clampUint(value: bigint, min: bigint, max: bigint): bigint {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
