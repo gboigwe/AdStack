@@ -11,3 +11,5 @@ export type ParsedPrincipal = {
 
 export const MAINNET_PREFIX = 'SP';
 export const TESTNET_PREFIX = 'ST';
+
+export const STANDARD_ADDRESS_REGEX = /^(SP|ST)[A-Z0-9]{33,39}$/;
