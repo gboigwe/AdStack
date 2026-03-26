@@ -21,3 +21,8 @@ export function makeFeeEstimate(baseFee: bigint): FeeEstimate {
     high: baseFee * BigInt(2),
   };
 }
+
+export function estimateContractCallFee(numArgs: number): FeeEstimate {
+  const baseSize = 200 + numArgs * 50;
+  return makeFeeEstimate(calculateFee(baseSize));
+}
