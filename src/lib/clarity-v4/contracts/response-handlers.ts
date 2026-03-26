@@ -109,3 +109,16 @@ export function withTimeout<T>(
   );
   return Promise.race([response, timeout]);
 }
+
+export function memoizeContractResponse<T>(
+  fn: (...args: unknown[]) => ContractResponse<T>,
+  cache: Map<string, ContractResponse<T>>
+): (...args: unknown[]) => ContractResponse<T> {
+  return (...args: unknown[]) => {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key)!;
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
