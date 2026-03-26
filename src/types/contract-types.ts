@@ -63,3 +63,13 @@ export interface ReadOnlyResult {
   okay: boolean;
   result: string;
 }
+
+export function parseContractAbi(raw: string): ContractAbi {
+  return JSON.parse(raw) as ContractAbi;
+}
+export function getPublicFunctions(abi: ContractAbi): AbiFunction[] {
+  return abi.functions.filter(f => f.access === 'public');
+}
+export function getReadOnlyFunctions(abi: ContractAbi): AbiFunction[] {
+  return abi.functions.filter(f => f.access === 'read_only');
+}
