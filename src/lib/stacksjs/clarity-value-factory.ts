@@ -10,3 +10,4 @@ export type SomeCV<T> = { type: 'some'; value: T };
 export type BufferCV = { type: 'buffer'; buffer: Uint8Array };
 export type StringAsciiCV = { type: 'string-ascii'; data: string };
 export type StringUtf8CV = { type: 'string-utf8'; data: string };
+export type StandardPrincipalCV = { type: 'standard_principal'; address: string };
