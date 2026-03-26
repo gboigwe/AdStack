@@ -41,3 +41,4 @@ export const TEST_CASE_ID_36 = 36;
 export const TEST_CASE_ID_37 = 37;
 export const TEST_CASE_ID_38 = 38;
 export const TEST_CASE_ID_39 = 39;
+export const TEST_CASE_ID_40 = 40;
