@@ -14,3 +14,4 @@ export const HOOK_RETRY_DELAY_11 = 1100;
 export const HOOK_RETRY_DELAY_12 = 1200;
 export const HOOK_RETRY_DELAY_13 = 1300;
 export const HOOK_RETRY_DELAY_14 = 1400;
+export const HOOK_RETRY_DELAY_15 = 1500;
