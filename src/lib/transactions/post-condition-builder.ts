@@ -9,3 +9,5 @@ export type PrincipalType = 'origin' | 'standard' | 'contract';
 export type StxCondition = { type: 'stx'; principal: PrincipalDetail; code: FungibleConditionCode; amount: bigint };
 
 export type FtCondition = { type: 'ft'; principal: PrincipalDetail; asset: AssetInfo; code: FungibleConditionCode; amount: bigint };
+
+export type NftCondition = { type: 'nft'; principal: PrincipalDetail; asset: AssetInfo; tokenId: bigint; code: NonFungibleConditionCode };
