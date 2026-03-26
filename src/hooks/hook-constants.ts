@@ -43,3 +43,4 @@ export const HOOK_RETRY_DELAY_40 = 4000;
 export const HOOK_RETRY_DELAY_41 = 4100;
 export const HOOK_RETRY_DELAY_42 = 4200;
 export const HOOK_RETRY_DELAY_43 = 4300;
+export const HOOK_RETRY_DELAY_44 = 4400;
