@@ -109,3 +109,9 @@ export function combineResponses<T, E>(
   }
   return makeOk(values);
 }
+
+/** Convert a nullable value to a response */
+export function fromNullable<T, E>(value: T | null | undefined, errorValue: E): ClarityResponse<T, E> {
+  if (value == null) return makeErr(errorValue);
+  return makeOk(value);
+}
