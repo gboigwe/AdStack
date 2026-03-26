@@ -72,3 +72,4 @@ export const HOOK_RETRY_DELAY_69 = 6900;
 export const HOOK_RETRY_DELAY_70 = 7000;
 export const HOOK_RETRY_DELAY_71 = 7100;
 export const HOOK_RETRY_DELAY_72 = 7200;
+export const HOOK_RETRY_DELAY_73 = 7300;
