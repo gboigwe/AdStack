@@ -91,3 +91,17 @@ export function searchItems<T>(items: T[], searchKey: keyof T, query: string): T
   const q = query.toLowerCase();
   return items.filter(item => String(item[searchKey]).toLowerCase().includes(q));
 }
+
+export type QueryCache<T> = {
+  key: string;
+  data: T;
+  expiresAt: number;
+};
+
+export function makeCachedQuery<T>(key: string, data: T, ttlMs: number): QueryCache<T> {
+  return { key, data, expiresAt: Date.now() + ttlMs };
+}
+
+export function isCacheExpired<T>(cache: QueryCache<T>): boolean {
+  return Date.now() > cache.expiresAt;
+}
