@@ -24,3 +24,15 @@ export function successQuery<T>(data: T): QueryResult<T> {
 export function errorQuery<T>(error: string): QueryResult<T> {
   return { data: null, error, loading: false };
 }
+
+export function isQueryLoading<T>(r: QueryResult<T>): boolean {
+  return r.loading;
+}
+
+export function isQuerySuccess<T>(r: QueryResult<T>): boolean {
+  return !r.loading && r.error === null && r.data !== null;
+}
+
+export function isQueryError<T>(r: QueryResult<T>): boolean {
+  return !r.loading && r.error !== null;
+}
