@@ -62,3 +62,10 @@ export function useStacksSession() {
   const setError = useCallback((msg: string) => {
     setState(prev => ({ ...prev, error: msg }));
   }, []);
+
+  const clearError = useCallback(() => {
+    setState(prev => ({ ...prev, error: null }));
+  }, []);
+
+  return { ...state, connect, disconnect, setError, clearError };
+}
