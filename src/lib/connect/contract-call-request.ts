@@ -7,3 +7,5 @@ export type PostConditionMode = 'allow' | 'deny';
 export type AnchorMode = 'any' | 'on_chain_only' | 'off_chain_only';
 
 export type ContractCallRequestParams = { contractAddress: string; contractName: string; functionName: string; functionArgs: unknown[]; network: Network; postConditions?: unknown[]; postConditionMode?: PostConditionMode; anchorMode?: AnchorMode; fee?: bigint; nonce?: bigint; onFinish?: (data: TxBroadcastResult) => void; onCancel?: () => void };
+
+export type TxBroadcastResult = { txId: string; txRaw: string };
