@@ -28,3 +28,10 @@ export async function fetchAccountBalance(address: string, network: Network = 'm
   if (!res.ok) throw new Error(`Failed to fetch balance: ${res.status}`);
   return res.json();
 }
+
+export async function fetchAccountTransactions(address: string, network: Network = 'mainnet', limit = 20, offset = 0): Promise<AccountTransactionsResponse> {
+  const url = `${getApiBase(network)}/extended/v1/address/${address}/transactions?limit=${limit}&offset=${offset}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch transactions: ${res.status}`);
+  return res.json();
+}
