@@ -79,3 +79,8 @@ export function calculateExpiry(currentBlock: bigint, durationBlocks: bigint): b
 export function isExpired(currentBlock: bigint, expiryBlock: bigint): boolean {
   return currentBlock >= expiryBlock;
 }
+
+export function remainingBlocks(currentBlock: bigint, expiryBlock: bigint): bigint {
+  if (currentBlock >= expiryBlock) return BigInt(0);
+  return expiryBlock - currentBlock;
+}
