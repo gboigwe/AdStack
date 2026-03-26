@@ -8,3 +8,7 @@ export type ContractErr = { type: 'err'; value: bigint };
 export function contractOk<T>(value: T): ContractOk<T> {
   return { type: 'ok', value };
 }
+
+export function contractErr(code: bigint): ContractErr {
+  return { type: 'err', value: code };
+}
