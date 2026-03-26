@@ -49,3 +49,14 @@ describe('makePrincipal', () => {
     expect(() => makePrincipal('invalid-address')).toThrow();
   });
 });
+
+describe('makeSome and makeNone', () => {
+  it('makeSome wraps value', () => {
+    const s = makeSome(42n);
+    expect(s.type).toBe('some');
+    expect(s.value).toBe(42n);
+  });
+  it('makeNone has none type', () => {
+    expect(makeNone().type).toBe('none');
+  });
+});
