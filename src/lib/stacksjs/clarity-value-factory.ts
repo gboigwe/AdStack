@@ -8,3 +8,4 @@ export type BoolCV = { type: 'bool'; value: boolean };
 export type NoneCV = { type: 'none' };
 export type SomeCV<T> = { type: 'some'; value: T };
 export type BufferCV = { type: 'buffer'; buffer: Uint8Array };
+export type StringAsciiCV = { type: 'string-ascii'; data: string };
