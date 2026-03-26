@@ -90,3 +90,12 @@ export function formatUstxAsStx(ustx: bigint): string {
   const frac = ustx % ONE_STX_IN_USTX;
   return `${stx}.${frac.toString().padStart(6, '0')} STX`;
 }
+
+export function gcd(a: bigint, b: bigint): bigint {
+  a = a < BigInt(0) ? -a : a;
+  b = b < BigInt(0) ? -b : b;
+  while (b !== BigInt(0)) {
+    [a, b] = [b, a % b];
+  }
+  return a;
+}
