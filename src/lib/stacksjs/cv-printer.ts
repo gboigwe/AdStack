@@ -44,3 +44,23 @@ export function cvToPrettyString(cv: ClarityValue, indent = 0): string {
     default: return cvToString(cv);
   }
 }
+
+export function cvTypeDescription(cv: ClarityValue): string {
+  switch (cv.type) {
+    case 'uint': return 'uint128';
+    case 'int': return 'int128';
+    case 'bool': return 'bool';
+    case 'none': return 'none';
+    case 'some': return '(optional ?)';
+    case 'buffer': return `(buff ${(cv as { type: 'buffer'; buffer: Uint8Array }).buffer.length})`;
+    case 'string-ascii': return `(string-ascii ${(cv as { type: 'string-ascii'; data: string }).data.length})`;
+    case 'string-utf8': return `(string-utf8 ${(cv as { type: 'string-utf8'; data: string }).data.length})`;
+    case 'standard_principal': return 'principal';
+    case 'contract_principal': return 'principal';
+    case 'ok': return '(response ? ?)';
+    case 'error': return '(response ? ?)';
+    case 'list': return '(list ?)';
+    case 'tuple': return '(tuple ...)';
+    default: return 'unknown';
+  }
+}
