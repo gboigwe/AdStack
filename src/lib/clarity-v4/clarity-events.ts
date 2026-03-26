@@ -12,3 +12,11 @@ export type StxTransferEvent = ClarityEvent & {
   recipient: string;
   amount: bigint;
 };
+
+export type FtTransferEvent = ClarityEvent & {
+  type: 'ft_transfer';
+  assetId: string;
+  sender: string;
+  recipient: string;
+  amount: bigint;
+};
