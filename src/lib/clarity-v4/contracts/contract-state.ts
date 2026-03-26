@@ -102,3 +102,17 @@ export function getTopPublishers(publishers: Publisher[], limit = 10): Publisher
     .sort((a, b) => (b.totalEarned > a.totalEarned ? 1 : -1))
     .slice(0, limit);
 }
+
+export function summarizeCampaigns(campaigns: Campaign[]): {
+  total: number;
+  active: number;
+  totalBudget: bigint;
+  totalSpent: bigint;
+} {
+  return {
+    total: campaigns.length,
+    active: campaigns.filter(c => c.status === 'active').length,
+    totalBudget: campaigns.reduce((sum, c) => sum + c.budget, BigInt(0)),
+    totalSpent: campaigns.reduce((sum, c) => sum + c.spent, BigInt(0)),
+  };
+}
