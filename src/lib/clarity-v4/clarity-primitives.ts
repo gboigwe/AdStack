@@ -199,3 +199,8 @@ export function isClaritySome<T>(v: unknown): v is ClaritySome<T> {
 export function equalUint(a: ClarityUint, b: ClarityUint): boolean {
   return a.value === b.value;
 }
+
+/** Returns whether a ClarityBool value is true */
+export function isTrue(b: ClarityBool): boolean {
+  return b.value === true;
+}
