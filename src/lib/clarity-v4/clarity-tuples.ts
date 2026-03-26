@@ -82,3 +82,14 @@ export function renameTupleField<T extends TupleRecord>(
   delete result[oldKey as string];
   return makeTuple(result);
 }
+
+export function mapTupleValues<T extends Record<string, unknown>>(
+  tuple: ClarityTuple<T>,
+  fn: (value: unknown, key: string) => unknown
+): ClarityTuple<Record<string, unknown>> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(tuple.data)) {
+    result[key] = fn(value, key);
+  }
+  return makeTuple(result);
+}
