@@ -17,3 +17,10 @@ export function traitRefToString(ref: TraitReference): string {
 export function isTraitReference(v: unknown): v is TraitReference {
   return typeof v === 'object' && v !== null && (v as TraitReference).type === 'trait';
 }
+
+export function traitMethodMatches(impl: TraitMethod, required: TraitMethod): boolean {
+  if (impl.name !== required.name) return false;
+  if (impl.inputs.length !== required.inputs.length) return false;
+  if (impl.output !== required.output) return false;
+  return true;
+}
