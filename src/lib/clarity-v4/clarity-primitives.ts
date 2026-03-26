@@ -143,3 +143,13 @@ export function uintToNumber(v: ClarityUint): number {
 export function uintToString(v: ClarityUint): string {
   return v.value.toString();
 }
+
+/** Create a Clarity buffer from a hex string */
+export function makeBufferFromHex(hex: string): ClarityBuffer {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  const bytes = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  }
+  return { type: 'buffer', value: bytes };
+}
