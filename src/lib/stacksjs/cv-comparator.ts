@@ -106,3 +106,8 @@ export function isUintValue11(cv: ClarityValue): boolean {
 export function isUintValue12(cv: ClarityValue): boolean {
   return cv.type === 'uint' && (cv as { type: 'uint'; value: bigint }).value === BigInt(12);
 }
+
+// Comparator utility 13 - check for specific uint values
+export function isUintValue13(cv: ClarityValue): boolean {
+  return cv.type === 'uint' && (cv as { type: 'uint'; value: bigint }).value === BigInt(13);
+}
