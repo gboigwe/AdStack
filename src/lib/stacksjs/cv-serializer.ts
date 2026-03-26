@@ -75,3 +75,15 @@ export function serializeListCV(items: ClarityValue[]): string {
   const serialized = items.map(serializeClarityValue).join('');
   return '0b' + lengthHex + serialized;
 }
+
+export function serializeTupleCV(data: Record<string, ClarityValue>): string {
+  const entries = Object.entries(data);
+  const countHex = entries.length.toString(16).padStart(8, '0');
+  const serialized = entries.map(([k, v]) => {
+    const keyBytes = new TextEncoder().encode(k);
+    return keyBytes.length.toString(16).padStart(2, '0') +
+      Array.from(keyBytes).map(b => b.toString(16).padStart(2, '0')).join('') +
+      serializeClarityValue(v);
+  }).join('');
+  return '0c' + countHex + serialized;
+}
