@@ -130,3 +130,9 @@ export function tapOk<T, E>(result: ClarityResponse<T, E>, fn: (v: T) => void): 
   if (result.type === 'ok') fn(result.value);
   return result;
 }
+
+/** Tap into a response for side effects (err branch) */
+export function tapErr<T, E>(result: ClarityResponse<T, E>, fn: (e: E) => void): ClarityResponse<T, E> {
+  if (result.type === 'err') fn(result.value);
+  return result;
+}
