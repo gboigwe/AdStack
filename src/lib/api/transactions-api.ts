@@ -21,3 +21,13 @@ export async function fetchTransaction(txId: string, network: Network = 'mainnet
   if (!res.ok) throw new Error(`Failed to fetch tx: ${res.status}`);
   return res.json();
 }
+
+export async function broadcastTransaction(txHex: string, network: Network = 'mainnet'): Promise<BroadcastResponse> {
+  const url = `${getBase(network)}/v2/transactions`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: Buffer.from(txHex.replace('0x', ''), 'hex'),
+  });
+  return res.json();
+}
