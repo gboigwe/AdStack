@@ -54,3 +54,8 @@ export function makeInt(value: bigint | number): ClarityInt {
   if (v > MAX_INT128) throw new RangeError('int exceeds max int128');
   return { type: 'int', value: v };
 }
+
+/** Create a Clarity bool value */
+export function makeBool(value: boolean): ClarityBool {
+  return { type: 'bool', value };
+}
