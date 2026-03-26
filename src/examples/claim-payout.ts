@@ -23,3 +23,9 @@ export function buildClaimPayoutParams(args: ClaimPayoutArgs): ContractWritePara
     network: 'mainnet',
   };
 }
+
+export const EXAMPLE_CLAIM: ClaimPayoutArgs = {
+  campaignId: 1n,
+  publisherAddress: 'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7',
+  expectedAmountUstx: 500_000n,
+};
