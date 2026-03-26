@@ -5,3 +5,10 @@ export type ClarityEvent = {
   txId: string;
   blockHeight: number;
 };
+
+export type StxTransferEvent = ClarityEvent & {
+  type: 'stx_transfer';
+  sender: string;
+  recipient: string;
+  amount: bigint;
+};
