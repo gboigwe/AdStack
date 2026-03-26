@@ -23,3 +23,7 @@ export function blockHashToHex(hash: string): string {
 export function isSameBlock(a: BlockInfo, b: BlockInfo): boolean {
   return a.height === b.height && a.hash === b.hash;
 }
+
+export function blocksBetween(from: BlockInfo, to: BlockInfo): bigint {
+  return to.height > from.height ? to.height - from.height : BigInt(0);
+}
