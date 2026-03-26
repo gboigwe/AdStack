@@ -21,3 +21,13 @@ export function buildCreateCampaignArgs(args: CreateCampaignArgs) {
     makeStringAscii(args.targetAudience),
   ];
 }
+
+export function buildCreateCampaignParams(args: CreateCampaignArgs): ContractWriteParams {
+  return {
+    contractAddress: ADSTACK_CONTRACT_ADDRESS,
+    contractName: ADSTACK_CONTRACT_NAME,
+    functionName: 'create-campaign',
+    functionArgs: buildCreateCampaignArgs(args) as unknown[],
+    network: 'mainnet',
+  };
+}
