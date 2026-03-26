@@ -103,3 +103,9 @@ export function isNegativeInt(v: ClarityInt): boolean {
 export function addUint(a: ClarityUint, b: ClarityUint): ClarityUint {
   return makeUint(a.value + b.value);
 }
+
+/** Subtract two ClarityUint values */
+export function subUint(a: ClarityUint, b: ClarityUint): ClarityUint {
+  if (b.value > a.value) throw new RangeError('uint subtraction underflow');
+  return makeUint(a.value - b.value);
+}
