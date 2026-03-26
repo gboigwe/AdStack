@@ -13,3 +13,5 @@ export type ClarityOptional<T> = { type: 'optional'; value: T | null };
 export type ClarityNone = { type: 'none' };
 
 export type ClaritySome<T> = { type: 'some'; value: T };
+
+export type ClarityResponseOk<T> = { type: 'ok'; value: T };
