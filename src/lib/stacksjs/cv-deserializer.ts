@@ -84,3 +84,13 @@ export function extractStringValue(cv: HiroApiCV): string | null {
   if (cv.repr) return parseStringFromRepr(cv.repr);
   return null;
 }
+
+export function isApiOkResponse(cv: HiroApiCV): boolean {
+  if (cv.repr) return cv.repr.startsWith('(ok');
+  return cv.type === 'ok';
+}
+
+export function isApiErrResponse(cv: HiroApiCV): boolean {
+  if (cv.repr) return cv.repr.startsWith('(err');
+  return cv.type === 'error';
+}
