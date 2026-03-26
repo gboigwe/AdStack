@@ -9,3 +9,5 @@ export type AuthResponsePayload = { authResponseToken: string; appPrivateKey: st
 export type UserData = { stxAddress: string; appPrivateKey: string; profile: UserProfile };
 
 export type UserProfile = { name?: string; email?: string; image?: string };
+
+export const DEFAULT_APP_ICON = '/icon.png';
