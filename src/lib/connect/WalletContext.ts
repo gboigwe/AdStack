@@ -34,3 +34,19 @@ export function getWalletAddress(state: WalletState): string | null {
 export function getWalletNetwork(state: WalletState): 'mainnet' | 'testnet' {
   return state.network;
 }
+
+export function createConnectAction(address: string, provider: string): WalletAction {
+  return { type: 'CONNECT', address, provider };
+}
+
+export function createDisconnectAction(): WalletAction {
+  return { type: 'DISCONNECT' };
+}
+
+export function createSetNetworkAction(network: 'mainnet' | 'testnet'): WalletAction {
+  return { type: 'SET_NETWORK', network };
+}
+
+export function createSetErrorAction(error: string): WalletAction {
+  return { type: 'SET_ERROR', error };
+}
