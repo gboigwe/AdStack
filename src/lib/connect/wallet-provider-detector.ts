@@ -41,3 +41,5 @@ export function getPreferredWallet(): WalletProvider {
 export function hasAnyWalletInstalled(): boolean {
   return detectInstalledWallets().length > 0;
 }
+
+export const WALLET_PROVIDER_VERSION_1 = '1';
