@@ -32,3 +32,8 @@ export function detectInstalledWallets(): WalletInfo[] {
   if (isAsignaInstalled()) wallets.push({ id: 'asigna', name: 'Asigna', icon: '/asigna.svg', installed: true });
   return wallets;
 }
+
+export function getPreferredWallet(): WalletProvider {
+  const installed = detectInstalledWallets();
+  return installed.length > 0 ? installed[0].id : 'unknown';
+}
