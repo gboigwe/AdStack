@@ -39,3 +39,7 @@ export function mapKeys<K, V>(m: ClarityMap<K, V>): string[] {
 export function mapValues<K, V>(m: ClarityMap<K, V>): V[] {
   return Array.from(m.entries.values());
 }
+
+export function mapToEntries<K, V>(m: ClarityMap<K, V>): [string, V][] {
+  return Array.from(m.entries.entries());
+}
