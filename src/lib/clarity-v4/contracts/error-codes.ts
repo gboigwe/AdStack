@@ -95,3 +95,8 @@ export const ERROR_CODE_MAP: Record<string, string> = {
 export function getErrorDescription(code: AdStackErrorCode): string {
   return ERROR_CODE_MAP[code.toString()] ?? 'Unknown error occurred';
 }
+
+export const ERR_NETWORK_ERROR = 900n;
+export const ERR_TIMEOUT = 901n;
+export const ERR_RATE_LIMITED = 902n;
+export const ERR_SERVICE_UNAVAILABLE = 903n;
