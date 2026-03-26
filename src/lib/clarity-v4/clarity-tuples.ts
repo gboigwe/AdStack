@@ -21,3 +21,10 @@ export function makeTuple<T extends TupleRecord>(data: T): ClarityTuple<T> {
 export function makeEmptyTuple(): ClarityTuple<Record<string, never>> {
   return { type: 'tuple', data: {} as Record<string, never> };
 }
+
+export function getTupleField<T extends TupleRecord, K extends keyof T>(
+  tuple: ClarityTuple<T>,
+  key: K
+): T[K] {
+  return tuple.data[key];
+}
