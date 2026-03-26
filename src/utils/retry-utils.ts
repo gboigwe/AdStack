@@ -7,3 +7,11 @@ export interface RetryOptions {
   maxDelayMs?: number;
   shouldRetry?: (error: unknown, attempt: number) => boolean;
 }
+
+const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
+  maxAttempts: 3,
+  initialDelayMs: 500,
+  backoffFactor: 2,
+  maxDelayMs: 10_000,
+  shouldRetry: () => true,
+};
