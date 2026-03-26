@@ -18,3 +18,11 @@ describe('useStacksSession', () => {
     expect(result.current.isConnected).toBe(true);
     expect(result.current.user?.stxAddress).toBe('SP123');
   });
+  it('disconnects user', () => {
+    const { result } = renderHook(() => useStacksSession());
+    act(() => { result.current.connect({ stxAddress: 'SP123', network: 'mainnet' }); });
+    act(() => { result.current.disconnect(); });
+    expect(result.current.isConnected).toBe(false);
+    expect(result.current.user).toBeNull();
+  });
+});
