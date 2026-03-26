@@ -28,3 +28,9 @@ export function cvUintLessThan(a: ClarityValue, b: ClarityValue): boolean {
   if (a.type !== 'uint' || b.type !== 'uint') return false;
   return (a as { type: 'uint'; value: bigint }).value < (b as { type: 'uint'; value: bigint }).value;
 }
+
+export function cvStringEqual(a: ClarityValue, b: ClarityValue): boolean {
+  if (a.type !== b.type) return false;
+  if (a.type !== 'string-ascii' && a.type !== 'string-utf8') return false;
+  return (a as { type: string; data: string }).data === (b as { type: string; data: string }).data;
+}
