@@ -116,3 +116,4 @@ export const HOOK_RETRY_DELAY_113 = 11300;
 export const HOOK_RETRY_DELAY_114 = 11400;
 export const HOOK_RETRY_DELAY_115 = 11500;
 export const HOOK_RETRY_DELAY_116 = 11600;
+export const HOOK_RETRY_DELAY_117 = 11700;
