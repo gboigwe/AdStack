@@ -132,3 +132,8 @@ export function addPublisherPayout(publisher: Publisher, amount: bigint): Publis
     totalEarned: publisher.totalEarned + amount,
   };
 }
+
+export function deductCampaignBudget(campaign: Campaign, amount: bigint): Campaign | null {
+  if (campaign.spent + amount > campaign.budget) return null;
+  return { ...campaign, spent: campaign.spent + amount };
+}
