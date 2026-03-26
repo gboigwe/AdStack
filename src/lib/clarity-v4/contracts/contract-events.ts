@@ -54,3 +54,10 @@ export function isPayoutClaimedEvent(e: AdStackEvent): e is PayoutClaimedEvent {
 export function isVoteCastEvent(e: AdStackEvent): e is VoteCastEvent {
   return e.eventType === 'vote-cast';
 }
+
+export function filterEventsByType<T extends AdStackEvent>(
+  events: AdStackEvent[],
+  guard: (e: AdStackEvent) => e is T
+): T[] {
+  return events.filter(guard);
+}
