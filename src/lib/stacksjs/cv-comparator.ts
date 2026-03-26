@@ -18,3 +18,8 @@ export function cvUintEqual(a: ClarityValue, b: ClarityValue): boolean {
   if (a.type !== 'uint' || b.type !== 'uint') return false;
   return (a as { type: 'uint'; value: bigint }).value === (b as { type: 'uint'; value: bigint }).value;
 }
+
+export function cvUintGreaterThan(a: ClarityValue, b: ClarityValue): boolean {
+  if (a.type !== 'uint' || b.type !== 'uint') return false;
+  return (a as { type: 'uint'; value: bigint }).value > (b as { type: 'uint'; value: bigint }).value;
+}
