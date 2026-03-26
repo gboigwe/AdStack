@@ -37,3 +37,4 @@ export const HOOK_RETRY_DELAY_34 = 3400;
 export const HOOK_RETRY_DELAY_35 = 3500;
 export const HOOK_RETRY_DELAY_36 = 3600;
 export const HOOK_RETRY_DELAY_37 = 3700;
+export const HOOK_RETRY_DELAY_38 = 3800;
