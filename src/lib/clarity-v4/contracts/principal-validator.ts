@@ -87,3 +87,9 @@ export function normalizePrincipal(address: string): string {
   if (!parsed) return address;
   return principalToString(parsed);
 }
+
+export function getPrincipalNetwork(address: string): 'mainnet' | 'testnet' | 'unknown' {
+  if (address.startsWith(MAINNET_PREFIX)) return 'mainnet';
+  if (address.startsWith(TESTNET_PREFIX)) return 'testnet';
+  return 'unknown';
+}
