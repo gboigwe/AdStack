@@ -71,3 +71,7 @@ export function daysToBlocks(days: bigint): bigint {
 export function weeksToDays(weeks: bigint): bigint {
   return weeks * BigInt(7);
 }
+
+export function calculateExpiry(currentBlock: bigint, durationBlocks: bigint): bigint {
+  return currentBlock + durationBlocks;
+}
