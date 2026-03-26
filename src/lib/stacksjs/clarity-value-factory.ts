@@ -45,3 +45,10 @@ export function someCV<T extends ClarityValue>(value: T): SomeCV<T> {
 export function bufferCV(buffer: Uint8Array): BufferCV {
   return { type: 'buffer', buffer };
 }
+
+export function bufferCVFromString(hex: string): BufferCV {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  const bytes = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  return bufferCV(bytes);
+}
