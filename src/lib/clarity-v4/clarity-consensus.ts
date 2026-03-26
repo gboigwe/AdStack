@@ -32,3 +32,8 @@ export function estimateTimeBetweenBlocks(fromHeight: bigint, toHeight: bigint, 
   const diff = toHeight > fromHeight ? Number(toHeight - fromHeight) : 0;
   return diff * avgBlockSeconds;
 }
+
+export function isValidBlockHash(hash: string): boolean {
+  const clean = hash.startsWith('0x') ? hash.slice(2) : hash;
+  return /^[0-9a-fA-F]{64}$/.test(clean);
+}
