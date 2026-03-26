@@ -32,3 +32,9 @@ describe('makeInt', () => {
     expect(() => makeInt(tooSmall)).toThrow(RangeError);
   });
 });
+
+describe('makeBool', () => {
+  it('creates true bool', () => { expect(makeBool(true).value).toBe(true); });
+  it('creates false bool', () => { expect(makeBool(false).value).toBe(false); });
+  it('has correct type tag', () => { expect(makeBool(true).type).toBe('bool'); });
+});
