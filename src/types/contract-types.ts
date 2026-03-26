@@ -19,3 +19,10 @@ export interface AbiArg {
   name: string;
   type: string;
 }
+
+export interface AbiFunction {
+  name: string;
+  access: 'public' | 'private' | 'read_only';
+  args: AbiArg[];
+  outputs: { type: string };
+}
