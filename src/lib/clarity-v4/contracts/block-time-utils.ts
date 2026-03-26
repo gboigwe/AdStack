@@ -126,3 +126,5 @@ export const BLOCKS_PER_30_MINUTES = 3;
 export const BLOCKS_PER_60_MINUTES = 6;
 
 export const BLOCKS_PER_90_MINUTES = 9;
+
+export const BLOCKS_PER_120_MINUTES = 12;
