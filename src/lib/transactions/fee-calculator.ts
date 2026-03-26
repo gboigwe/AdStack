@@ -34,3 +34,7 @@ export function estimateTokenTransferFee(): FeeEstimate {
 export function clampFee(fee: bigint, min = MIN_FEE): bigint {
   return fee < min ? min : fee;
 }
+
+export function feeInStx(feeUstx: bigint): string {
+  return `${Number(feeUstx) / 1_000_000} STX`;
+}
