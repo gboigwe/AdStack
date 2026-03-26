@@ -32,3 +32,7 @@ export function deserializeUint(hex: string): bigint {
   const low = view.getBigUint64(8);
   return (high << BigInt(64)) | low;
 }
+
+export function encodeBoolCV(value: boolean): string {
+  return value ? '03' : '04';
+}
