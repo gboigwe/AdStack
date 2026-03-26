@@ -57,3 +57,8 @@ export function extractContractAddress(contractPrincipal: string): string | null
   if (!isContractPrincipal(contractPrincipal)) return null;
   return contractPrincipal.split('.')[0];
 }
+
+export function extractContractName(contractPrincipal: string): string | null {
+  if (!isContractPrincipal(contractPrincipal)) return null;
+  return contractPrincipal.split('.')[1] ?? null;
+}
