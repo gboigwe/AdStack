@@ -7,3 +7,5 @@ export type NonFungibleConditionCode = 'owns' | 'not_owns';
 export type PrincipalType = 'origin' | 'standard' | 'contract';
 
 export type StxCondition = { type: 'stx'; principal: PrincipalDetail; code: FungibleConditionCode; amount: bigint };
+
+export type FtCondition = { type: 'ft'; principal: PrincipalDetail; asset: AssetInfo; code: FungibleConditionCode; amount: bigint };
