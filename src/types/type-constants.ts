@@ -41,3 +41,4 @@ export const TYPE_GUARD_ID_38 = 38;
 export const TYPE_GUARD_ID_39 = 39;
 export const TYPE_GUARD_ID_40 = 40;
 export const TYPE_GUARD_ID_41 = 41;
+export const TYPE_GUARD_ID_42 = 42;
