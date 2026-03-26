@@ -68,3 +68,11 @@ export function standardPrincipalCV(address: string): StandardPrincipalCV {
 export function contractPrincipalCV(address: string, contractName: string): ContractPrincipalCV {
   return { type: 'contract_principal', address, contractName };
 }
+
+export function principalCV(addressOrContractId: string): PrincipalCV {
+  if (addressOrContractId.includes('.')) {
+    const [address, name] = addressOrContractId.split('.');
+    return contractPrincipalCV(address, name);
+  }
+  return standardPrincipalCV(addressOrContractId);
+}
