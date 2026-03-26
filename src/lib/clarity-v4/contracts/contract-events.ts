@@ -28,3 +28,8 @@ export type ImpressionRecordedEvent = AdStackEvent & {
   eventType: 'impression-recorded';
   data: { campaignId: bigint; publisher: string; amount: bigint };
 };
+
+export type PayoutClaimedEvent = AdStackEvent & {
+  eventType: 'payout-claimed';
+  data: { publisher: string; amount: bigint; campaignId: bigint };
+};
