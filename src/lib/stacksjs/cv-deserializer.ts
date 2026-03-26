@@ -48,3 +48,11 @@ export function parseOptionalFromRepr(repr: string): string | null {
   if (!match) return null;
   return match[1];
 }
+
+export function parseResponseFromRepr(repr: string): { ok: boolean; inner: string } {
+  const okMatch = repr.match(/^\(ok (.*)\)$/);
+  if (okMatch) return { ok: true, inner: okMatch[1] };
+  const errMatch = repr.match(/^\(err (.*)\)$/);
+  if (errMatch) return { ok: false, inner: errMatch[1] };
+  throw new Error(`Invalid response repr: ${repr}`);
+}
