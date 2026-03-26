@@ -70,3 +70,7 @@ export function everyInList<T>(list: ClarityList<T>, predicate: (item: T) => boo
 export function takeList<T>(list: ClarityList<T>, n: number): ClarityList<T> {
   return makeList(list.items.slice(0, n));
 }
+
+export function dropList<T>(list: ClarityList<T>, n: number): ClarityList<T> {
+  return makeList(list.items.slice(n));
+}
