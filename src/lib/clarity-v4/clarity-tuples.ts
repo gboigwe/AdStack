@@ -36,3 +36,10 @@ export function setTupleField<T extends TupleRecord, K extends string, V>(
 ): ClarityTuple<T & Record<K, V>> {
   return makeTuple({ ...tuple.data, [key]: value } as T & Record<K, V>);
 }
+
+export function mergeTuples<A extends TupleRecord, B extends TupleRecord>(
+  a: ClarityTuple<A>,
+  b: ClarityTuple<B>
+): MergeTuples<A, B> {
+  return makeTuple({ ...a.data, ...b.data }) as MergeTuples<A, B>;
+}
