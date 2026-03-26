@@ -26,3 +26,10 @@ export function uintCV(value: bigint | number | string): UintCV {
 export function intCV(value: bigint | number | string): IntCV {
   return { type: 'int', value: BigInt(value) };
 }
+
+export function boolCV(value: boolean): BoolCV {
+  return { type: 'bool', value };
+}
+
+export const trueCV = (): BoolCV => boolCV(true);
+export const falseCV = (): BoolCV => boolCV(false);
