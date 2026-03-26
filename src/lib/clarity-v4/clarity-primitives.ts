@@ -214,3 +214,8 @@ export function makeUintFromString(s: string): ClarityUint {
 export function makeIntFromString(s: string): ClarityInt {
   return makeInt(BigInt(s));
 }
+
+/** Negate a ClarityBool */
+export function negateBool(b: ClarityBool): ClarityBool {
+  return { type: 'bool', value: !b.value };
+}
