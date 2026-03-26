@@ -12,3 +12,8 @@ export type AccessControlList = { assignments: RoleAssignment[] };
 export function makeAccessControlList(): AccessControlList {
   return { assignments: [] };
 }
+
+export function grantRole(acl: AccessControlList, principal: Principal, role: AccessRole): AccessControlList {
+  const filtered = acl.assignments.filter(a => !(a.principal === principal && a.role === role));
+  return { assignments: [...filtered, { principal, role }] };
+}
