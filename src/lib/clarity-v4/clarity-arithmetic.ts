@@ -75,3 +75,7 @@ export function weeksToDays(weeks: bigint): bigint {
 export function calculateExpiry(currentBlock: bigint, durationBlocks: bigint): bigint {
   return currentBlock + durationBlocks;
 }
+
+export function isExpired(currentBlock: bigint, expiryBlock: bigint): boolean {
+  return currentBlock >= expiryBlock;
+}
