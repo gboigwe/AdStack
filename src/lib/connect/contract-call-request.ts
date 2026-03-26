@@ -31,3 +31,11 @@ export function buildContractCallRequest(
     anchorMode: DEFAULT_ANCHOR_MODE,
   };
 }
+
+export function withPostConditions(
+  params: ContractCallRequestParams,
+  postConditions: unknown[],
+  mode?: PostConditionMode
+): ContractCallRequestParams {
+  return { ...params, postConditions, postConditionMode: mode ?? params.postConditionMode };
+}
