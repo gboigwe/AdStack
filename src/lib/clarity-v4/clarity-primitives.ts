@@ -109,3 +109,8 @@ export function subUint(a: ClarityUint, b: ClarityUint): ClarityUint {
   if (b.value > a.value) throw new RangeError('uint subtraction underflow');
   return makeUint(a.value - b.value);
 }
+
+/** Multiply two ClarityUint values */
+export function mulUint(a: ClarityUint, b: ClarityUint): ClarityUint {
+  return makeUint(a.value * b.value);
+}
