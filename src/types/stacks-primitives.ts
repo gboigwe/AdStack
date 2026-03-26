@@ -31,3 +31,7 @@ export function asStxAddress(s: string): StxAddress { return s as StxAddress; }
 export function asMicroStx(n: bigint): MicroStx { return n as MicroStx; }
 export function asBlockHeight(n: number): BlockHeight { return n as BlockHeight; }
 export function asHexString(s: string): HexString { return s as HexString; }
+
+export const MAX_UINT128 = 340282366920938463463374607431768211455n as Uint128;
+export const MIN_INT128 = -170141183460469231731687303715884105728n as Int128;
+export const MAX_INT128 = 170141183460469231731687303715884105727n as Int128;
