@@ -121,3 +121,4 @@ export const TEST_CASE_ID_116 = 116;
 export const TEST_CASE_ID_117 = 117;
 export const TEST_CASE_ID_118 = 118;
 export const TEST_CASE_ID_119 = 119;
+export const TEST_CASE_ID_120 = 120;
