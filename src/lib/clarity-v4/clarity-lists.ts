@@ -112,3 +112,7 @@ export function initList<T>(list: ClarityList<T>): ClarityList<T> {
 export function countWhere<T>(list: ClarityList<T>, predicate: (item: T) => boolean): number {
   return list.items.filter(predicate).length;
 }
+
+export function indexOfList<T>(list: ClarityList<T>, item: T): number {
+  return list.items.findIndex(i => JSON.stringify(i) === JSON.stringify(item));
+}
