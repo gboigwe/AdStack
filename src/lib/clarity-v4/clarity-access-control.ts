@@ -8,3 +8,7 @@ export type AccessRole = 'owner' | 'admin' | 'operator' | 'viewer';
 export type RoleAssignment = { principal: Principal; role: AccessRole };
 
 export type AccessControlList = { assignments: RoleAssignment[] };
+
+export function makeAccessControlList(): AccessControlList {
+  return { assignments: [] };
+}
