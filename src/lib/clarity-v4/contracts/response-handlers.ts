@@ -20,3 +20,8 @@ export function isContractOk<T>(r: ContractResponse<T>): r is ContractOk<T> {
 export function isContractErr<T>(r: ContractResponse<T>): r is ContractErr {
   return r.type === 'err';
 }
+
+export function tryUnwrap<T>(r: ContractResponse<T>): T {
+  if (r.type !== 'ok') throw new Error(`Contract returned error: ${r.value}`);
+  return r.value;
+}
