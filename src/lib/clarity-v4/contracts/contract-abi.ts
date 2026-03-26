@@ -39,3 +39,11 @@ export function getAbiFunctionDef(abi: ContractAbi, name: string): AbiFunctionDe
 export function validateAbiArgs(fn: AbiFunctionDef, args: unknown[]): boolean {
   return args.length === fn.args.length;
 }
+
+export function isPublicFunction(fn: AbiFunctionDef): boolean {
+  return fn.access === 'public';
+}
+
+export function isReadOnlyFunction(fn: AbiFunctionDef): boolean {
+  return fn.access === 'read_only';
+}
