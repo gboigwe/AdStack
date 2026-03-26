@@ -25,3 +25,5 @@ export type ClarityBuffer = { type: 'buffer'; value: Uint8Array };
 export type ClarityStringAscii = { type: 'string-ascii'; value: string };
 
 export type ClarityStringUtf8 = { type: 'string-utf8'; value: string };
+
+export const MAX_UINT128 = BigInt('340282366920938463463374607431768211455');
