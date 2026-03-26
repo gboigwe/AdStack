@@ -18,3 +18,8 @@ export type AdStackEvent = {
   timestamp?: number;
   data: Record<string, unknown>;
 };
+
+export type CampaignCreatedEvent = AdStackEvent & {
+  eventType: 'campaign-created';
+  data: { advertiser: string; campaignId: bigint; budget: bigint };
+};
