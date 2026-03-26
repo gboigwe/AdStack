@@ -20,3 +20,10 @@ describe('makeUint', () => {
     expect(() => makeUint(tooBig)).toThrow(RangeError);
   });
 });
+
+describe('makeInt', () => {
+  it('creates int with correct type tag', () => {
+    const v = makeInt(-1n);
+    expect(v.type).toBe('int');
+    expect(v.value).toBe(-1n);
+  });
