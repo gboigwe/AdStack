@@ -89,3 +89,11 @@ export function getPublisherEvents(events: AdStackEvent[], publisher: string): A
     return data.publisher === publisher;
   });
 }
+
+export function sortEventsByBlock(events: AdStackEvent[]): AdStackEvent[] {
+  return [...events].sort((a, b) => {
+    if (a.blockHeight < b.blockHeight) return -1;
+    if (a.blockHeight > b.blockHeight) return 1;
+    return 0;
+  });
+}
