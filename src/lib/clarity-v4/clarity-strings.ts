@@ -46,3 +46,11 @@ export function concatAscii(a: StringAscii, b: StringAscii): StringAscii {
 export function concatUtf8(a: StringUtf8, b: StringUtf8): StringUtf8 {
   return makeStringUtf8(a.value + b.value, a.maxLength);
 }
+
+export function asciiToUpper(s: StringAscii): StringAscii {
+  return makeStringAscii(s.value.toUpperCase(), s.maxLength);
+}
+
+export function asciiToLower(s: StringAscii): StringAscii {
+  return makeStringAscii(s.value.toLowerCase(), s.maxLength);
+}
