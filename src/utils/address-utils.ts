@@ -24,3 +24,8 @@ export function getContractName(principal: string): string | null {
   const parts = principal.split('.');
   return parts.length > 1 ? parts[1] : null;
 }
+
+export function switchNetwork(address: string, to: 'mainnet' | 'testnet'): string {
+  const prefix = to === 'mainnet' ? MAINNET_PREFIX : TESTNET_PREFIX;
+  return prefix + address.slice(2);
+}
