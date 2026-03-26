@@ -11,3 +11,8 @@ export interface StxAssetEvent extends BaseContractEvent {
   event_type: 'stx_asset';
   asset: { asset_event_type: 'transfer' | 'mint' | 'burn'; sender?: string; recipient?: string; amount: string };
 }
+
+export interface FtAssetEvent extends BaseContractEvent {
+  event_type: 'fungible_token_asset';
+  asset: { asset_event_type: string; asset_id: string; sender?: string; recipient?: string; amount: string };
+}
