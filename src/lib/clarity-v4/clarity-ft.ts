@@ -11,3 +11,11 @@ export type FtBurnParams = { owner: string; amount: bigint };
 export function makeFtAsset(contractId: string, assetName: string, decimals: number): FtAsset {
   return { contractId, assetName, decimals };
 }
+
+export function ftAmountToDisplay(amount: bigint, decimals: number): string {
+  if (decimals === 0) return amount.toString();
+  const factor = BigInt(10 ** decimals);
+  const whole = amount / factor;
+  const frac = amount % factor;
+  return `${whole}.${frac.toString().padStart(decimals, '0')}`;
+}
