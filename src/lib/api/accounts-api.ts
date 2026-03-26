@@ -496,3 +496,5 @@ export const API_ENDPOINT_VERSION_222 = 'v222';
 export const API_ENDPOINT_VERSION_223 = 'v223';
 
 export const API_ENDPOINT_VERSION_224 = 'v224';
+
+export const API_ENDPOINT_VERSION_225 = 'v225';
