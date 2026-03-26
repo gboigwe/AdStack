@@ -21,3 +21,8 @@ async function searchStacksById(id: string): Promise<SearchResult> {
   if (!res.ok) throw new Error(`Search failed: ${res.status}`);
   return res.json() as Promise<SearchResult>;
 }
+
+export function useStacksSearch() {
+  const [state, setState] = useState<SearchState>({
+    result: null, isLoading: false, error: null,
+  });
