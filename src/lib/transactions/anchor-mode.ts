@@ -25,3 +25,7 @@ export function anchorModeFromCode(code: AnchorModeCode): AnchorModeType {
     case 3: return 'off_chain_only';
   }
 }
+
+export function isValidAnchorMode(mode: number): mode is AnchorModeCode {
+  return mode === 1 || mode === 2 || mode === 3;
+}
