@@ -522,3 +522,4 @@ export const API_ENDPOINT_VERSION_241 = 'v241';
 export const API_ENDPOINT_VERSION_242 = 'v242';
 export const API_ENDPOINT_VERSION_243 = 'v243';
 export const API_ENDPOINT_VERSION_244 = 'v244';
+export const API_ENDPOINT_VERSION_245 = 'v245';
