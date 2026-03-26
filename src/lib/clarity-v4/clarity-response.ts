@@ -82,3 +82,9 @@ export function flatMapOk<T, U, E>(
   if (result.type === 'ok') return fn(result.value);
   return result as unknown as ErrResult<E>;
 }
+
+/** Propagate an error from a response */
+export function propagateError<T, E>(result: ClarityResponse<T, E>): ErrResult<E> | null {
+  if (result.type === 'err') return result;
+  return null;
+}
