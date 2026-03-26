@@ -26,3 +26,9 @@ export interface AbiFunction {
   args: AbiArg[];
   outputs: { type: string };
 }
+
+export interface AbiMap {
+  name: string;
+  key: string;
+  value: string;
+}
