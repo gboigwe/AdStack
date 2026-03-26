@@ -150,3 +150,5 @@ export const API_ENDPOINT_VERSION_49 = 'v49';
 export const API_ENDPOINT_VERSION_50 = 'v50';
 
 export const API_ENDPOINT_VERSION_51 = 'v51';
+
+export const API_ENDPOINT_VERSION_52 = 'v52';
