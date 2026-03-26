@@ -47,3 +47,7 @@ export function withFee(params: ContractCallRequestParams, fee: bigint): Contrac
 export function withNonce(params: ContractCallRequestParams, nonce: bigint): ContractCallRequestParams {
   return { ...params, nonce };
 }
+
+export function withNetwork(params: ContractCallRequestParams, network: Network): ContractCallRequestParams {
+  return { ...params, network };
+}
