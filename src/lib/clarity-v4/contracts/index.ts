@@ -4,3 +4,4 @@ export * from './block-time-utils';
 export * from './response-handlers';
 export * from './error-codes';
 export * from './storage-patterns';
+export * from './contract-interfaces';
