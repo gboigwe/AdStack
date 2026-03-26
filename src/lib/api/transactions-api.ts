@@ -8,3 +8,5 @@ export type MempoolTransaction = { tx_id: string; tx_type: string; receipt_time:
 export type BroadcastResponse = { txid: string } | { error: string; reason: string };
 
 export type FeeEstimateResponse = { estimated_cost: { read_count: number; read_length: number; runtime: number; write_count: number; write_length: number }; estimated_cost_scalar: number; estimations: FeeEstimation[] };
+
+export type FeeEstimation = { fee_rate: number; fee: number };
