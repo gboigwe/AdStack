@@ -52,3 +52,16 @@ export function serializeStringUtf8CV(cv: { type: 'string-utf8'; data: string })
   const lengthHex = bytes.length.toString(16).padStart(8, '0');
   return '0e' + lengthHex + bytesToHex(bytes);
 }
+
+export function serializeClarityValue(cv: ClarityValue): string {
+  switch (cv.type) {
+    case 'uint': return serializeUintCV(cv as UintCV);
+    case 'int': return serializeIntCV(cv as IntCV);
+    case 'bool': return serializeBoolCV(cv as BoolCV);
+    case 'none': return serializeNoneCV();
+    case 'buffer': return serializeBufferCV(cv as BufferCV);
+    case 'string-ascii': return serializeStringAsciiCV(cv as StringAsciiCV);
+    case 'string-utf8': return serializeStringUtf8CV(cv as { type: 'string-utf8'; data: string });
+    default: return '';
+  }
+}
