@@ -62,3 +62,21 @@ export function publisherKeyToString(key: PublisherKey): string {
 export function proposalKeyToString(key: ProposalKey): string {
   return key.proposalId.toString();
 }
+
+export type StorageStats = {
+  mapCount: number;
+  dataVarCount: number;
+  totalEntries: number;
+};
+
+export function calculateStorageStats(
+  maps: StorageMap<unknown, unknown>[],
+  vars: StorageDataVar<unknown>[]
+): StorageStats {
+  const totalEntries = maps.reduce((sum, m) => sum + m.entries.size, 0);
+  return {
+    mapCount: maps.length,
+    dataVarCount: vars.length,
+    totalEntries,
+  };
+}
