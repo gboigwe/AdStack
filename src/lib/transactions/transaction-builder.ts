@@ -38,3 +38,19 @@ export function buildContractCallPayload(
 ): ContractCallPayload {
   return { type: 'contract_call', contractAddress, contractName, functionName, functionArgs };
 }
+
+export function buildUnsignedTransaction(
+  payload: TransactionPayload,
+  nonce: bigint,
+  fee: bigint,
+  network: 'mainnet' | 'testnet' = 'mainnet'
+): UnsignedTransaction {
+  return {
+    version: network === 'mainnet' ? MAINNET_VERSION : TESTNET_VERSION,
+    chainId: network === 'mainnet' ? MAINNET_CHAIN_ID : TESTNET_CHAIN_ID,
+    payload,
+    nonce,
+    fee,
+    postConditions: [],
+  };
+}
