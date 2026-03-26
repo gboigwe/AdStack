@@ -38,3 +38,5 @@ export function clampFee(fee: bigint, min = MIN_FEE): bigint {
 export function feeInStx(feeUstx: bigint): string {
   return `${Number(feeUstx) / 1_000_000} STX`;
 }
+
+export const FEE_TIER_1 = BigInt(100);
