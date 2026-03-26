@@ -16,3 +16,11 @@ export type FtPostCondition = {
   conditionCode: PostConditionCode;
   amount: bigint;
 };
+
+export type NftPostCondition = {
+  type: 'nft';
+  principal: string;
+  assetInfo: { contractId: string; assetName: string };
+  tokenId: bigint;
+  conditionCode: 'has' | 'not-has';
+};
