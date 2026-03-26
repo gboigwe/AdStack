@@ -25,3 +25,8 @@ export function validateStringLength(value: string, maxLen: number, fieldName: s
   if (value.length > maxLen) return invalidResult(`${fieldName} length ${value.length} exceeds max ${maxLen}`);
   return validResult();
 }
+
+export function validateNonEmptyString(value: string, fieldName: string): ValidationResult {
+  if (!value || value.trim().length === 0) return invalidResult(`${fieldName} cannot be empty`);
+  return validResult();
+}
