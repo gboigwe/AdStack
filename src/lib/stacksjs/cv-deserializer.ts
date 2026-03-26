@@ -64,3 +64,10 @@ export function deserializeHiroApiCV(cv: HiroApiCV): DeserializedCV {
     repr: cv.repr,
   };
 }
+
+export function extractUintValue(cv: HiroApiCV): bigint | null {
+  if (cv.type !== 'uint') return null;
+  if (cv.repr) return parseUintFromRepr(cv.repr);
+  if (typeof cv.value === 'string') return BigInt(cv.value);
+  return null;
+}
