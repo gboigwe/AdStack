@@ -18,3 +18,9 @@ export function formatStxAmount(ustx: bigint, decimals = 2): string {
   const [whole, frac] = stxStr.split('.');
   return `${Number(whole).toLocaleString()}.${frac.slice(0, decimals)} STX`;
 }
+
+export function formatTxId(txId: string, short = false): string {
+  if (!txId.startsWith('0x')) return txId;
+  if (short) return `${txId.slice(0, 8)}...${txId.slice(-6)}`;
+  return txId;
+}
