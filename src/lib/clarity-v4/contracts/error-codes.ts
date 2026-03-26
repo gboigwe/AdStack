@@ -79,3 +79,15 @@ export function isGovernanceError(code: AdStackErrorCode): boolean {
 export function isTokenError(code: AdStackErrorCode): boolean {
   return code >= 600n && code < 700n;
 }
+
+export const ERROR_CODE_MAP: Record<string, string> = {
+  '100': 'Owner only action',
+  '101': 'Admin only action',
+  '102': 'Not authorized',
+  '200': 'Campaign not found',
+  '201': 'Campaign inactive',
+  '300': 'Insufficient budget',
+  '400': 'Publisher not registered',
+  '500': 'Proposal not found',
+  '600': 'Invalid token',
+};
