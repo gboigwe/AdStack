@@ -11,3 +11,8 @@ export const ERR_NOT_STARTED = 201n;
 export const ERR_PAUSED = 202n;
 export const ERR_ALREADY_CLAIMED = 203n;
 export const ERR_COOLDOWN_ACTIVE = 204n;
+
+export const ERR_OVERFLOW = 300n;
+export const ERR_UNDERFLOW = 301n;
+export const ERR_DIVIDE_BY_ZERO = 302n;
+export const ERR_OUT_OF_BOUNDS = 303n;
