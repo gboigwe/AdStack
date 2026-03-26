@@ -44,3 +44,10 @@ export function validateCampaignBudget(budget: bigint): ValidationResult {
     validateUintRange(budget, BigInt(1_000_000), BigInt('1000000000000'))
   );
 }
+
+export function validatePayoutAmount(amount: bigint, budget: bigint): ValidationResult {
+  return combineValidations(
+    validateNonZero(amount, 'payout amount'),
+    amount > budget ? invalidResult('Payout amount exceeds campaign budget') : validResult()
+  );
+}
