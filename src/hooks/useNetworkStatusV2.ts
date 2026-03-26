@@ -18,3 +18,11 @@ export interface NetworkStatusState {
   lastUpdated: number | null;
   error: string | null;
 }
+
+const POLL_INTERVAL = 30_000;
+
+async function fetchNetworkInfo(base: string): Promise<NetworkInfo> {
+  const res = await fetch(`${base}/v2/info`);
+  if (!res.ok) throw new Error(`Network info failed: ${res.status}`);
+  return res.json() as Promise<NetworkInfo>;
+}
