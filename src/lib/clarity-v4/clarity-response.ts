@@ -19,3 +19,8 @@ export function makeOk<T>(value: T): OkResult<T> {
 export function makeErr<E>(error: E): ErrResult<E> {
   return { type: 'err', value: error };
 }
+
+/** Check if a response is OK */
+export function isOk<T, E>(result: ClarityResponse<T, E>): result is OkResult<T> {
+  return result.type === 'ok';
+}
