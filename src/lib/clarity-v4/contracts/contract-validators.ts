@@ -172,3 +172,8 @@ export function isPositiveAmount13(amount: bigint): boolean {
 export function isPositiveAmount14(amount: bigint): boolean {
   return amount > BigInt(0);
 }
+
+// Validator helper 15
+export function isPositiveAmount15(amount: bigint): boolean {
+  return amount > BigInt(0);
+}
