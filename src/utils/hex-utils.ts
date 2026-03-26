@@ -32,3 +32,12 @@ export function hexToUtf8(hex: string): string {
 export function utf8ToHex(str: string): string {
   return bytesToHex(new TextEncoder().encode(str));
 }
+
+export function hexToBigInt(hex: string): bigint {
+  const clean = removeHexPrefix(hex);
+  return BigInt(`0x${clean}`);
+}
+export function bigIntToHex(n: bigint): string {
+  const h = n.toString(16);
+  return h.length % 2 === 0 ? `0x${h}` : `0x0${h}`;
+}
