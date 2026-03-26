@@ -164,3 +164,8 @@ export function makeStringAscii(value: string): ClarityStringAscii {
 export function makeStringUtf8(value: string): ClarityStringUtf8 {
   return { type: 'string-utf8', value };
 }
+
+/** Guard: check if value is ClarityUint */
+export function isClarityUint(v: unknown): v is ClarityUint {
+  return typeof v === 'object' && v !== null && (v as ClarityUint).type === 'uint';
+}
