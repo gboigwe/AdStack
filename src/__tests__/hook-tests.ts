@@ -5,3 +5,8 @@ import { useStacksSession } from '../hooks/useStacksSession';
 
 describe('useStacksSession', () => {
   beforeEach(() => { localStorage.clear(); });
+  it('starts with no user', () => {
+    const { result } = renderHook(() => useStacksSession());
+    expect(result.current.user).toBeNull();
+    expect(result.current.isConnected).toBe(false);
+  });
