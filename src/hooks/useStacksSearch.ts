@@ -26,3 +26,14 @@ export function useStacksSearch() {
   const [state, setState] = useState<SearchState>({
     result: null, isLoading: false, error: null,
   });
+
+  const search = useCallback(async (id: string) => {
+    if (!id.trim()) return;
+    setState({ result: null, isLoading: true, error: null });
+    try {
+      const result = await searchStacksById(id);
+      setState({ result, isLoading: false, error: null });
+    } catch (e) {
+      setState({ result: null, isLoading: false, error: String(e) });
+    }
+  }, []);
