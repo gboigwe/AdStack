@@ -44,3 +44,4 @@ export const TYPE_GUARD_ID_41 = 41;
 export const TYPE_GUARD_ID_42 = 42;
 export const TYPE_GUARD_ID_43 = 43;
 export const TYPE_GUARD_ID_44 = 44;
+export const TYPE_GUARD_ID_45 = 45;
