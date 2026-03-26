@@ -26,3 +26,10 @@ export const ERR_PUBLISHER_UNVERIFIED = 401n;
 export const ERR_PUBLISHER_BANNED = 402n;
 export const ERR_PAYOUT_ALREADY_CLAIMED = 403n;
 export const ERR_PAYOUT_COOLDOWN = 404n;
+
+// --- Governance errors ---
+export const ERR_PROPOSAL_NOT_FOUND = 500n;
+export const ERR_ALREADY_VOTED = 501n;
+export const ERR_VOTING_CLOSED = 502n;
+export const ERR_INSUFFICIENT_VOTING_POWER = 503n;
+export const ERR_PROPOSAL_NOT_PASSED = 504n;
