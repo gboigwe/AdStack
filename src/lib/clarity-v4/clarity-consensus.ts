@@ -15,3 +15,7 @@ export const EPOCH_3_START_BLOCK = BigInt(666050);
 export function isEpoch3OrLater(blockHeight: bigint): boolean {
   return blockHeight >= EPOCH_3_START_BLOCK;
 }
+
+export function blockHashToHex(hash: string): string {
+  return hash.startsWith('0x') ? hash : `0x${hash}`;
+}
