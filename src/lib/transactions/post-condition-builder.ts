@@ -29,3 +29,11 @@ export function standardPrincipalDetail(address: string): PrincipalDetail {
 export function contractPrincipalDetail(address: string, contractName: string): PrincipalDetail {
   return { type: 'contract', address, contractName };
 }
+
+export function makeStxCondition(
+  principal: PrincipalDetail,
+  code: FungibleConditionCode,
+  amount: bigint
+): StxCondition {
+  return { type: 'stx', principal, code, amount };
+}
