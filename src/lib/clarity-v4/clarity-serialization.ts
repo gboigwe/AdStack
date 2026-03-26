@@ -40,3 +40,8 @@ export function encodeBoolCV(value: boolean): string {
 export function encodeNoneCV(): string {
   return '09';
 }
+
+export function validateHexString(hex: string): boolean {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  return /^[0-9a-fA-F]*$/.test(clean) && clean.length % 2 === 0;
+}
