@@ -29,3 +29,12 @@ export interface TokenTransferTransaction extends BaseTransaction {
     memo: string;
   };
 }
+
+export interface ContractCallTransaction extends BaseTransaction {
+  tx_type: 'contract_call';
+  contract_call: {
+    contract_id: string;
+    function_name: string;
+    function_args: Array<{ hex: HexString; repr: string; name: string; type: string }>;
+  };
+}
