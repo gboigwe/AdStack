@@ -546,3 +546,6 @@ export function makeUint146(): UintCV { return uintCV(146); }
 
 // Factory helper 147
 export function makeUint147(): UintCV { return uintCV(147); }
+
+// Factory helper 148
+export function makeUint148(): UintCV { return uintCV(148); }
