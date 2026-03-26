@@ -62,3 +62,9 @@ export function extractContractName(contractPrincipal: string): string | null {
   if (!isContractPrincipal(contractPrincipal)) return null;
   return contractPrincipal.split('.')[1] ?? null;
 }
+
+export function switchPrincipalNetwork(address: string): string | null {
+  if (!isAnyPrincipal(address)) return null;
+  if (address.startsWith(MAINNET_PREFIX)) return TESTNET_PREFIX + address.slice(2);
+  return MAINNET_PREFIX + address.slice(2);
+}
