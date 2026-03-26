@@ -7,3 +7,5 @@ export type TransactionType =
   | 'smart_contract'
   | 'coinbase'
   | 'poison_microblock';
+
+export type TransactionStatus = 'pending' | 'success' | 'abort_by_response' | 'abort_by_post_condition';
