@@ -34,3 +34,4 @@ export const TYPE_GUARD_ID_31 = 31;
 export const TYPE_GUARD_ID_32 = 32;
 export const TYPE_GUARD_ID_33 = 33;
 export const TYPE_GUARD_ID_34 = 34;
+export const TYPE_GUARD_ID_35 = 35;
