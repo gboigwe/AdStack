@@ -24,3 +24,11 @@ export function serializeUint(value: bigint): string {
   view.setBigUint64(8, low);
   return bytesToHex(new Uint8Array(buf));
 }
+
+export function deserializeUint(hex: string): bigint {
+  const bytes = hexToBytes(hex.slice(0, 32));
+  const view = new DataView(bytes.buffer);
+  const high = view.getBigUint64(0);
+  const low = view.getBigUint64(8);
+  return (high << BigInt(64)) | low;
+}
