@@ -33,3 +33,8 @@ export type PayoutClaimedEvent = AdStackEvent & {
   eventType: 'payout-claimed';
   data: { publisher: string; amount: bigint; campaignId: bigint };
 };
+
+export type VoteCastEvent = AdStackEvent & {
+  eventType: 'vote-cast';
+  data: { voter: string; proposalId: bigint; support: boolean; weight: bigint };
+};
