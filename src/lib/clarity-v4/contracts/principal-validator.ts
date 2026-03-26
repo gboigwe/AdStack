@@ -19,3 +19,7 @@ export const CONTRACT_PRINCIPAL_REGEX = /^(SP|ST)[A-Z0-9]{1,40}\.[a-zA-Z][a-zA-Z
 export function isStandardPrincipal(address: string): boolean {
   return STANDARD_ADDRESS_REGEX.test(address);
 }
+
+export function isContractPrincipal(address: string): boolean {
+  return CONTRACT_PRINCIPAL_REGEX.test(address);
+}
