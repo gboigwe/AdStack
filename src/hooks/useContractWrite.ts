@@ -52,3 +52,10 @@ export function useContractWrite(params: ContractWriteParams) {
       setState({ txId: null, status: 'error', error: String(e) });
     }
   }, [params]);
+
+  const reset = useCallback(() => {
+    setState({ txId: null, status: 'idle', error: null });
+  }, []);
+
+  return { ...state, write, reset };
+}
