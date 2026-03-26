@@ -38,3 +38,10 @@ describe('makeBool', () => {
   it('creates false bool', () => { expect(makeBool(false).value).toBe(false); });
   it('has correct type tag', () => { expect(makeBool(true).type).toBe('bool'); });
 });
+
+describe('makePrincipal', () => {
+  it('accepts valid standard principal', () => {
+    const p = makePrincipal('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7');
+    expect(p.type).toBe('principal');
+    expect(p.value).toBe('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7');
+  });
