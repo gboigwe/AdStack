@@ -129,3 +129,6 @@ export function makeUint7(): UintCV { return uintCV(7); }
 
 // Factory helper 8
 export function makeUint8(): UintCV { return uintCV(8); }
+
+// Factory helper 9
+export function makeUint9(): UintCV { return uintCV(9); }
