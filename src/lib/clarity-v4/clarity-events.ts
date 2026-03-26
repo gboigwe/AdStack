@@ -67,3 +67,7 @@ export function groupEventsByBlock(events: ClarityEvent[]): Record<number, Clari
   }
   return grouped;
 }
+
+export function getEventsAfterBlock(events: ClarityEvent[], blockHeight: number): ClarityEvent[] {
+  return events.filter(e => e.blockHeight > blockHeight);
+}
