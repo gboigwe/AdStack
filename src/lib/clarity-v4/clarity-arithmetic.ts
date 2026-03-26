@@ -54,3 +54,7 @@ export function minBigInt(a: bigint, b: bigint): bigint {
 export function maxBigInt(a: bigint, b: bigint): bigint {
   return a > b ? a : b;
 }
+
+export function absDiffUint(a: bigint, b: bigint): bigint {
+  return a > b ? a - b : b - a;
+}
