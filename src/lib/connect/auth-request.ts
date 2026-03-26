@@ -23,3 +23,9 @@ export const ASIGNA_WALLET_ID = 'asigna';
 export function buildAuthRequest(appDetails: AppDetails, redirectTo = '/'): AuthRequestParams {
   return { appDetails, redirectTo };
 }
+
+export function openAuth(params: AuthRequestParams): void {
+  if (typeof window === 'undefined') return;
+  const event = new CustomEvent('openStacksAuth', { detail: params });
+  window.dispatchEvent(event);
+}
