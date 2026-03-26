@@ -27,3 +27,8 @@ describe('makeInt', () => {
     expect(v.type).toBe('int');
     expect(v.value).toBe(-1n);
   });
+  it('throws below min int128', () => {
+    const tooSmall = -170141183460469231731687303715884105729n;
+    expect(() => makeInt(tooSmall)).toThrow(RangeError);
+  });
+});
