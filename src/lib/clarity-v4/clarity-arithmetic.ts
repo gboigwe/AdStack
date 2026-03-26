@@ -99,3 +99,8 @@ export function gcd(a: bigint, b: bigint): bigint {
   }
   return a;
 }
+
+export function lcm(a: bigint, b: bigint): bigint {
+  if (a === BigInt(0) || b === BigInt(0)) return BigInt(0);
+  return (a / gcd(a, b)) * b;
+}
