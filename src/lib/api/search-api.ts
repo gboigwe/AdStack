@@ -15,3 +15,8 @@ export async function searchById(id: string, network: Network = 'mainnet'): Prom
   if (!res.ok) return { found: false, result: null };
   return res.json();
 }
+
+export async function isValidAddress(address: string, network: Network = 'mainnet'): Promise<boolean> {
+  const result = await searchById(address, network);
+  return result.found && (result.result?.entity_type === 'standard_address' || result.result?.entity_type === 'contract_address');
+}
