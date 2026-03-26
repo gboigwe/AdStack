@@ -29,3 +29,8 @@ export function tryUnwrap<T>(r: ContractResponse<T>): T {
 export function tryUnwrapOr<T>(r: ContractResponse<T>, fallback: T): T {
   return r.type === 'ok' ? r.value : fallback;
 }
+
+export function mapContractOk<T, U>(r: ContractResponse<T>, fn: (v: T) => U): ContractResponse<U> {
+  if (r.type === 'ok') return contractOk(fn(r.value));
+  return r;
+}
