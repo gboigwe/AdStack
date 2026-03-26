@@ -17,3 +17,20 @@ export async function fetchContractInfo(contractId: string, network: Network = '
   if (!res.ok) throw new Error(`Contract not found: ${contractId}`);
   return res.json();
 }
+
+export async function callReadOnlyFunction(
+  contractId: string,
+  functionName: string,
+  args: string[],
+  senderAddress: string,
+  network: Network = 'mainnet'
+): Promise<ReadOnlyCallResult> {
+  const [contractAddress, contractName] = contractId.split('.');
+  const url = `${getBase(network)}/v2/contracts/call-read/${contractAddress}/${contractName}/${functionName}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sender: senderAddress, arguments: args }),
+  });
+  return res.json();
+}
