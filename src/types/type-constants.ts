@@ -71,3 +71,4 @@ export const TYPE_GUARD_ID_68 = 68;
 export const TYPE_GUARD_ID_69 = 69;
 export const TYPE_GUARD_ID_70 = 70;
 export const TYPE_GUARD_ID_71 = 71;
+export const TYPE_GUARD_ID_72 = 72;
