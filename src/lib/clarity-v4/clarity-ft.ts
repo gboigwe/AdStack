@@ -3,3 +3,7 @@
 export type FtAsset = { contractId: string; assetName: string; decimals: number };
 
 export type FtBalance = { asset: FtAsset; amount: bigint };
+
+export type FtMintParams = { recipient: string; amount: bigint };
+export type FtTransferParams = { sender: string; recipient: string; amount: bigint };
+export type FtBurnParams = { owner: string; amount: bigint };
