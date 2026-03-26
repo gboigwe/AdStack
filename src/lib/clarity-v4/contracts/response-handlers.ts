@@ -42,3 +42,12 @@ export function flatMapContractOk<T, U>(
   if (r.type === 'ok') return fn(r.value);
   return r;
 }
+
+export function matchContractResponse<T, R>(
+  r: ContractResponse<T>,
+  onOk: (value: T) => R,
+  onErr: (code: bigint) => R
+): R {
+  if (r.type === 'ok') return onOk(r.value);
+  return onErr(r.value);
+}
