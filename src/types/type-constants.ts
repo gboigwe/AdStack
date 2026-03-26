@@ -11,3 +11,4 @@ export const TYPE_GUARD_ID_8 = 8;
 export const TYPE_GUARD_ID_9 = 9;
 export const TYPE_GUARD_ID_10 = 10;
 export const TYPE_GUARD_ID_11 = 11;
+export const TYPE_GUARD_ID_12 = 12;
