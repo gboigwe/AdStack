@@ -20,3 +20,4 @@ export const TYPE_GUARD_ID_17 = 17;
 export const TYPE_GUARD_ID_18 = 18;
 export const TYPE_GUARD_ID_19 = 19;
 export const TYPE_GUARD_ID_20 = 20;
+export const TYPE_GUARD_ID_21 = 21;
