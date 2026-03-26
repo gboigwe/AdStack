@@ -21,3 +21,5 @@ export type SignedTransaction = UnsignedTransaction & { auth: TransactionAuth };
 export type TransactionAuth = { type: 'standard' | 'sponsored'; spendingCondition: SpendingCondition };
 
 export type SpendingCondition = { signer: string; nonce: bigint; fee: bigint; signature?: string };
+
+export const MAINNET_CHAIN_ID = 1;
