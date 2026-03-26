@@ -15,3 +15,7 @@ export const COMPRESSED_PUBLIC_KEY_LENGTH = 66;
 export const UNCOMPRESSED_PUBLIC_KEY_LENGTH = 130;
 
 export const SIGNATURE_LENGTH = 130;
+
+export function isValidPrivateKey(key: string): boolean {
+  return /^[0-9a-fA-F]{64}(01)?$/.test(key);
+}
