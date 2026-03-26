@@ -79,3 +79,11 @@ export function intToBytes(n: number, byteCount: number): Uint8Array {
   }
   return new Uint8Array(buf);
 }
+
+export function xorBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const result = new Uint8Array(Math.max(a.length, b.length));
+  for (let i = 0; i < result.length; i++) {
+    result[i] = (a[i] ?? 0) ^ (b[i] ?? 0);
+  }
+  return result;
+}
