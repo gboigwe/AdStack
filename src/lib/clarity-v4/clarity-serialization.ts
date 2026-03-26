@@ -14,3 +14,13 @@ export function hexToBytes(hex: string): Uint8Array {
   }
   return result;
 }
+
+export function serializeUint(value: bigint): string {
+  const buf = new ArrayBuffer(16);
+  const view = new DataView(buf);
+  const high = value >> BigInt(64);
+  const low = value & BigInt('0xFFFFFFFFFFFFFFFF');
+  view.setBigUint64(0, high);
+  view.setBigUint64(8, low);
+  return bytesToHex(new Uint8Array(buf));
+}
