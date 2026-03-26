@@ -124,3 +124,6 @@ export function storageMapFilter<K, V>(
   }
   return { ...map, entries: filtered };
 }
+
+// Additional map pattern utility 1
+export const STORAGE_PATTERN_VERSION_1 = '1.0.0';
