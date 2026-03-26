@@ -15,3 +15,8 @@ export interface STXTransferState {
   status: 'idle' | 'pending' | 'success' | 'error';
   error: string | null;
 }
+
+export function useSTXTransfer(defaultParams?: Partial<STXTransferParams>) {
+  const [state, setState] = useState<STXTransferState>({
+    txId: null, status: 'idle', error: null,
+  });
