@@ -24,3 +24,9 @@ export function traitMethodMatches(impl: TraitMethod, required: TraitMethod): bo
   if (impl.output !== required.output) return false;
   return true;
 }
+
+export function contractImplementsTrait(methods: TraitMethod[], trait: TraitDefinition): boolean {
+  return trait.methods.every(required =>
+    methods.some(impl => traitMethodMatches(impl, required))
+  );
+}
