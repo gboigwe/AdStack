@@ -179,3 +179,8 @@ export function isClarityInt(v: unknown): v is ClarityInt {
 export function isClarityBool(v: unknown): v is ClarityBool {
   return typeof v === 'object' && v !== null && (v as ClarityBool).type === 'bool';
 }
+
+/** Guard: check if value is ClarityPrincipal */
+export function isClarityPrincipal(v: unknown): v is ClarityPrincipal {
+  return typeof v === 'object' && v !== null && (v as ClarityPrincipal).type === 'principal';
+}
