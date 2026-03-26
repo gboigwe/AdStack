@@ -20,3 +20,8 @@ export function addHexPrefix(hex: string): string {
 export function removeHexPrefix(hex: string): string {
   return hex.startsWith('0x') ? hex.slice(2) : hex;
 }
+
+export function isValidHex(hex: string): boolean {
+  const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  return /^[0-9a-fA-F]*$/.test(clean) && clean.length % 2 === 0;
+}
