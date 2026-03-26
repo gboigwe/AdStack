@@ -24,3 +24,4 @@ export const TYPE_GUARD_ID_21 = 21;
 export const TYPE_GUARD_ID_22 = 22;
 export const TYPE_GUARD_ID_23 = 23;
 export const TYPE_GUARD_ID_24 = 24;
+export const TYPE_GUARD_ID_25 = 25;
