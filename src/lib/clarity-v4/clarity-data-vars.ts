@@ -23,3 +23,7 @@ export function updateDataVar<T>(v: DataVar<T>, fn: (current: T) => T): DataVar<
 export function isDataVar<T>(val: unknown): val is DataVar<T> {
   return typeof val === 'object' && val !== null && (val as DataVar<T>).type === 'data-var';
 }
+
+export function resetDataVar<T>(v: DataVar<T>, defaultValue: T): DataVar<T> {
+  return setDataVar(v, defaultValue);
+}
