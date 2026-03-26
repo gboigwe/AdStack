@@ -59,3 +59,12 @@ export function remainingBlocksUntilExpiry(expiry: BlockExpiry, currentBlock: bi
   if (isExpiryReached(expiry, currentBlock)) return BigInt(0);
   return expiry.expiryBlock - currentBlock;
 }
+
+export function blocksElapsed(expiry: BlockExpiry, currentBlock: bigint): bigint {
+  if (!hasStarted(expiry, currentBlock)) return BigInt(0);
+  return minBigInt(currentBlock - expiry.startBlock, expiry.durationBlocks);
+}
+
+function minBigInt(a: bigint, b: bigint): bigint {
+  return a < b ? a : b;
+}
