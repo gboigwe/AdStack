@@ -9,3 +9,9 @@ export function validResult(): ValidationResult {
 export function invalidResult(error: string): ValidationResult {
   return { valid: false, error };
 }
+
+export function validateUintRange(value: bigint, min: bigint, max: bigint): ValidationResult {
+  if (value < min) return invalidResult(`Value ${value} below minimum ${min}`);
+  if (value > max) return invalidResult(`Value ${value} exceeds maximum ${max}`);
+  return validResult();
+}
