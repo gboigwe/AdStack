@@ -93,3 +93,7 @@ export function getPrincipalNetwork(address: string): 'mainnet' | 'testnet' | 'u
   if (address.startsWith(TESTNET_PREFIX)) return 'testnet';
   return 'unknown';
 }
+
+export function isDeployerPrincipal(address: string, expectedDeployer: string): boolean {
+  return normalizePrincipal(address) === normalizePrincipal(expectedDeployer);
+}
