@@ -99,3 +99,13 @@ export function logContractResponse<T>(
   }
   return r;
 }
+
+export function withTimeout<T>(
+  response: Promise<ContractResponse<T>>,
+  ms: number
+): Promise<ContractResponse<T>> {
+  const timeout = new Promise<ContractResponse<T>>(resolve =>
+    setTimeout(() => resolve(contractErr(408n)), ms)
+  );
+  return Promise.race([response, timeout]);
+}
