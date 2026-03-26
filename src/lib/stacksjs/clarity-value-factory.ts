@@ -88,3 +88,7 @@ export function tupleCV<T extends Record<string, ClarityValue>>(data: T): TupleC
 export function responseOkCV<T extends ClarityValue>(value: T): ResponseOkCV<T> {
   return { type: 'ok', value };
 }
+
+export function responseErrCV<E extends ClarityValue>(value: E): ResponseErrCV<E> {
+  return { type: 'error', value };
+}
