@@ -12,3 +12,4 @@ export type StringAsciiCV = { type: 'string-ascii'; data: string };
 export type StringUtf8CV = { type: 'string-utf8'; data: string };
 export type StandardPrincipalCV = { type: 'standard_principal'; address: string };
 export type ContractPrincipalCV = { type: 'contract_principal'; address: string; contractName: string };
+export type PrincipalCV = StandardPrincipalCV | ContractPrincipalCV;
