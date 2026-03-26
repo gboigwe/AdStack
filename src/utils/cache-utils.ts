@@ -19,3 +19,9 @@ export class SimpleCache<K, V> {
     if (Date.now() > entry.expiresAt) { this.store.delete(key); return null; }
     return entry.value;
   }
+
+  has(key: K): boolean { return this.get(key) !== null; }
+  delete(key: K): void { this.store.delete(key); }
+  clear(): void { this.store.clear(); }
+  size(): number { return this.store.size; }
+}
