@@ -12,3 +12,6 @@ export type BurnBlockHash = Brand<string, 'BurnBlockHash'>;
 export type StxAddress = Brand<string, 'StxAddress'>;
 export type ContractAddress = Brand<string, 'ContractAddress'>;
 export type ContractName = Brand<string, 'ContractName'>;
+
+export type MicroStx = Brand<bigint, 'MicroStx'>;
+export type Stx = Brand<number, 'Stx'>;
