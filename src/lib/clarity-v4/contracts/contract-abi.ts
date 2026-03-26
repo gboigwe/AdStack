@@ -16,3 +16,10 @@ export type AbiType =
 
 export type AbiParam = { name: string; type: AbiType | AbiTypeComplex };
 export type AbiTypeComplex = { list: { type: AbiType } } | { tuple: AbiParam[] } | { optional: AbiType } | { response: { ok: AbiType; error: AbiType } };
+
+export type AbiFunctionDef = {
+  name: string;
+  access: 'public' | 'read_only' | 'private';
+  args: AbiParam[];
+  outputs: { type: AbiType | AbiTypeComplex };
+};
