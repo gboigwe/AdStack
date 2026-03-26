@@ -103,3 +103,4 @@ export const TYPE_GUARD_ID_100 = 100;
 export const TYPE_GUARD_ID_101 = 101;
 export const TYPE_GUARD_ID_102 = 102;
 export const TYPE_GUARD_ID_103 = 103;
+export const TYPE_GUARD_ID_104 = 104;
