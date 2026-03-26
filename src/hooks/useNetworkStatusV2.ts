@@ -10,3 +10,11 @@ export interface NetworkInfo {
   stacks_tip_consensus_hash: string;
   burn_block_height: number;
 }
+
+export interface NetworkStatusState {
+  info: NetworkInfo | null;
+  isOnline: boolean;
+  isLoading: boolean;
+  lastUpdated: number | null;
+  error: string | null;
+}
