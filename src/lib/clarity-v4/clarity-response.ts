@@ -46,3 +46,12 @@ export function unwrapErr<T, E>(result: ClarityResponse<T, E>): E {
 export function unwrapOr<T, E>(result: ClarityResponse<T, E>, fallback: T): T {
   return result.type === 'ok' ? result.value : fallback;
 }
+
+/** Match a response against ok/err handlers */
+export function matchResponse<T, E, R>(
+  result: ClarityResponse<T, E>,
+  handlers: ResultHandler<T, E, R>
+): R {
+  if (result.type === 'ok') return handlers.ok(result.value);
+  return handlers.err(result.value);
+}
