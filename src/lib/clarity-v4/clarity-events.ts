@@ -47,3 +47,7 @@ export function isFtTransferEvent(e: ClarityEvent): e is FtTransferEvent {
 export function isNftTransferEvent(e: ClarityEvent): e is NftTransferEvent {
   return e.type === 'nft_transfer';
 }
+
+export function isContractEvent(e: ClarityEvent): e is ContractEvent {
+  return e.type === 'contract_event';
+}
