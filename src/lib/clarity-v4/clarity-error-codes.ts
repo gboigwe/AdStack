@@ -38,3 +38,15 @@ export function errorCodeToString(code: ClarityErrorCode): string {
   };
   return known[code.toString()] ?? `UNKNOWN_ERROR(${code})`;
 }
+
+export function isAuthError(code: ClarityErrorCode): boolean {
+  return code >= 100n && code < 200n;
+}
+
+export function isLifecycleError(code: ClarityErrorCode): boolean {
+  return code >= 200n && code < 300n;
+}
+
+export function isArithmeticError(code: ClarityErrorCode): boolean {
+  return code >= 300n && code < 400n;
+}
