@@ -9,3 +9,11 @@ export interface ContractReadParams {
   senderAddress?: string;
   network?: 'mainnet' | 'testnet';
 }
+
+export interface ContractReadState<T> {
+  data: T | null;
+  isLoading: boolean;
+  isError: boolean;
+  error: string | null;
+  isFetched: boolean;
+}
