@@ -43,3 +43,8 @@ export function useStacksSession() {
     isLoading: true,
     error: null,
   });
+
+  useEffect(() => {
+    const stored = loadSessionFromStorage();
+    setState({ user: stored, isConnected: !!stored, isLoading: false, error: null });
+  }, []);
