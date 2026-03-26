@@ -60,3 +60,9 @@ export function makePaginatedQuery<T>(
 ): PaginatedQuery<T> {
   return { items, total, page, pageSize, hasMore: page * pageSize < total };
 }
+
+export function paginateItems<T>(items: T[], page: number, pageSize: number): PaginatedQuery<T> {
+  const start = (page - 1) * pageSize;
+  const pageItems = items.slice(start, start + pageSize);
+  return makePaginatedQuery(pageItems, items.length, page, pageSize);
+}
