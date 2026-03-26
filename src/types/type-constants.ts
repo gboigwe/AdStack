@@ -186,3 +186,4 @@ export const TYPE_GUARD_ID_183 = 183;
 export const TYPE_GUARD_ID_184 = 184;
 export const TYPE_GUARD_ID_185 = 185;
 export const TYPE_GUARD_ID_186 = 186;
+export const TYPE_GUARD_ID_187 = 187;
