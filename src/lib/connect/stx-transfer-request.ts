@@ -14,3 +14,10 @@ export function buildStxTransferRequest(
 ): StxTransferParams {
   return { recipient, amount, memo, network };
 }
+
+export function validateStxTransferParams(params: StxTransferParams): string | null {
+  if (params.amount < MIN_STX_TRANSFER_AMOUNT) return 'Amount too small';
+  if (params.memo && params.memo.length > MAX_MEMO_LENGTH) return 'Memo too long';
+  if (!params.recipient) return 'Recipient required';
+  return null;
+}
