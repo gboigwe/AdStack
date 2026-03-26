@@ -63,3 +63,7 @@ export function isPowerOfTwo(n: bigint): boolean {
   if (n <= BigInt(0)) return false;
   return (n & (n - BigInt(1))) === BigInt(0);
 }
+
+export function daysToBlocks(days: bigint): bigint {
+  return days * BLOCKS_PER_DAY;
+}
