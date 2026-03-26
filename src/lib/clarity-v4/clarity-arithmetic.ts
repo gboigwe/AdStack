@@ -84,3 +84,9 @@ export function remainingBlocks(currentBlock: bigint, expiryBlock: bigint): bigi
   if (currentBlock >= expiryBlock) return BigInt(0);
   return expiryBlock - currentBlock;
 }
+
+export function formatUstxAsStx(ustx: bigint): string {
+  const stx = ustx / ONE_STX_IN_USTX;
+  const frac = ustx % ONE_STX_IN_USTX;
+  return `${stx}.${frac.toString().padStart(6, '0')} STX`;
+}
