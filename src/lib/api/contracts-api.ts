@@ -39,3 +39,8 @@ export async function fetchContractSource(contractId: string, network: Network =
   const info = await fetchContractInfo(contractId, network);
   return info.source_code;
 }
+
+export async function fetchContractAbi(contractId: string, network: Network = 'mainnet'): Promise<unknown> {
+  const info = await fetchContractInfo(contractId, network);
+  try { return JSON.parse(info.abi); } catch { return null; }
+}
