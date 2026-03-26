@@ -70,3 +70,8 @@ export function groupEventsByType(events: AdStackEvent[]): Record<AdStackEventTy
   }
   return grouped;
 }
+
+export function getTotalPayouts(events: AdStackEvent[]): bigint {
+  return filterEventsByType(events, isPayoutClaimedEvent)
+    .reduce((sum, e) => sum + e.data.amount, BigInt(0));
+}
