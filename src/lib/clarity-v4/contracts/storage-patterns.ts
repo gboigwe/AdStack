@@ -38,3 +38,11 @@ export function storageMapHas<K, V>(map: StorageMap<K, V>, key: K): boolean {
 export function makeStorageDataVar<T>(name: string, valueType: string, initial: T): StorageDataVar<T> {
   return { name, valueType, value: initial };
 }
+
+export function dataVarGet<T>(v: StorageDataVar<T>): T {
+  return v.value;
+}
+
+export function dataVarSet<T>(v: StorageDataVar<T>, value: T): StorageDataVar<T> {
+  return { ...v, value };
+}
