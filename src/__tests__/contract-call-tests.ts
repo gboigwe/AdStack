@@ -17,3 +17,8 @@ describe('buildContractCallRequest', () => {
     expect(req.contractName).toBe(base.contractName);
     expect(req.functionName).toBe(base.functionName);
   });
+  it('includes empty functionArgs by default', () => {
+    const req = buildContractCallRequest(base);
+    expect(req.functionArgs).toEqual([]);
+  });
+});
