@@ -77,3 +77,10 @@ export function extractBoolValue(cv: HiroApiCV): boolean | null {
   if (cv.repr) return parseBoolFromRepr(cv.repr);
   return typeof cv.value === 'boolean' ? cv.value : null;
 }
+
+export function extractStringValue(cv: HiroApiCV): string | null {
+  if (cv.type !== 'string-ascii' && cv.type !== 'string-utf8') return null;
+  if (typeof cv.value === 'string') return cv.value;
+  if (cv.repr) return parseStringFromRepr(cv.repr);
+  return null;
+}
