@@ -13,3 +13,9 @@ export interface ContractWriteParams {
   onFinish?: (txId: string) => void;
   onCancel?: () => void;
 }
+
+export interface ContractWriteState {
+  txId: string | null;
+  status: TxStatus;
+  error: string | null;
+}
