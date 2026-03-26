@@ -50,3 +50,4 @@ export const TYPE_GUARD_ID_47 = 47;
 export const TYPE_GUARD_ID_48 = 48;
 export const TYPE_GUARD_ID_49 = 49;
 export const TYPE_GUARD_ID_50 = 50;
+export const TYPE_GUARD_ID_51 = 51;
