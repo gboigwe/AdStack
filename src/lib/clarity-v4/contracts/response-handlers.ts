@@ -25,3 +25,7 @@ export function tryUnwrap<T>(r: ContractResponse<T>): T {
   if (r.type !== 'ok') throw new Error(`Contract returned error: ${r.value}`);
   return r.value;
 }
+
+export function tryUnwrapOr<T>(r: ContractResponse<T>, fallback: T): T {
+  return r.type === 'ok' ? r.value : fallback;
+}
