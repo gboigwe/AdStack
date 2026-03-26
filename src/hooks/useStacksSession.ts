@@ -15,3 +15,5 @@ export interface StacksSessionState {
   isLoading: boolean;
   error: string | null;
 }
+
+const SESSION_KEY = 'stacks_session_user';
