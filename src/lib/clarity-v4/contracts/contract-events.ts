@@ -10,3 +10,11 @@ export type AdStackEventType =
   | 'vote-cast'
   | 'proposal-created'
   | 'proposal-executed';
+
+export type AdStackEvent = {
+  eventType: AdStackEventType;
+  txId: string;
+  blockHeight: bigint;
+  timestamp?: number;
+  data: Record<string, unknown>;
+};
