@@ -70,3 +70,10 @@ export function validateCampaignDuration(startBlock: bigint, endBlock: bigint): 
   if (durationBlocks > BigInt(52560)) return invalidResult('Campaign cannot exceed 1 year');
   return validResult();
 }
+
+export function validateImpressionRate(rate: bigint): ValidationResult {
+  return combineValidations(
+    validateNonZero(rate, 'impression rate'),
+    validateUintRange(rate, BigInt(1), BigInt(1_000_000))
+  );
+}
