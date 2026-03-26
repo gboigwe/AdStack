@@ -63,3 +63,9 @@ export function isProposalPassing(p: Proposal): boolean {
   if (total < p.quorum) return false;
   return p.votesFor * BigInt(2) > total;
 }
+
+export function getVoteParticipation(p: Proposal): number {
+  const total = p.votesFor + p.votesAgainst;
+  if (p.quorum === BigInt(0)) return 100;
+  return Math.min(100, Number((total * BigInt(100)) / p.quorum));
+}
