@@ -53,3 +53,8 @@ export function useStacksSession() {
     saveSessionToStorage(user);
     setState({ user, isConnected: true, isLoading: false, error: null });
   }, []);
+
+  const disconnect = useCallback(() => {
+    clearSessionFromStorage();
+    setState({ user: null, isConnected: false, isLoading: false, error: null });
+  }, []);
