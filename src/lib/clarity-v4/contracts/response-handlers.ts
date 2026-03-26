@@ -87,3 +87,15 @@ export function retryContractResponse<T>(
   }
   return responses[responses.length - 1] ?? contractErr(500n);
 }
+
+export function logContractResponse<T>(
+  r: ContractResponse<T>,
+  label: string
+): ContractResponse<T> {
+  if (r.type === 'ok') {
+    console.debug(`[${label}] OK:`, r.value);
+  } else {
+    console.warn(`[${label}] ERR:`, r.value);
+  }
+  return r;
+}
