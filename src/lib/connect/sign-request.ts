@@ -15,3 +15,10 @@ export const TESTNET_CHAIN_ID = 2147483648;
 export function buildSignMessageRequest(message: string): SignMessageParams {
   return { message };
 }
+
+export function buildSignStructuredDataRequest(
+  message: unknown,
+  domain: StructuredDataDomain
+): SignStructuredDataParams {
+  return { message, domain };
+}
