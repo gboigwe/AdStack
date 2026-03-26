@@ -38,3 +38,5 @@ export function openStructuredDataSignature(params: SignStructuredDataParams): v
 export function verifySignatureFormat(sig: string): boolean {
   return /^[0-9a-fA-F]{130}$/.test(sig);
 }
+
+export const SIGN_REQUEST_VERSION_1 = '1.0';
