@@ -116,3 +116,7 @@ export function summarizeCampaigns(campaigns: Campaign[]): {
     totalSpent: campaigns.reduce((sum, c) => sum + c.spent, BigInt(0)),
   };
 }
+
+export function resetPublisherPayout(publisher: Publisher): Publisher {
+  return { ...publisher, pendingPayout: BigInt(0) };
+}
