@@ -38,3 +38,11 @@ export function asciiLength(s: StringAscii): number {
 export function utf8ByteLength(s: StringUtf8): number {
   return new TextEncoder().encode(s.value).length;
 }
+
+export function concatAscii(a: StringAscii, b: StringAscii): StringAscii {
+  return makeStringAscii(a.value + b.value, a.maxLength);
+}
+
+export function concatUtf8(a: StringUtf8, b: StringUtf8): StringUtf8 {
+  return makeStringUtf8(a.value + b.value, a.maxLength);
+}
