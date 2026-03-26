@@ -19,3 +19,10 @@ export function ftAmountToDisplay(amount: bigint, decimals: number): string {
   const frac = amount % factor;
   return `${whole}.${frac.toString().padStart(decimals, '0')}`;
 }
+
+export function ftDisplayToAmount(display: string, decimals: number): bigint {
+  const parts = display.split('.');
+  const whole = BigInt(parts[0] ?? '0');
+  const fracStr = (parts[1] ?? '').padEnd(decimals, '0').slice(0, decimals);
+  return whole * BigInt(10 ** decimals) + BigInt(fracStr);
+}
