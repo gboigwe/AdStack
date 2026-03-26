@@ -83,3 +83,11 @@ export function blockToApproxDate(blockHeight: bigint, genesisTimestamp: number)
   const secondsSinceGenesis = Number(blockHeight) * AVERAGE_BLOCK_SECONDS;
   return new Date((genesisTimestamp + secondsSinceGenesis) * 1000);
 }
+
+export function blocksToHours(blocks: bigint): number {
+  return Number(blocks) / BLOCKS_PER_HOUR;
+}
+
+export function blocksToDays(blocks: bigint): number {
+  return Number(blocks) / BLOCKS_PER_DAY;
+}
