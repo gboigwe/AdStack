@@ -9,3 +9,5 @@ export type StructuredDataDomain = { name: string; version: string; chainId: num
 export type SignStructuredDataParams = { message: unknown; domain: StructuredDataDomain; onFinish?: (data: SignatureData) => void; onCancel?: () => void };
 
 export const MAINNET_CHAIN_ID = 1;
+
+export const TESTNET_CHAIN_ID = 2147483648;
