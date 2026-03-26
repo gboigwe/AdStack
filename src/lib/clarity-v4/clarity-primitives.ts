@@ -9,3 +9,5 @@ export type ClarityBool = { type: 'bool'; value: boolean };
 export type ClarityPrincipal = { type: 'principal'; value: string };
 
 export type ClarityOptional<T> = { type: 'optional'; value: T | null };
+
+export type ClarityNone = { type: 'none' };
