@@ -26,3 +26,7 @@ export function makeBlockDuration(blocks: bigint): BlockDuration {
     approximateSeconds: blocks * BigInt(AVERAGE_BLOCK_SECONDS),
   };
 }
+
+export function durationFromDays(days: number): BlockDuration {
+  return makeBlockDuration(BigInt(Math.round(days * BLOCKS_PER_DAY)));
+}
