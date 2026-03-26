@@ -13,3 +13,5 @@ export type MultiSigConfig = { requiredSignatures: number; publicKeys: PublicKey
 export const COMPRESSED_PUBLIC_KEY_LENGTH = 66;
 
 export const UNCOMPRESSED_PUBLIC_KEY_LENGTH = 130;
+
+export const SIGNATURE_LENGTH = 130;
