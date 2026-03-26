@@ -43,3 +43,5 @@ export function hasAnyWalletInstalled(): boolean {
 }
 
 export const WALLET_PROVIDER_VERSION_1 = '1';
+
+export const WALLET_PROVIDER_VERSION_2 = '2';
