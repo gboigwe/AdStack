@@ -184,3 +184,8 @@ export function isClarityBool(v: unknown): v is ClarityBool {
 export function isClarityPrincipal(v: unknown): v is ClarityPrincipal {
   return typeof v === 'object' && v !== null && (v as ClarityPrincipal).type === 'principal';
 }
+
+/** Guard: check if value is ClarityNone */
+export function isClarityNone(v: unknown): v is ClarityNone {
+  return typeof v === 'object' && v !== null && (v as ClarityNone).type === 'none';
+}
