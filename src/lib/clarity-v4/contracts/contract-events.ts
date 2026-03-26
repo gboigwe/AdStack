@@ -82,3 +82,10 @@ export function getCampaignEvents(events: AdStackEvent[], campaignId: bigint): A
     return data.campaignId === campaignId;
   });
 }
+
+export function getPublisherEvents(events: AdStackEvent[], publisher: string): AdStackEvent[] {
+  return events.filter(e => {
+    const data = e.data as Record<string, unknown>;
+    return data.publisher === publisher;
+  });
+}
