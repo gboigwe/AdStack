@@ -58,3 +58,12 @@ export function filterEventsByType<T extends ClarityEvent>(
 ): T[] {
   return events.filter(guard);
 }
+
+export function groupEventsByBlock(events: ClarityEvent[]): Record<number, ClarityEvent[]> {
+  const grouped: Record<number, ClarityEvent[]> = {};
+  for (const event of events) {
+    if (!grouped[event.blockHeight]) grouped[event.blockHeight] = [];
+    grouped[event.blockHeight].push(event);
+  }
+  return grouped;
+}
