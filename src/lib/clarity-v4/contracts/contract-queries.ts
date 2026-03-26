@@ -82,3 +82,12 @@ export function sortItems<T>(
     return 0;
   });
 }
+
+export function filterItems<T>(items: T[], predicate: (item: T) => boolean): T[] {
+  return items.filter(predicate);
+}
+
+export function searchItems<T>(items: T[], searchKey: keyof T, query: string): T[] {
+  const q = query.toLowerCase();
+  return items.filter(item => String(item[searchKey]).toLowerCase().includes(q));
+}
