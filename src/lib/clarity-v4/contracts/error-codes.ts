@@ -116,3 +116,5 @@ export const ERR_CUSTOM_6 = 1006n;
 export const ERR_CUSTOM_7 = 1007n;
 
 export const ERR_CUSTOM_8 = 1008n;
+
+export const ERR_CUSTOM_9 = 1009n;
