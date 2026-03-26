@@ -55,3 +55,15 @@ export function makeNftCondition(
 ): NftCondition {
   return { type: 'nft', principal, asset, tokenId, code };
 }
+
+export function makeStxEqCondition(principal: PrincipalDetail, amount: bigint): StxCondition {
+  return makeStxCondition(principal, 'eq', amount);
+}
+
+export function makeStxGteCondition(principal: PrincipalDetail, amount: bigint): StxCondition {
+  return makeStxCondition(principal, 'gte', amount);
+}
+
+export function makeStxLteCondition(principal: PrincipalDetail, amount: bigint): StxCondition {
+  return makeStxCondition(principal, 'lte', amount);
+}
