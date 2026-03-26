@@ -44,3 +44,13 @@ export function makeFtPostCondition(
 ): FtPostCondition {
   return { type: 'ft', principal, assetInfo: { contractId, assetName }, conditionCode, amount };
 }
+
+export function makeNftPostCondition(
+  principal: string,
+  contractId: string,
+  assetName: string,
+  tokenId: bigint,
+  conditionCode: 'has' | 'not-has'
+): NftPostCondition {
+  return { type: 'nft', principal, assetInfo: { contractId, assetName }, tokenId, conditionCode };
+}
