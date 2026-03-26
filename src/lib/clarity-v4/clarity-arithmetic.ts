@@ -31,3 +31,8 @@ export function safeAddUint(a: ClarityUint, b: ClarityUint): ClarityUint | null 
   if (sum > MAX_UINT128) return null;
   return makeUint(sum);
 }
+
+export function safeSubUint(a: ClarityUint, b: ClarityUint): ClarityUint | null {
+  if (b.value > a.value) return null;
+  return makeUint(a.value - b.value);
+}
