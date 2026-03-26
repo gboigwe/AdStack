@@ -9,3 +9,7 @@ export type TraitDefinition = { name: string; methods: TraitMethod[] };
 export function makeTraitRef(contractId: string, traitName: string): TraitReference {
   return { type: 'trait', contractId, traitName };
 }
+
+export function traitRefToString(ref: TraitReference): string {
+  return `${ref.contractId}.${ref.traitName}`;
+}
