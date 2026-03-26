@@ -24,3 +24,9 @@ export function storageMapSet<K, V>(map: StorageMap<K, V>, key: K, value: V): St
   newEntries.set(JSON.stringify(key), value);
   return { ...map, entries: newEntries };
 }
+
+export function storageMapDelete<K, V>(map: StorageMap<K, V>, key: K): StorageMap<K, V> {
+  const newEntries = new Map(map.entries);
+  newEntries.delete(JSON.stringify(key));
+  return { ...map, entries: newEntries };
+}
