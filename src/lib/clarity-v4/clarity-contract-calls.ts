@@ -31,3 +31,20 @@ export function parseContractId(contractId: string): { address: string; name: st
 export function isValidContractId(id: string): boolean {
   return parseContractId(id) !== null;
 }
+
+export function makeContractCallParams(
+  contractId: string,
+  functionName: string,
+  args: unknown[],
+  network: 'mainnet' | 'testnet' = 'mainnet'
+): ContractCallParams | null {
+  const parsed = parseContractId(contractId);
+  if (!parsed) return null;
+  return {
+    contractAddress: parsed.address,
+    contractName: parsed.name,
+    functionName,
+    functionArgs: args,
+    network,
+  };
+}
