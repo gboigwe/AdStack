@@ -71,3 +71,14 @@ export function areTuplesEqual<T extends TupleRecord>(a: ClarityTuple<T>, b: Cla
 export function isClarityTuple(v: unknown): v is ClarityTuple {
   return typeof v === 'object' && v !== null && (v as ClarityTuple).type === 'tuple';
 }
+
+export function renameTupleField<T extends TupleRecord>(
+  tuple: ClarityTuple<T>,
+  oldKey: keyof T,
+  newKey: string
+): ClarityTuple<Record<string, TupleValue>> {
+  const result: Record<string, TupleValue> = { ...tuple.data };
+  result[newKey] = result[oldKey as string];
+  delete result[oldKey as string];
+  return makeTuple(result);
+}
