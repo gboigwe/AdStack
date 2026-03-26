@@ -1,3 +1,5 @@
 // Clarity v4 Arithmetic and Math Utilities
 
 import { ClarityUint, ClarityInt, makeUint, makeInt, MAX_UINT128 } from './clarity-primitives';
+
+export const ONE_STX_IN_USTX = BigInt(1_000_000);
