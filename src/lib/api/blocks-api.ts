@@ -25,3 +25,10 @@ export async function fetchBlock(hashOrHeight: string | number, network: Network
   if (!res.ok) throw new Error(`Block not found: ${hashOrHeight}`);
   return res.json();
 }
+
+export async function fetchRecentBlocks(limit = 10, network: Network = 'mainnet'): Promise<BlocksResponse> {
+  const url = `${getBase(network)}/extended/v1/block?limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch blocks');
+  return res.json();
+}
