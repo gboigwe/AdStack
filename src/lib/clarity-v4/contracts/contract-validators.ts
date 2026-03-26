@@ -20,3 +20,8 @@ export function validateNonZero(value: bigint, fieldName: string): ValidationRes
   if (value === BigInt(0)) return invalidResult(`${fieldName} must be non-zero`);
   return validResult();
 }
+
+export function validateStringLength(value: string, maxLen: number, fieldName: string): ValidationResult {
+  if (value.length > maxLen) return invalidResult(`${fieldName} length ${value.length} exceeds max ${maxLen}`);
+  return validResult();
+}
