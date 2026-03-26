@@ -12,3 +12,6 @@ describe('makeUint', () => {
     const v = makeUint(100);
     expect(v.value).toBe(100n);
   });
+  it('throws for negative values', () => {
+    expect(() => makeUint(-1n)).toThrow(RangeError);
+  });
