@@ -120,3 +120,9 @@ export function divUint(a: ClarityUint, b: ClarityUint): ClarityUint {
   if (b.value === BigInt(0)) throw new Error('Division by zero');
   return makeUint(a.value / b.value);
 }
+
+/** Modulo of two ClarityUint values */
+export function modUint(a: ClarityUint, b: ClarityUint): ClarityUint {
+  if (b.value === BigInt(0)) throw new Error('Modulo by zero');
+  return makeUint(a.value % b.value);
+}
