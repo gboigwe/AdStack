@@ -46,3 +46,8 @@ export interface SmartContractTransaction extends BaseTransaction {
     source_code: string;
   };
 }
+
+export type StacksTransaction =
+  | TokenTransferTransaction
+  | ContractCallTransaction
+  | SmartContractTransaction;
