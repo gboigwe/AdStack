@@ -97,3 +97,10 @@ export function getPrincipalNetwork(address: string): 'mainnet' | 'testnet' | 'u
 export function isDeployerPrincipal(address: string, expectedDeployer: string): boolean {
   return normalizePrincipal(address) === normalizePrincipal(expectedDeployer);
 }
+
+export function isCallablePrincipal(address: string, caller: string): boolean {
+  const parsedAddr = parsePrincipal(address);
+  const parsedCaller = parsePrincipal(caller);
+  if (!parsedAddr || !parsedCaller) return false;
+  return parsedAddr.network === parsedCaller.network;
+}
