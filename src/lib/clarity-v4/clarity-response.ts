@@ -2,3 +2,5 @@
 import type { ClarityResponse, ClarityResponseOk, ClarityResponseErr } from './clarity-primitives';
 
 export type OkResult<T> = ClarityResponseOk<T>;
+
+export type ErrResult<E> = ClarityResponseErr<E>;
