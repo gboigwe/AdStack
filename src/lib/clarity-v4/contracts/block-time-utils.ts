@@ -99,3 +99,16 @@ export function formatBlockDuration(duration: BlockDuration): string {
   if (hours >= 1) return `${hours.toFixed(1)} hours`;
   return `${duration.blocks} blocks`;
 }
+
+export function splitExpiryToRanges(
+  expiry: BlockExpiry,
+  parts: number
+): BlockExpiry[] {
+  const partBlocks = expiry.durationBlocks / BigInt(parts);
+  const result: BlockExpiry[] = [];
+  for (let i = 0; i < parts; i++) {
+    const start = expiry.startBlock + BigInt(i) * partBlocks;
+    result.push(makeBlockExpiry(start, partBlocks));
+  }
+  return result;
+}
