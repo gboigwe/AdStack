@@ -46,3 +46,12 @@ export function makeFtCondition(
 ): FtCondition {
   return { type: 'ft', principal, asset, code, amount };
 }
+
+export function makeNftCondition(
+  principal: PrincipalDetail,
+  asset: AssetInfo,
+  tokenId: bigint,
+  code: NonFungibleConditionCode
+): NftCondition {
+  return { type: 'nft', principal, asset, tokenId, code };
+}
