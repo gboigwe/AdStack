@@ -8,3 +8,5 @@ export type StorageMap<K, V> = {
   valueType: string;
   entries: Map<string, V>;
 };
+
+export type StorageDataVar<T> = { name: string; valueType: string; value: T };
