@@ -58,3 +58,7 @@ export function reverseList<T>(list: ClarityList<T>): ClarityList<T> {
 export function findInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): T | null {
   return list.items.find(predicate) ?? null;
 }
+
+export function someInList<T>(list: ClarityList<T>, predicate: (item: T) => boolean): boolean {
+  return list.items.some(predicate);
+}
