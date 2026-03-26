@@ -11,3 +11,5 @@ export type SignerOptions = { network: 'mainnet' | 'testnet'; fee?: bigint; nonc
 export type MultiSigConfig = { requiredSignatures: number; publicKeys: PublicKey[] };
 
 export const COMPRESSED_PUBLIC_KEY_LENGTH = 66;
+
+export const UNCOMPRESSED_PUBLIC_KEY_LENGTH = 130;
