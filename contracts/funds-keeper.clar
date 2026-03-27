@@ -152,6 +152,7 @@
     )
 
     (var-set total-escrowed (+ (var-get total-escrowed) amount))
+    (var-set total-escrows-created (+ (var-get total-escrows-created) u1))
 
     (print {
       event: "escrow-created",
