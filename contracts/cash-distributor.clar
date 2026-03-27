@@ -57,6 +57,7 @@
 (define-data-var payouts-paused bool false)
 (define-data-var total-payouts-count uint u0)
 (define-data-var total-publishers-paid uint u0)
+(define-data-var current-fee-rate uint PLATFORM_FEE_BPS)
 
 ;; --- Data Maps ---
 
