@@ -197,10 +197,12 @@
   (let (
     (current (get-publisher-earnings campaign-id publisher))
     (fee (calculate-fee amount))
-    (net (- amount fee))
+    (net (if (>= amount fee) (- amount fee) u0))
     (totals (get-publisher-totals publisher))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    ;; Ensure fee does not exceed the amount (underflow protection)
+    (asserts! (>= amount fee) ERR_FEE_CALCULATION_ERROR)
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
     (asserts! (<= amount MAX_EARNINGS_PER_RECORD) ERR_EARNINGS_OVERFLOW)
