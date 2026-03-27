@@ -71,7 +71,12 @@ export function toStringAsciiCV(value: string, maxLength = MAX_ASCII_STRING_LENG
 /**
  * Create a Clarity string-utf8 value.
  */
-export function toStringUtf8CV(value: string): StringUtf8CV {
+const MAX_UTF8_STRING_LENGTH = 256;
+
+export function toStringUtf8CV(value: string, maxLength = MAX_UTF8_STRING_LENGTH): StringUtf8CV {
+  if (value.length > maxLength) {
+    throw new RangeError(`UTF-8 string length ${value.length} exceeds max ${maxLength}`);
+  }
   return { type: 'string-utf8', value };
 }
 
