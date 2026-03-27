@@ -74,13 +74,33 @@ export function toStringUtf8CV(value: string): StringUtf8CV {
  * Create a Clarity principal value from an address string.
  * Supports both standard principals (SP...) and contract principals (SP...contract-name).
  */
+const PRINCIPAL_PATTERN = /^S[PM][A-Z0-9]{1,38}$/;
+const CONTRACT_NAME_PATTERN = /^[a-zA-Z][a-zA-Z0-9_-]{0,127}$/;
+
 export function toPrincipalCV(address: string): PrincipalCV {
+  if (!address || address.length === 0) {
+    throw new Error('toPrincipalCV: address is required');
+  }
+
   if (address.includes('.')) {
     const parts = address.split('.', 2);
     const addr = parts[0] ?? '';
     const contractName = parts[1] ?? '';
+
+    if (!PRINCIPAL_PATTERN.test(addr)) {
+      throw new Error(`toPrincipalCV: invalid standard principal format: ${addr}`);
+    }
+    if (!CONTRACT_NAME_PATTERN.test(contractName)) {
+      throw new Error(`toPrincipalCV: invalid contract name format: ${contractName}`);
+    }
+
     return { type: 'principal', value: { address: addr, contractName } };
   }
+
+  if (!PRINCIPAL_PATTERN.test(address)) {
+    throw new Error(`toPrincipalCV: invalid principal format: ${address}`);
+  }
+
   return { type: 'principal', value: { address } };
 }
 
