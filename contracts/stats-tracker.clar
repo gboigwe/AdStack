@@ -270,6 +270,8 @@
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (> amount u0) ERR_ZERO_AMOUNT)
+    ;; Overflow protection: ensure addition will not wrap
+    (asserts! (>= (- u340282366920938463463374607431768211455 (get total-spent analytics)) amount) ERR_SPEND_OVERFLOW)
 
     (map-set campaign-analytics
       { campaign-id: campaign-id }
