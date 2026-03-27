@@ -150,6 +150,35 @@
   )
 )
 
+;; Check if a release is currently allowed for a publisher on a campaign
+(define-read-only (is-release-allowed (campaign-id uint) (publisher principal) (amount uint))
+  (match (map-get? escrows { campaign-id: campaign-id })
+    escrow (let (
+      (available (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
+      (pub-release (get-publisher-release campaign-id publisher))
+      (cooldown-ok (or
+        (is-eq (get last-release-block pub-release) u0)
+        (>= (- stacks-block-height (get last-release-block pub-release)) WITHDRAWAL_COOLDOWN)
+      ))
+    )
+      (ok {
+        allowed: (and
+          (not (var-get contract-paused))
+          (is-eq (get status escrow) STATUS_ACTIVE)
+          (> amount u0)
+          (<= amount available)
+          (<= amount MAX_RELEASE_PER_TX)
+          cooldown-ok
+        ),
+        available-balance: available,
+        cooldown-ok: cooldown-ok,
+        contract-paused: (var-get contract-paused),
+      })
+    )
+    ERR_ESCROW_NOT_FOUND
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
