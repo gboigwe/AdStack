@@ -315,13 +315,19 @@
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
 
-    ;; Decrement global valid count
+    ;; Decrement global valid count (underflow-safe)
     (if (> (var-get total-valid-views) u0)
       (var-set total-valid-views (- (var-get total-valid-views) u1))
       true
     )
 
-    ;; Decrement publisher valid views count
+    ;; Decrement global total views (underflow-safe)
+    (if (> (var-get total-views) u0)
+      (var-set total-views (- (var-get total-views) u1))
+      true
+    )
+
+    ;; Decrement publisher valid views count (underflow-safe)
     (if (> (get valid-views pub-stats) u0)
       (map-set publisher-stats
         { campaign-id: campaign-id, publisher: publisher }
@@ -332,7 +338,7 @@
       true
     )
 
-    ;; Decrement campaign-level total views
+    ;; Decrement campaign-level total views (underflow-safe)
     (if (> (get total-views analytics) u0)
       (map-set campaign-analytics
         { campaign-id: campaign-id }
