@@ -15,6 +15,7 @@
 (define-constant ERR_RATE_LIMIT (err u305))
 (define-constant ERR_ZERO_AMOUNT (err u306))
 (define-constant ERR_ZERO_CAMPAIGN_ID (err u307))
+(define-constant ERR_PUBLISHER_NOT_REGISTERED (err u308))
 
 ;; Rate limit: max 10 views per viewer per campaign per day (~144 blocks)
 (define-constant MAX_DAILY_VIEWS_PER_VIEWER u10)
