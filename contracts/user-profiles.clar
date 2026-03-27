@@ -66,6 +66,7 @@
 (define-data-var total-viewers uint u0)
 (define-data-var contract-paused bool false)
 (define-data-var total-verifications uint u0)
+(define-data-var total-suspensions uint u0)
 
 ;; --- Data Maps ---
 
