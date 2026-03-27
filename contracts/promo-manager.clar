@@ -336,8 +336,12 @@
       event: "campaign-created",
       campaign-id: campaign-id,
       advertiser: tx-sender,
+      name: name,
       budget: budget,
+      daily-budget: daily-budget,
       duration: duration,
+      start-height: stacks-block-height,
+      end-height: end-block,
       timestamp: stacks-block-time,
     })
 
