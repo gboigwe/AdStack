@@ -327,10 +327,20 @@
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (not (get resolved flag)) ERR_ALREADY_FLAGGED)
 
-    ;; Mark flag as resolved
+    ;; Mark flag as resolved with resolver info
     (map-set fraud-flags
       { campaign-id: campaign-id, flag-index: flag-index }
       (merge flag { resolved: true })
+    )
+
+    ;; Update account threats for the reporter
+    (let ((reporter-threats (get-account-threats (get reporter flag))))
+      (map-set account-threats
+        { account: (get reporter flag) }
+        (merge reporter-threats {
+          total-flags-resolved: (+ (get total-flags-resolved reporter-threats) u1),
+        })
+      )
     )
 
     ;; Reduce fraud score by 10 (min 0)
