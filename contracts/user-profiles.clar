@@ -325,16 +325,26 @@
     ;; Only contract owner (or authorized caller contracts) can increment
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (map-set profiles
-      { user: user }
-      (merge profile {
-        total-campaigns: (+ (get total-campaigns profile) u1),
-        last-active: stacks-block-height,
-      })
-    )
+    (asserts! (< (get total-campaigns profile) MAX_CAMPAIGNS_PER_USER) ERR_MAX_CAMPAIGNS_EXCEEDED)
+    (let ((old-count (get total-campaigns profile))
+          (new-count (+ old-count u1)))
+      (map-set profiles
+        { user: user }
+        (merge profile {
+          total-campaigns: new-count,
+          last-active: stacks-block-height,
+        })
+      )
 
-    (print { event: "campaigns-incremented", user: user, timestamp: stacks-block-time })
-    (ok true)
+      (print {
+        event: "campaigns-incremented",
+        user: user,
+        old-count: old-count,
+        new-count: new-count,
+        timestamp: stacks-block-time,
+      })
+      (ok true)
+    )
   )
 )
 

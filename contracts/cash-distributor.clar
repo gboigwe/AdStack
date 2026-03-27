@@ -194,6 +194,17 @@
   (var-get total-payouts-count)
 )
 
+(define-read-only (get-payout-history (publisher principal))
+  (let ((totals (get-publisher-totals publisher)))
+    {
+      total-claimed: (get total-claimed totals),
+      payout-count: (get payout-count totals),
+      total-fees: (get total-fees totals),
+      total-earned: (get total-earned totals),
+    }
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Record publisher earnings for a campaign (admin or authorized contract)
