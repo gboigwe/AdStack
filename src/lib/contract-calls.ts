@@ -98,9 +98,12 @@ export function buildResumeCampaign(campaignId: number) {
  * Calls user-profiles.register with role and display name.
  */
 export function buildRegisterUser(params: RegisterUserParams) {
+  if (!params.displayName || params.displayName.length === 0) throw new Error('buildRegisterUser: displayName is required');
+  if (params.displayName.length > 48) throw new Error('buildRegisterUser: displayName exceeds max length (48)');
+
   const roleUint = ROLE_TO_UINT[params.role];
   if (roleUint === undefined) {
-    throw new Error(`Invalid role: ${params.role}`);
+    throw new Error(`Invalid role: ${params.role}. Valid roles: ${Object.keys(ROLE_TO_UINT).join(', ')}`);
   }
 
   return {
