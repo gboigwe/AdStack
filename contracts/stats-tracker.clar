@@ -183,6 +183,25 @@
   )
 )
 
+;; Check if a view submission would be allowed (pre-flight check)
+(define-read-only (is-view-submission-allowed (campaign-id uint) (viewer principal) (publisher principal))
+  (let (
+    (day (get-day-block stacks-block-height))
+    (current-daily (get count (default-to { count: u0 }
+      (map-get? daily-view-counts { campaign-id: campaign-id, viewer: viewer, day-block: day }))))
+    (current-block (get count (default-to { count: u0 }
+      (map-get? block-view-counts { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }))))
+  )
+    (and
+      (not (var-get contract-paused))
+      (> campaign-id u0)
+      (not (is-eq publisher viewer))
+      (< current-daily MAX_DAILY_VIEWS_PER_VIEWER)
+      (< current-block MAX_VIEWS_PER_BLOCK)
+    )
+  )
+)
+
 ;; Combined campaign analytics view for convenient frontend queries
 (define-read-only (get-campaign-view-summary (campaign-id uint))
   (let ((analytics (get-analytics campaign-id)))
