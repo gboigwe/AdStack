@@ -256,7 +256,9 @@
   (let (
     (publisher tx-sender)
     (earnings (get-publisher-earnings campaign-id publisher))
-    (claimable (- (get net-earnings earnings) (get claimed earnings)))
+    (claimable (if (>= (get net-earnings earnings) (get claimed earnings))
+                 (- (get net-earnings earnings) (get claimed earnings))
+                 u0))
     (payout-id (increment-payout-nonce))
     (totals (get-publisher-totals publisher))
   )
