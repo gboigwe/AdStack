@@ -252,6 +252,9 @@
 ;; Increment campaign count for a user (called by promo-manager)
 (define-public (increment-campaigns (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
+    ;; Only contract owner (or authorized caller contracts) can increment
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (map-set profiles
       { user: user }
       (merge profile {
@@ -259,6 +262,8 @@
         last-active: stacks-block-height,
       })
     )
+
+    (print { event: "campaigns-incremented", user: user, timestamp: stacks-block-time })
     (ok true)
   )
 )
