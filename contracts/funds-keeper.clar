@@ -418,3 +418,20 @@
     (ok true)
   )
 )
+
+;; Emergency withdraw stuck funds to a recipient (admin only)
+;; Use only when funds are stuck due to contract bugs or edge cases
+(define-public (emergency-withdraw (recipient principal) (amount uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    (try! (stx-transfer? amount tx-sender recipient))
+    (print {
+      event: "emergency-withdraw",
+      recipient: recipient,
+      amount: amount,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
