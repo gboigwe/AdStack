@@ -268,6 +268,8 @@
       campaign-id: campaign-id,
       publisher: publisher,
       viewer: viewer,
+      block-height: stacks-block-height,
+      daily-views-used: (+ current-daily u1),
       timestamp: stacks-block-time,
     })
 
