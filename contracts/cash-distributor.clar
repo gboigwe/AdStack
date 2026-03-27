@@ -203,6 +203,7 @@
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    (asserts! (<= amount MAX_EARNINGS_PER_RECORD) ERR_EARNINGS_OVERFLOW)
     ;; Prevent recording earnings for the contract owner itself
     (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
 
