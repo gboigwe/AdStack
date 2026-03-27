@@ -20,6 +20,7 @@
 (define-constant ERR_INVALID_PUBLISHER (err u310))
 (define-constant ERR_CONTRACT_PAUSED (err u311))
 (define-constant ERR_SPEND_OVERFLOW (err u312))
+(define-constant ERR_INVALID_AMOUNT (err u313))
 
 ;; Rate limit: max 10 views per viewer per campaign per day (~144 blocks)
 (define-constant MAX_DAILY_VIEWS_PER_VIEWER u10)
