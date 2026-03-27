@@ -170,10 +170,7 @@
       (>= (- stacks-block-height (get last-release-block escrow)) WITHDRAWAL_COOLDOWN)
     ) ERR_COOLDOWN_ACTIVE)
 
-    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
-    (try! (stx-transfer? amount tx-sender publisher))
-
-    ;; Update escrow
+    ;; Update escrow state BEFORE transfer to prevent reentrancy
     (map-set escrows
       { campaign-id: campaign-id }
       (merge escrow {
@@ -182,7 +179,7 @@
       })
     )
 
-    ;; Update publisher release record
+    ;; Update publisher release record BEFORE transfer
     (map-set publisher-releases
       { campaign-id: campaign-id, publisher: publisher }
       {
@@ -193,6 +190,10 @@
     )
 
     (var-set total-released (+ (var-get total-released) amount))
+
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
+    ;; Transfer AFTER state updates to prevent reentrancy attacks
+    (try! (stx-transfer? amount tx-sender publisher))
 
     (print {
       event: "funds-released",
