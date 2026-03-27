@@ -174,6 +174,8 @@
     (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
     ;; Campaign ID must be positive
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    ;; Campaign must have existing analytics or be a first view
+    ;; (analytics default means campaign exists in the broader system)
     ;; Publisher cannot be the viewer (prevents self-dealing)
     (asserts! (not (is-eq publisher viewer)) ERR_INVALID_VIEWER)
     ;; Rate limit check
