@@ -240,6 +240,17 @@
 
     (var-set total-flags (+ (var-get total-flags) u1))
 
+    ;; Track flag in reporter's account-threats record
+    (let ((reporter-threats (get-account-threats tx-sender)))
+      (map-set account-threats
+        { account: tx-sender }
+        (merge reporter-threats {
+          total-flags-received: (+ (get total-flags-received reporter-threats) u1),
+          last-flagged: stacks-block-height,
+        })
+      )
+    )
+
     (print {
       event: "fraud-flag-submitted",
       campaign-id: campaign-id,
