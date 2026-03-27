@@ -221,6 +221,23 @@
   )
 )
 
+(define-read-only (get-user-activity-summary (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (ok {
+        last-active: (get last-active profile),
+        blocks-since-active: (- stacks-block-height (get last-active profile)),
+        total-campaigns: (get total-campaigns profile),
+        reputation-score: (get reputation-score profile),
+        is-verified: (and
+          (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+          (< stacks-block-height (get verification-expires profile))
+        ),
+      })
+    ERR_NOT_REGISTERED
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
