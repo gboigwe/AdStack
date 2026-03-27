@@ -168,6 +168,21 @@
   (var-get total-spend-recorded)
 )
 
+;; Returns views used vs daily limit for a viewer/campaign pair
+(define-read-only (get-daily-view-rate (campaign-id uint) (viewer principal))
+  (let (
+    (day (get-day-block stacks-block-height))
+    (current (get count (default-to { count: u0 }
+      (map-get? daily-view-counts { campaign-id: campaign-id, viewer: viewer, day-block: day }))))
+  )
+    {
+      views-used: current,
+      views-limit: MAX_DAILY_VIEWS_PER_VIEWER,
+      is-at-limit: (>= current MAX_DAILY_VIEWS_PER_VIEWER),
+    }
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
