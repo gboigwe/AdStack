@@ -248,7 +248,11 @@
     (amount uint))
   (let (
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
-    (available (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
+    (outflows (+ (get released escrow) (get refunded escrow)))
+    (available (if (>= (get deposited escrow) outflows)
+      (- (get deposited escrow) outflows)
+      u0
+    ))
     (pub-release (get-publisher-release campaign-id publisher))
   )
     (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
