@@ -131,6 +131,10 @@
   (var-get contract-paused)
 )
 
+(define-read-only (get-total-escrows-created)
+  (var-get total-escrows-created)
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
