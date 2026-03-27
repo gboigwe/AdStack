@@ -192,6 +192,20 @@
   CONTRACT_VERSION
 )
 
+(define-read-only (get-verification-remaining (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (if (and
+        (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+        (> (get verification-expires profile) stacks-block-height)
+      )
+        (ok (- (get verification-expires profile) stacks-block-height))
+        (ok u0)
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
