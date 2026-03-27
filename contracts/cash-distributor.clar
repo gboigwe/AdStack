@@ -28,6 +28,7 @@
 (define-constant ERR_DUPLICATE_EARNINGS (err u614))
 (define-constant ERR_MAX_CLAIMS_REACHED (err u615))
 (define-constant ERR_EARNINGS_OVERFLOW (err u616))
+(define-constant ERR_FEE_RATE_OUT_OF_BOUNDS (err u617))
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
