@@ -136,6 +136,9 @@ export function estimateBlockTime(
   currentBlock: number,
   currentTimestamp: number,
 ): Date {
+  if (targetBlock < 0 || currentBlock < 0 || currentTimestamp < 0) {
+    throw new RangeError('estimateBlockTime: all parameters must be non-negative');
+  }
   const blockDelta = targetBlock - currentBlock;
   const secondsDelta = blockDelta * BLOCK_TIME.SECONDS_PER_BLOCK;
   return new Date((currentTimestamp + secondsDelta) * 1000);
