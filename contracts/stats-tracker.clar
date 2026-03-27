@@ -170,6 +170,8 @@
     (pub-stats (get-publisher-stats campaign-id publisher))
     (existing-record (map-get? viewer-records { campaign-id: campaign-id, viewer: viewer }))
   )
+    ;; Campaign ID must be positive
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     ;; Publisher cannot be the viewer (prevents self-dealing)
     (asserts! (not (is-eq publisher viewer)) ERR_INVALID_VIEWER)
     ;; Rate limit check
