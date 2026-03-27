@@ -417,14 +417,19 @@
 (define-public (reinstate-user (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    (asserts! (is-eq (get status profile) STATUS_SUSPENDED) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status profile) STATUS_SUSPENDED) ERR_NOT_SUSPENDED)
 
     (map-set profiles
       { user: user }
       (merge profile { status: STATUS_ACTIVE })
     )
 
-    (print { event: "user-reinstated", user: user, timestamp: stacks-block-time })
+    (print {
+      event: "user-reinstated",
+      user: user,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
