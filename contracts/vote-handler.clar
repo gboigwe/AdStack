@@ -21,6 +21,7 @@
 
 ;; Maximum active proposals per proposer to prevent spam
 (define-constant MAX_ACTIVE_PROPOSALS_PER_USER u5)
+(define-constant ERR_VOTING_NOT_STARTED (err u411))
 
 ;; Proposal status
 (define-constant STATUS_ACTIVE u1)
