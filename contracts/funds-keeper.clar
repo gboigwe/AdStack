@@ -19,6 +19,7 @@
 (define-constant ERR_INVALID_AMOUNT (err u505))
 (define-constant ERR_INVALID_RECIPIENT (err u506))
 (define-constant ERR_COOLDOWN_ACTIVE (err u507))
+(define-constant ERR_ZERO_CAMPAIGN_ID (err u508))
 
 ;; Escrow status
 (define-constant STATUS_ACTIVE u1)
