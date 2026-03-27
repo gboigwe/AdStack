@@ -198,6 +198,11 @@
   CONTRACT_VERSION
 )
 
+;; Get current campaign nonce (next available ID)
+(define-read-only (get-campaign-nonce)
+  (var-get campaign-nonce)
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
