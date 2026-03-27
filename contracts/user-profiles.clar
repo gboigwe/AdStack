@@ -287,7 +287,17 @@
       })
     )
 
-    (print { event: "verification-updated", user: user, status: status, timestamp: stacks-block-time })
+    (print {
+      event: "verification-updated",
+      user: user,
+      status: status,
+      expires: (if (is-eq status VERIFICATION_VERIFIED)
+        (+ stacks-block-height VERIFICATION_VALIDITY_BLOCKS)
+        u0
+      ),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
