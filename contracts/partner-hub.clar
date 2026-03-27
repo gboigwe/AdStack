@@ -226,7 +226,11 @@
       })
     )
 
-    (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
+    ;; Guard against underflow when decrementing active count
+    (if (> (var-get total-active-partnerships) u0)
+      (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
+      true
+    )
 
     (print { event: "partnership-paused", partnership-id: partnership-id, paused-by: tx-sender, timestamp: stacks-block-time })
     (ok true)
