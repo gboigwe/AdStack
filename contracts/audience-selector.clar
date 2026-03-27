@@ -195,6 +195,14 @@
       (merge segment { tag-count: (+ current-tags u1) })
     )
 
+    (print {
+      event: "segment-tag-added",
+      segment-id: segment-id,
+      tag: tag,
+      tag-index: current-tags,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
