@@ -207,6 +207,9 @@
     ;; Prevent recording earnings for the contract owner itself
     (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
 
+    ;; Overflow protection: ensure accumulated gross won't exceed uint max
+    (asserts! (>= (- u340282366920938463463374607431768211455 amount) (get gross-earnings current)) ERR_EARNINGS_OVERFLOW)
+
     ;; Update per-campaign earnings
     (map-set publisher-earnings
       { campaign-id: campaign-id, publisher: publisher }
