@@ -126,7 +126,20 @@
 ;; --- Read-Only Functions ---
 
 (define-read-only (get-profile (user principal))
-  (map-get? profiles { user: user })
+  (match (map-get? profiles { user: user })
+    profile
+      (some (merge profile {
+        verification-status: (if (and
+          (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+          (>= stacks-block-height (get verification-expires profile))
+          (> (get verification-expires profile) u0)
+        )
+          VERIFICATION_UNVERIFIED
+          (get verification-status profile)
+        )
+      }))
+    none
+  )
 )
 
 (define-read-only (is-registered (user principal))
