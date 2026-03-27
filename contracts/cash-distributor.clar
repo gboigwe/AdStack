@@ -158,7 +158,10 @@
 
 (define-read-only (get-claimable-amount (campaign-id uint) (publisher principal))
   (let ((earnings (get-publisher-earnings campaign-id publisher)))
-    (- (get net-earnings earnings) (get claimed earnings))
+    (if (>= (get net-earnings earnings) (get claimed earnings))
+      (- (get net-earnings earnings) (get claimed earnings))
+      u0
+    )
   )
 )
 
