@@ -13,6 +13,7 @@ import {
   STXTransferOptions,
   SignTransactionOptions,
 } from '@stacks/connect';
+import { PostConditionMode } from '@stacks/transactions';
 import { getStacksNetwork, SupportedNetwork } from './stacks-network';
 import { CONTRACT_ADDRESS, APP_DETAILS, CONTRACTS } from './stacks-config';
 import type { ContractName } from './stacks-config';
@@ -60,7 +61,7 @@ export function connectContractCall(options: ConnectCallOptions): void {
     network,
     appDetails: APP_DETAILS,
     postConditions: options.postConditions ?? [],
-    postConditionMode: options.postConditionMode === 'allow' ? 0x01 : 0x02,
+    postConditionMode: options.postConditionMode === 'allow' ? PostConditionMode.Allow : PostConditionMode.Deny,
     onFinish: options.onFinish
       ? (data) => options.onFinish!({ txId: data.txId, txRaw: data.txRaw })
       : undefined,
@@ -126,6 +127,6 @@ export function connectSignTransaction(
 // ---------------------------------------------------------------------------
 
 export const PC_MODE = {
-  DENY: 0x02 as const,
-  ALLOW: 0x01 as const,
+  DENY: PostConditionMode.Deny,
+  ALLOW: PostConditionMode.Allow,
 };
