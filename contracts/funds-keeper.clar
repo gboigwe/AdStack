@@ -179,6 +179,21 @@
   )
 )
 
+;; Validation helper: check if a new escrow can be created for a campaign
+(define-read-only (can-create-escrow (campaign-id uint) (amount uint))
+  (ok {
+    allowed: (and
+      (not (var-get contract-paused))
+      (> campaign-id u0)
+      (is-none (map-get? escrows { campaign-id: campaign-id }))
+      (>= amount MIN_ESCROW_AMOUNT)
+    ),
+    contract-paused: (var-get contract-paused),
+    escrow-exists: (is-some (map-get? escrows { campaign-id: campaign-id })),
+    meets-minimum: (>= amount MIN_ESCROW_AMOUNT),
+  })
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
