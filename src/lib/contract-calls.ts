@@ -147,12 +147,78 @@ export function buildCancelCampaign(campaignId: number) {
  * permissionless so anyone can trigger cleanup of expired campaigns.
  */
 export function buildCompleteExpiredCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildCompleteExpiredCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
     functionName: 'complete-expired-campaign',
     functionArgs: [toUIntCV(campaignId)],
     postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for extending campaign duration.
+ * Calls promo-manager.extend-campaign-duration. Only the advertiser can extend.
+ */
+export function buildExtendCampaignDuration(campaignId: number, additionalBlocks: number) {
+  if (campaignId < 0) throw new Error('buildExtendCampaignDuration: campaignId must be non-negative');
+  if (additionalBlocks <= 0) throw new Error('buildExtendCampaignDuration: additionalBlocks must be positive');
+  if (additionalBlocks > 12960) throw new Error('buildExtendCampaignDuration: additionalBlocks exceeds MAX_DURATION_BLOCKS');
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'extend-campaign-duration',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(additionalBlocks)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for increasing campaign budget.
+ * Requires additional STX deposit from advertiser to CONTRACT_OWNER.
+ */
+export function buildIncreaseCampaignBudget(
+  senderAddress: string,
+  campaignId: number,
+  additionalBudgetSTX: number,
+) {
+  if (!senderAddress) throw new Error('buildIncreaseCampaignBudget: senderAddress is required');
+  if (campaignId < 0) throw new Error('buildIncreaseCampaignBudget: campaignId must be non-negative');
+  if (additionalBudgetSTX <= 0) throw new Error('buildIncreaseCampaignBudget: additionalBudgetSTX must be positive');
+
+  const additionalMicro = stxToMicroStx(additionalBudgetSTX);
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'increase-campaign-budget',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(additionalMicro)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: createCampaignFundingPostConditions(senderAddress, additionalBudgetSTX),
+  };
+}
+
+/**
+ * Build contract call for updating campaign daily budget.
+ * Only the advertiser can update the daily spend limit.
+ */
+export function buildUpdateDailyBudget(campaignId: number, newDailyBudgetSTX: number) {
+  if (campaignId < 0) throw new Error('buildUpdateDailyBudget: campaignId must be non-negative');
+  if (newDailyBudgetSTX <= 0) throw new Error('buildUpdateDailyBudget: newDailyBudgetSTX must be positive');
+
+  const dailyMicro = stxToMicroStx(newDailyBudgetSTX);
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'update-daily-budget',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(dailyMicro)],
+    postConditionMode: PC_MODE.DENY,
     postConditions: [],
   };
 }
