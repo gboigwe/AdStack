@@ -302,6 +302,14 @@
       (merge profile { tag-count: (+ current-tags u1), last-updated: stacks-block-height })
     )
 
+    (print {
+      event: "publisher-tag-added",
+      publisher: tx-sender,
+      tag: tag,
+      tag-index: current-tags,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
