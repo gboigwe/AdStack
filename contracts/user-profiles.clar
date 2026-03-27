@@ -47,7 +47,15 @@
 ;; Maximum number of campaigns per user
 (define-constant MAX_CAMPAIGNS_PER_USER u100)
 
+;; Reputation bounds
+(define-constant MAX_REPUTATION u100)
+(define-constant MIN_REPUTATION u0)
+
+;; Reputation decays 1 point per REPUTATION_DECAY_BLOCKS of inactivity
+(define-constant REPUTATION_DECAY_BLOCKS u1440)
+
 ;; Maximum display name length
+(define-constant MAX_DISPLAY_NAME_LENGTH u48)
 (define-constant MAX_NAME_LENGTH u48)
 
 ;; --- Data Variables ---
