@@ -213,7 +213,7 @@
     (advertiser-count (get count (get-advertiser-campaigns tx-sender)))
   )
     ;; Validations
-    (asserts! (not (var-get contract-paused)) ERR_NOT_AUTHORIZED)
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
     (asserts! (>= budget MIN_BUDGET) ERR_INVALID_BUDGET)
     (asserts! (> (len name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
