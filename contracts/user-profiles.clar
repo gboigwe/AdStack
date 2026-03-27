@@ -242,6 +242,10 @@
   (var-get total-verifications)
 )
 
+(define-read-only (get-total-suspensions)
+  (var-get total-suspensions)
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
