@@ -55,6 +55,7 @@
 (define-data-var total-distributed uint u0)
 (define-data-var total-fees-collected uint u0)
 (define-data-var payouts-paused bool false)
+(define-data-var total-payouts-count uint u0)
 
 ;; --- Data Maps ---
 

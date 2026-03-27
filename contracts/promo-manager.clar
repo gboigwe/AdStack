@@ -625,7 +625,10 @@
     (print {
       event: "spend-recorded",
       campaign-id: campaign-id,
+      advertiser: (get advertiser campaign),
       amount: amount,
+      total-spent: (+ (get spent campaign) amount),
+      remaining-budget: (- (get budget campaign) (+ (get spent campaign) amount)),
       timestamp: stacks-block-time,
     })
     (ok true)
