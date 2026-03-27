@@ -29,8 +29,17 @@ export const NETWORK: StacksNetwork = NETWORKS[CURRENT_NETWORK];
  */
 const DEVNET_DEPLOYER = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
 
+const envContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+
+if (!envContractAddress && CURRENT_NETWORK === 'mainnet' && typeof console !== 'undefined') {
+  console.warn(
+    '[AdStack] NEXT_PUBLIC_CONTRACT_ADDRESS not set for mainnet. Using fallback address. ' +
+    'Set this environment variable before deploying to production.'
+  );
+}
+
 export const CONTRACT_ADDRESS =
-  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  envContractAddress ||
   (CURRENT_NETWORK === 'devnet' ? DEVNET_DEPLOYER : 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD');
 
 /**
