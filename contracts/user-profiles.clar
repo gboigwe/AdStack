@@ -367,10 +367,17 @@
       })
     )
 
+    ;; Increment verification counter when approving
+    (if (is-eq status VERIFICATION_VERIFIED)
+      (var-set total-verifications (+ (var-get total-verifications) u1))
+      true
+    )
+
     (print {
       event: "verification-updated",
       user: user,
-      status: status,
+      old-status: (get verification-status profile),
+      new-status: status,
       expires: (if (is-eq status VERIFICATION_VERIFIED)
         (+ stacks-block-height VERIFICATION_VALIDITY_BLOCKS)
         u0
