@@ -205,6 +205,8 @@
   (let (
     (proposal (unwrap! (map-get? proposals { proposal-id: proposal-id }) ERR_PROPOSAL_NOT_FOUND))
   )
+    ;; Governance must not be paused
+    (asserts! (not (var-get governance-paused)) ERR_NOT_AUTHORIZED)
     ;; Voting must be open
     (asserts! (is-eq (get status proposal) STATUS_ACTIVE) ERR_VOTING_CLOSED)
     (asserts! (<= stacks-block-height (get end-height proposal)) ERR_VOTING_CLOSED)
