@@ -34,6 +34,7 @@
 
 ;; Configurable constants
 (define-constant BLOCKS_PER_DAY u144)
+(define-constant MAX_RELEASE_PER_TX u500000000)
 
 ;; Minimum escrow amount: 0.1 STX
 (define-constant MIN_ESCROW_AMOUNT u100000)
