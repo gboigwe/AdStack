@@ -438,14 +438,23 @@
 (define-public (update-reputation (user principal) (new-score uint))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    ;; Clamp reputation to 0-100
-    (let ((clamped-score (if (> new-score u100) u100 new-score)))
+    ;; Clamp reputation to bounds
+    (let ((old-score (get reputation-score profile))
+          (clamped-score (if (> new-score MAX_REPUTATION) MAX_REPUTATION
+                           (if (< new-score MIN_REPUTATION) MIN_REPUTATION new-score))))
       (map-set profiles
         { user: user }
         (merge profile { reputation-score: clamped-score })
       )
 
-      (print { event: "reputation-updated", user: user, score: clamped-score, timestamp: stacks-block-time })
+      (print {
+        event: "reputation-updated",
+        user: user,
+        old-score: old-score,
+        new-score: clamped-score,
+        admin: tx-sender,
+        timestamp: stacks-block-time,
+      })
       (ok true)
     )
   )
