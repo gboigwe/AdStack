@@ -244,6 +244,7 @@
 ;; Update display name
 (define-public (update-display-name (new-name (string-ascii 48)))
   (let ((profile (unwrap! (map-get? profiles { user: tx-sender }) ERR_NOT_REGISTERED)))
+    (asserts! (is-not-paused) ERR_CONTRACT_PAUSED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (asserts! (> (len new-name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len new-name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
