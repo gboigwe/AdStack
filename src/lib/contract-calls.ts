@@ -719,6 +719,10 @@ export function buildCreateSegment(
  * Build contract call to add a tag to an audience segment.
  */
 export function buildAddSegmentTag(segmentId: number, tag: string) {
+  if (segmentId < 0) throw new Error('buildAddSegmentTag: segmentId must be non-negative');
+  if (!tag || tag.length === 0) throw new Error('buildAddSegmentTag: tag is required');
+  if (tag.length > 32) throw new Error('buildAddSegmentTag: tag exceeds max length (32)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
