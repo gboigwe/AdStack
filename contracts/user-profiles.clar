@@ -579,3 +579,41 @@
     (ok true)
   )
 )
+
+;; Batch update reputation for multiple users (admin only)
+;; Accepts a list of {user, score} tuples up to 10 entries.
+(define-public (batch-update-reputation
+  (updates (list 10 { user: principal, score: uint }))
+)
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map batch-update-reputation-single updates)
+    (print {
+      event: "batch-reputation-updated",
+      count: (len updates),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+(define-private (batch-update-reputation-single (entry { user: principal, score: uint }))
+  (let (
+    (user (get user entry))
+    (new-score (get score entry))
+    (clamped (if (> new-score MAX_REPUTATION) MAX_REPUTATION new-score))
+  )
+    (match (map-get? profiles { user: user })
+      profile
+        (begin
+          (map-set profiles
+            { user: user }
+            (merge profile { reputation-score: clamped })
+          )
+          true
+        )
+      false
+    )
+  )
+)
