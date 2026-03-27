@@ -54,6 +54,9 @@
 ;; Reputation decays 1 point per REPUTATION_DECAY_BLOCKS of inactivity
 (define-constant REPUTATION_DECAY_BLOCKS u1440)
 
+;; Default window for "active user" checks (~5 days)
+(define-constant DEFAULT_ACTIVE_WINDOW u720)
+
 ;; Maximum display name length (use MAX_DISPLAY_NAME_LENGTH going forward)
 (define-constant MAX_DISPLAY_NAME_LENGTH u48)
 (define-constant MAX_NAME_LENGTH MAX_DISPLAY_NAME_LENGTH)
