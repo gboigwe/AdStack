@@ -135,6 +135,10 @@
   (var-get total-escrows-created)
 )
 
+(define-read-only (get-total-releases-count)
+  (var-get total-releases-count)
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
