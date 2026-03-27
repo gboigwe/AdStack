@@ -133,6 +133,7 @@
 (define-public (create-escrow (campaign-id uint) (advertiser principal) (amount uint))
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-none (map-get? escrows { campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
     (asserts! (>= amount MIN_ESCROW_AMOUNT) ERR_INVALID_AMOUNT)
 
