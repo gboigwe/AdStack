@@ -187,6 +187,8 @@
   )
     ;; Validate flag type (1-5)
     (asserts! (and (>= flag-type u1) (<= flag-type u5)) ERR_INVALID_SCORE)
+    ;; Validate evidence hash is not empty (all zeros)
+    (asserts! (not (is-eq evidence-hash 0x0000000000000000000000000000000000000000000000000000000000000000)) ERR_INVALID_SCORE)
 
     ;; Rate limit: check cooldown period for this reporter on this campaign
     (let ((last-flag (default-to { last-flag-block: u0 }
