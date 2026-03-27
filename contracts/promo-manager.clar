@@ -236,6 +236,44 @@
   )
 )
 
+;; Get platform-wide statistics summary
+(define-read-only (get-platform-stats)
+  {
+    total-campaigns: (var-get total-campaigns-created),
+    total-locked: (var-get total-stx-locked),
+    total-spent: (var-get total-stx-spent),
+    total-completed: (var-get total-campaigns-completed),
+    total-cancelled: (var-get total-campaigns-cancelled),
+    next-campaign-id: (var-get campaign-nonce),
+    is-paused: (var-get contract-paused),
+  }
+)
+
+;; Get campaign budget utilization as a percentage (0-100)
+(define-read-only (get-campaign-utilization (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (if (> (get budget campaign) u0)
+      (/ (* (get spent campaign) u100) (get budget campaign))
+      u0
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
+;; Check if spending is allowed for a campaign (active, not expired, not paused, within budget)
+(define-read-only (can-record-spend (campaign-id uint) (amount uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (and
+      (not (var-get contract-paused))
+      (is-eq (get status campaign) STATUS_ACTIVE)
+      (<= stacks-block-height (get end-height campaign))
+      (> amount u0)
+      (<= (+ (get spent campaign) amount) (get budget campaign))
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
