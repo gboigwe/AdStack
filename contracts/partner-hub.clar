@@ -18,6 +18,8 @@
 (define-constant ERR_SELF_PARTNER (err u904))
 (define-constant ERR_INACTIVE (err u905))
 (define-constant ERR_WRONG_STATUS (err u906))
+(define-constant ERR_EXPIRED (err u907))
+(define-constant ERR_DUPLICATE_ENROLLMENT (err u908))
 
 ;; Partnership statuses
 (define-constant STATUS_PENDING u1)
