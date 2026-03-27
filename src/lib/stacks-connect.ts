@@ -113,6 +113,9 @@ export function connectSignTransaction(
     onCancel?: () => void;
   } = {},
 ): void {
+  if (!txHex || txHex.length === 0) throw new Error('connectSignTransaction: txHex is required');
+  if (!/^[0-9a-fA-F]+$/.test(txHex)) throw new Error('connectSignTransaction: txHex must be valid hex');
+
   const network = getStacksNetwork(options.network);
 
   const signOptions: SignTransactionOptions = {
