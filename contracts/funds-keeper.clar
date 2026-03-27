@@ -419,6 +419,32 @@
   )
 )
 
+;; Batch release info: returns escrow state plus publisher release data
+;; Useful for frontend to get all needed data in a single read-only call
+(define-read-only (get-release-info (campaign-id uint) (publisher principal))
+  (match (map-get? escrows { campaign-id: campaign-id })
+    escrow (let (
+      (pub-release (get-publisher-release campaign-id publisher))
+      (outflows (+ (get released escrow) (get refunded escrow)))
+      (available (if (>= (get deposited escrow) outflows)
+        (- (get deposited escrow) outflows)
+        u0
+      ))
+    )
+      (ok {
+        deposited: (get deposited escrow),
+        total-released: (get released escrow),
+        available: available,
+        status: (get status escrow),
+        publisher-released: (get total-released pub-release),
+        publisher-release-count: (get release-count pub-release),
+        publisher-last-release: (get last-release-block pub-release),
+      })
+    )
+    ERR_ESCROW_NOT_FOUND
+  )
+)
+
 ;; --- Admin Functions ---
 
 ;; Toggle contract paused state (admin only)
