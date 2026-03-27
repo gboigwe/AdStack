@@ -9,8 +9,17 @@ import { CURRENT_NETWORK, APP_DETAILS } from './stacks-config';
  * WalletConnect Project ID
  * Get yours at https://cloud.reown.com/
  */
-export const WALLETCONNECT_PROJECT_ID =
-  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project-id';
+const envProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+if (!envProjectId && typeof console !== 'undefined') {
+  console.error(
+    '[AdStack] NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is not set. ' +
+    'WalletConnect will not work without a valid project ID. ' +
+    'Get one at https://cloud.reown.com/'
+  );
+}
+
+export const WALLETCONNECT_PROJECT_ID = envProjectId || '';
 
 /**
  * Stacks Chain Configuration for Reown AppKit
