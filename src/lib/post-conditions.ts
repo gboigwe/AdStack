@@ -29,6 +29,12 @@ export function createSTXTransferExact(
   senderAddress: string,
   amountSTX: number,
 ) {
+  if (!senderAddress || senderAddress.length === 0) {
+    throw new Error('createSTXTransferExact: senderAddress is required');
+  }
+  if (amountSTX <= 0 || !Number.isFinite(amountSTX)) {
+    throw new Error('createSTXTransferExact: amountSTX must be a positive finite number');
+  }
   const microAmount = BigInt(Math.floor(amountSTX * MICRO_STX));
   return Pc.principal(senderAddress).willSendEq(microAmount).ustx();
 }
