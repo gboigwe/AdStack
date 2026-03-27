@@ -547,3 +547,18 @@
     )
   )
 )
+
+;; Set contract paused state (admin only)
+(define-public (set-contract-paused (paused bool))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (var-set contract-paused paused)
+    (print {
+      event: "contract-pause-toggled",
+      paused: paused,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
