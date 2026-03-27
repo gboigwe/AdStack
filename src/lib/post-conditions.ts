@@ -65,6 +65,12 @@ export function createContractSTXTransfer(
   contractName: ContractName,
   maxSTX: number,
 ) {
+  if (!contractName || contractName.length === 0) {
+    throw new Error('createContractSTXTransfer: contractName is required');
+  }
+  if (maxSTX <= 0 || !Number.isFinite(maxSTX)) {
+    throw new Error('createContractSTXTransfer: maxSTX must be a positive finite number');
+  }
   const microAmount = BigInt(Math.floor(maxSTX * MICRO_STX));
   const contractPrincipal = `${CONTRACT_ADDRESS}.${contractName}`;
   return Pc.principal(contractPrincipal).willSendLte(microAmount).ustx();
