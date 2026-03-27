@@ -175,6 +175,7 @@
     (pub-release (get-publisher-release campaign-id publisher))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
     (asserts! (<= amount available) ERR_INSUFFICIENT_BALANCE)
