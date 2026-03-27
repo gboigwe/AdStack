@@ -160,6 +160,10 @@
   (var-get contract-paused)
 )
 
+(define-read-only (get-total-campaigns-tracked)
+  (var-get total-campaigns-tracked)
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
