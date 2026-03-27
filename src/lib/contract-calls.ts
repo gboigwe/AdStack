@@ -10,6 +10,7 @@ import {
   getContractId,
   stxToMicroStx,
   BLOCK_TIME,
+  CAMPAIGN_LIMITS,
 } from './stacks-config';
 import { toUIntCV, toStringAsciiCV, toPrincipalCV, toBoolCV } from './clarity-converters';
 import {
