@@ -820,6 +820,10 @@ export function buildProposePartnership(
   commissionRate: number,
   message: string,
 ) {
+  if (!publisherAddress) throw new Error('buildProposePartnership: publisherAddress is required');
+  if (commissionRate < 100 || commissionRate > 5000) throw new Error('buildProposePartnership: commissionRate must be between 100-5000 bps');
+  if (!message || message.length === 0) throw new Error('buildProposePartnership: message is required');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PARTNER_HUB,
