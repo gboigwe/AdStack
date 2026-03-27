@@ -335,6 +335,14 @@
       { score: score, computed-at: stacks-block-height }
     )
 
+    (print {
+      event: "match-score-recorded",
+      segment-id: segment-id,
+      publisher: publisher,
+      score: score,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
