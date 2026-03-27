@@ -338,6 +338,17 @@
     (totals (get-publisher-totals publisher))
   )
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    ;; Emit denial event when payouts are paused for monitoring
+    (if (var-get payouts-paused)
+      (print {
+        event: "claim-denied",
+        publisher: publisher,
+        campaign-id: campaign-id,
+        reason: "payouts-paused",
+        timestamp: stacks-block-time,
+      })
+      true
+    )
     (asserts! (not (var-get payouts-paused)) ERR_PAYOUT_PAUSED)
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
