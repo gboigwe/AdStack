@@ -442,7 +442,13 @@
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (var-set payouts-paused paused)
-    (print { event: "payouts-pause-toggled", paused: paused, timestamp: stacks-block-time })
+    (print {
+      event: "payouts-pause-toggled",
+      paused: paused,
+      admin: tx-sender,
+      total-payouts-at-toggle: (var-get total-payouts-processed),
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
