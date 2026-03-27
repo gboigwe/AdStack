@@ -386,6 +386,105 @@
   )
 )
 
+;; Extend campaign duration (advertiser only, active campaigns)
+(define-public (extend-campaign-duration (campaign-id uint) (additional-blocks uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> additional-blocks u0) ERR_INVALID_DURATION)
+    (asserts! (<= additional-blocks MAX_DURATION_BLOCKS) ERR_INVALID_DURATION)
+
+    (let ((new-end-height (+ (get end-height campaign) additional-blocks)))
+      (map-set campaigns
+        { campaign-id: campaign-id }
+        (merge campaign {
+          end-height: new-end-height,
+          last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
+        })
+      )
+
+      (print {
+        event: "campaign-duration-extended",
+        campaign-id: campaign-id,
+        additional-blocks: additional-blocks,
+        new-end-height: new-end-height,
+        timestamp: stacks-block-time,
+      })
+      (ok new-end-height)
+    )
+  )
+)
+
+;; Increase campaign budget (advertiser only, requires additional STX deposit)
+(define-public (increase-campaign-budget (campaign-id uint) (additional-budget uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (or
+      (is-eq (get status campaign) STATUS_ACTIVE)
+      (is-eq (get status campaign) STATUS_PAUSED)
+    ) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (>= additional-budget MIN_BUDGET) ERR_INVALID_BUDGET)
+
+    ;; Transfer additional STX to CONTRACT_OWNER escrow
+    (try! (stx-transfer? additional-budget tx-sender CONTRACT_OWNER))
+
+    (let ((new-budget (+ (get budget campaign) additional-budget)))
+      (map-set campaigns
+        { campaign-id: campaign-id }
+        (merge campaign {
+          budget: new-budget,
+          last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
+        })
+      )
+
+      ;; Update total locked
+      (var-set total-stx-locked (+ (var-get total-stx-locked) additional-budget))
+
+      (print {
+        event: "campaign-budget-increased",
+        campaign-id: campaign-id,
+        additional-budget: additional-budget,
+        new-budget: new-budget,
+        timestamp: stacks-block-time,
+      })
+      (ok new-budget)
+    )
+  )
+)
+
+;; Update daily budget for a campaign (advertiser only)
+(define-public (update-daily-budget (campaign-id uint) (new-daily-budget uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> new-daily-budget u0) ERR_INVALID_DAILY_BUDGET)
+    (asserts! (<= new-daily-budget (get budget campaign)) ERR_INVALID_DAILY_BUDGET)
+
+    (map-set campaigns
+      { campaign-id: campaign-id }
+      (merge campaign {
+        daily-budget: new-daily-budget,
+        last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
+      })
+    )
+
+    (print {
+      event: "daily-budget-updated",
+      campaign-id: campaign-id,
+      old-daily-budget: (get daily-budget campaign),
+      new-daily-budget: new-daily-budget,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
 ;; Cancel a campaign and mark for refund
 ;; Clarity 4: actual STX refund is issued by CONTRACT_OWNER in refund-campaign-budget
 (define-public (cancel-campaign (campaign-id uint))
