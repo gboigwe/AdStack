@@ -106,6 +106,11 @@
   )
 )
 
+;; Validate that budget + existing locked doesn't overflow
+(define-private (check-budget-overflow (additional uint))
+  (<= (+ (var-get total-stx-locked) additional) u340282366920938463463374607431768211455)
+)
+
 (define-private (increment-nonce)
   (let ((current (var-get campaign-nonce)))
     (var-set campaign-nonce (+ current u1))
