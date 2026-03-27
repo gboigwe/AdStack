@@ -54,10 +54,15 @@ export function toBoolCV(value: boolean): BoolCV {
  * Create a Clarity string-ascii value.
  * Validates that the string only contains ASCII characters.
  */
-export function toStringAsciiCV(value: string): StringAsciiCV {
+const MAX_ASCII_STRING_LENGTH = 128;
+
+export function toStringAsciiCV(value: string, maxLength = MAX_ASCII_STRING_LENGTH): StringAsciiCV {
+  if (value.length > maxLength) {
+    throw new RangeError(`ASCII string length ${value.length} exceeds max ${maxLength}`);
+  }
   for (let i = 0; i < value.length; i++) {
     if (value.charCodeAt(i) > 127) {
-      throw new RangeError(`Non-ASCII character at position ${i}: "${value[i]}"`);
+      throw new RangeError(`Non-ASCII character at position ${i}: "${value[i]}" (code ${value.charCodeAt(i)})`);
     }
   }
   return { type: 'string-ascii', value };
