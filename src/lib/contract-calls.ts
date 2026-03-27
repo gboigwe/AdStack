@@ -69,6 +69,8 @@ export function buildCreateCampaign(
  * Build contract call options for pausing a campaign.
  */
 export function buildPauseCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildPauseCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
