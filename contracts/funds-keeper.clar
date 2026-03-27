@@ -12,7 +12,7 @@
 
 ;; --- Constants ---
 
-(define-constant CONTRACT_VERSION "4.0.0")
+(define-constant CONTRACT_VERSION "4.1.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u500))
 (define-constant ERR_ESCROW_NOT_FOUND (err u501))
