@@ -364,7 +364,7 @@
       })
     )
 
-    (print { event: "campaign-paused", campaign-id: campaign-id, timestamp: stacks-block-time })
+    (print { event: "campaign-paused", campaign-id: campaign-id, advertiser: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
