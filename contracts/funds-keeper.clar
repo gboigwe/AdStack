@@ -117,7 +117,7 @@
 ;; Create a new escrow for a campaign (called during campaign creation)
 (define-public (create-escrow (campaign-id uint) (advertiser principal) (amount uint))
   (begin
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-none (map-get? escrows { campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
     (asserts! (>= amount MIN_ESCROW_AMOUNT) ERR_INVALID_AMOUNT)
 
@@ -158,7 +158,7 @@
     (available (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
     (pub-release (get-publisher-release campaign-id publisher))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
     (asserts! (<= amount available) ERR_INSUFFICIENT_BALANCE)
@@ -213,7 +213,7 @@
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
     (remaining (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
 
     (if (> remaining u0)
@@ -260,7 +260,7 @@
   (let (
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
 
     (map-set escrows
