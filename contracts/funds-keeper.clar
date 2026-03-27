@@ -275,6 +275,14 @@
           timestamp: stacks-block-time,
         })
 
+        (print {
+          event: "escrow-status-changed",
+          campaign-id: campaign-id,
+          old-status: STATUS_ACTIVE,
+          new-status: STATUS_REFUNDED,
+          timestamp: stacks-block-time,
+        })
+
         (ok remaining)
       )
       (begin
