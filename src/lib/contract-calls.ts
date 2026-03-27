@@ -38,6 +38,12 @@ export function buildCreateCampaign(
   senderAddress: string,
   params: CreateCampaignParams,
 ) {
+  if (!senderAddress) throw new Error('buildCreateCampaign: senderAddress is required');
+  if (!params.name || params.name.length === 0) throw new Error('buildCreateCampaign: name is required');
+  if (Number(params.budget) <= 0) throw new Error('buildCreateCampaign: budget must be positive');
+  if (Number(params.dailyBudget) <= 0) throw new Error('buildCreateCampaign: dailyBudget must be positive');
+  if (Number(params.dailyBudget) > Number(params.budget)) throw new Error('buildCreateCampaign: dailyBudget cannot exceed total budget');
+
   const budgetMicro = stxToMicroStx(Number(params.budget));
   const dailyMicro = stxToMicroStx(Number(params.dailyBudget));
 
