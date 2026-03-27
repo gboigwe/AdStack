@@ -203,6 +203,14 @@
   (var-get campaign-nonce)
 )
 
+;; Check if a campaign has expired based on block height
+(define-read-only (is-campaign-expired (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (> stacks-block-height (get end-height campaign))
+    false
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
