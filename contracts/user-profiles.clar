@@ -14,6 +14,8 @@
 (define-constant ERR_ACCOUNT_SUSPENDED (err u205))
 (define-constant ERR_ALREADY_VERIFIED (err u206))
 (define-constant ERR_VERIFICATION_PENDING (err u207))
+(define-constant ERR_INVALID_SCORE (err u208))
+(define-constant ERR_NOT_ACTIVE (err u209))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
