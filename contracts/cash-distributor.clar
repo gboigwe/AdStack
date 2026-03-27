@@ -25,6 +25,7 @@
 (define-constant ERR_CLAIM_BELOW_MINIMUM (err u611))
 (define-constant ERR_INSUFFICIENT_CONTRACT_BALANCE (err u612))
 (define-constant ERR_FEE_CALCULATION_ERROR (err u613))
+(define-constant ERR_DUPLICATE_EARNINGS (err u614))
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
