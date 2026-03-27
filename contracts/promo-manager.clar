@@ -563,6 +563,8 @@
       event: "campaign-budget-refunded",
       campaign-id: campaign-id,
       amount: remaining,
+      total-budget: (get budget campaign),
+      total-spent: (get spent campaign),
       recipient: (get advertiser campaign),
       timestamp: stacks-block-time,
     })
