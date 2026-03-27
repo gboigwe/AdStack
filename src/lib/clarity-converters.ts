@@ -20,9 +20,12 @@ import type {
  * Create a Clarity uint value.
  * @param value - Non-negative integer or bigint
  */
+const UINT128_MAX = (1n << 128n) - 1n;
+
 export function toUIntCV(value: number | bigint): UIntCV {
   const n = typeof value === 'number' ? BigInt(Math.floor(value)) : value;
   if (n < 0n) throw new RangeError('UInt cannot be negative');
+  if (n > UINT128_MAX) throw new RangeError(`UInt value ${n} exceeds uint128 max (${UINT128_MAX})`);
   return { type: 'uint', value: n };
 }
 
