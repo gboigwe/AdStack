@@ -214,6 +214,17 @@
   )
 )
 
+(define-read-only (get-platform-revenue)
+  {
+    total-fees-collected: (var-get total-fees-collected),
+    total-distributed: (var-get total-distributed),
+    total-payouts: (var-get total-payouts-processed),
+    total-publishers-paid: (var-get total-publishers-paid),
+    current-fee-rate: (var-get current-fee-rate),
+    fee-denominator: FEE_DENOMINATOR,
+  }
+)
+
 ;; --- Public Functions ---
 
 ;; Record publisher earnings for a campaign (admin or authorized contract)
