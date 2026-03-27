@@ -235,9 +235,12 @@
   )
 )
 
-;; Update activity timestamp (called by other contracts)
+;; Update activity timestamp (called by other contracts or the user themselves)
 (define-public (update-activity (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
+    ;; Only the user or contract owner can update activity
+    (asserts! (or (is-eq tx-sender user) (is-contract-owner)) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (map-set profiles
       { user: user }
       (merge profile { last-active: stacks-block-height })
