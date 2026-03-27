@@ -32,8 +32,14 @@ export function toUIntCV(value: number | bigint): UIntCV {
 /**
  * Create a Clarity int value.
  */
+const INT128_MIN = -(1n << 127n);
+const INT128_MAX = (1n << 127n) - 1n;
+
 export function toIntCV(value: number | bigint): IntCV {
   const n = typeof value === 'number' ? BigInt(Math.floor(value)) : value;
+  if (n < INT128_MIN || n > INT128_MAX) {
+    throw new RangeError(`Int value ${n} is outside int128 range [${INT128_MIN}, ${INT128_MAX}]`);
+  }
   return { type: 'int', value: n };
 }
 
