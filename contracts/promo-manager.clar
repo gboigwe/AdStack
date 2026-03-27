@@ -25,6 +25,7 @@
 (define-constant ERR_DAILY_BUDGET_EXCEEDED (err u109))
 (define-constant ERR_CONTRACT_PAUSED (err u110))
 (define-constant ERR_ZERO_AMOUNT (err u111))
+(define-constant ERR_ALREADY_COMPLETED (err u112))
 
 ;; Minimum budget: 1 STX (1,000,000 micro-STX)
 (define-constant MIN_BUDGET u1000000)
