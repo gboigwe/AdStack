@@ -418,6 +418,9 @@ export function buildReadUserCounts() {
  * Build contract call for updating display name.
  */
 export function buildUpdateDisplayName(newName: string) {
+  if (!newName || newName.length === 0) throw new Error('buildUpdateDisplayName: newName is required');
+  if (newName.length > 48) throw new Error('buildUpdateDisplayName: newName exceeds max length (48)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.USER_PROFILES,
