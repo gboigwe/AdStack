@@ -183,6 +183,23 @@
   )
 )
 
+;; Combined campaign analytics view for convenient frontend queries
+(define-read-only (get-campaign-view-summary (campaign-id uint))
+  (let ((analytics (get-analytics campaign-id)))
+    {
+      campaign-id: campaign-id,
+      total-views: (get total-views analytics),
+      unique-viewers: (get unique-viewers analytics),
+      total-spent: (get total-spent analytics),
+      last-view-block: (get last-view-block analytics),
+      avg-views-per-viewer: (if (> (get unique-viewers analytics) u0)
+        (/ (get total-views analytics) (get unique-viewers analytics))
+        u0
+      ),
+    }
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
