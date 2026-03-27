@@ -21,6 +21,7 @@
 (define-constant ERR_MIN_PAYOUT_NOT_MET (err u607))
 (define-constant ERR_SELF_PAYOUT (err u608))
 (define-constant ERR_ZERO_CAMPAIGN_ID (err u609))
+(define-constant ERR_PUBLISHER_NOT_FOUND (err u610))
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
