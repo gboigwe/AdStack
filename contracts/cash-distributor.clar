@@ -30,6 +30,9 @@
 (define-constant ERR_EARNINGS_OVERFLOW (err u616))
 (define-constant ERR_FEE_RATE_OUT_OF_BOUNDS (err u617))
 
+;; Configurable limits
+(define-constant MAX_CLAIMS_PER_BLOCK u10)
+
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
 ;; Platform fee: 5% (represented as 50 out of 1000)
