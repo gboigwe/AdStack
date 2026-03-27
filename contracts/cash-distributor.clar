@@ -259,7 +259,9 @@
 
     ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
     ;; Transfer AFTER all state updates to prevent reentrancy attacks
-    (try! (stx-transfer? claimable tx-sender publisher))
+    ;; Note: tx-sender here should be CONTRACT_OWNER calling on behalf of the system
+    ;; The publisher claims, but the actual STX comes from the admin escrow wallet
+    (try! (stx-transfer? claimable CONTRACT_OWNER publisher))
 
     (print {
       event: "payout-claimed",
