@@ -85,6 +85,12 @@
   }
 )
 
+;; Registered publisher whitelist
+(define-map registered-publishers
+  { publisher: principal }
+  { registered-at: uint, is-active: bool }
+)
+
 ;; --- Private Functions ---
 
 (define-private (is-contract-owner)
