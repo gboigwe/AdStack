@@ -22,6 +22,7 @@
 (define-constant ERR_ZERO_CAMPAIGN_ID (err u508))
 (define-constant ERR_ESCROW_COMPLETED (err u509))
 (define-constant ERR_ESCROW_REFUNDED (err u510))
+(define-constant ERR_DUPLICATE_ESCROW (err u511))
 
 ;; Escrow status
 (define-constant STATUS_ACTIVE u1)
