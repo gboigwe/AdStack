@@ -585,6 +585,21 @@ export function buildUpdateDisplayName(newName: string) {
 }
 
 /**
+ * Build admin contract call to pause/unpause the user-profiles contract.
+ * @param paused - Whether to pause (true) or unpause (false) the contract
+ */
+export function buildSetUserProfilesPaused(paused: boolean) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'set-contract-paused',
+    functionArgs: [toBoolCV(paused)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
  * Build contract call for requesting verification.
  */
 export function buildRequestVerification() {
