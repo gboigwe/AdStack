@@ -330,6 +330,8 @@
     (asserts! (is-admin) ERR_UNAUTHORIZED)
     (asserts! (<= score u100) ERR_INVALID_INPUT)
     (asserts! (is-some (map-get? segments { segment-id: segment-id })) ERR_NOT_FOUND)
+    ;; Verify segment is still active
+    (asserts! (default-to false (get is-active (map-get? segments { segment-id: segment-id }))) ERR_NOT_FOUND)
     ;; Verify publisher has a registered profile
     (asserts! (is-some (map-get? publisher-profiles { publisher: publisher })) ERR_NOT_FOUND)
 
