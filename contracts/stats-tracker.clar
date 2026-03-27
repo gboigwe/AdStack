@@ -300,6 +300,8 @@
       event: "spend-tracked",
       campaign-id: campaign-id,
       amount: amount,
+      recorded-by: tx-sender,
+      block-height: stacks-block-height,
       timestamp: stacks-block-time,
     })
 
