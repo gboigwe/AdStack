@@ -460,7 +460,11 @@
         })
       )
 
-      (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+      ;; Underflow protection
+      (if (>= (var-get total-stx-locked) remaining)
+        (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+        (var-set total-stx-locked u0)
+      )
 
       (print {
         event: "campaign-completed",
