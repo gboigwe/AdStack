@@ -64,11 +64,17 @@ export async function estimateTransactionFee(
   const apiUrl = getApiUrl(network);
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
     const response = await fetch(`${apiUrl}/v2/fees/transaction`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/octet-stream' },
       body: transactionBytes,
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       return applyMultiplier(MIN_TX_FEE, multiplier);
