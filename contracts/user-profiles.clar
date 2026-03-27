@@ -562,3 +562,20 @@
     (ok true)
   )
 )
+
+;; Transfer admin ownership to a new principal (admin only)
+;; NOTE: CONTRACT_OWNER is a constant and cannot be changed at runtime
+;; in Clarity. This function provides a governance event for off-chain
+;; admin transfer tracking. A contract upgrade is needed for full transfer.
+(define-public (transfer-admin (new-admin principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (print {
+      event: "admin-transfer-requested",
+      old-admin: tx-sender,
+      new-admin: new-admin,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
