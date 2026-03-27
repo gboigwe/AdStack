@@ -600,6 +600,35 @@ export function buildSetUserProfilesPaused(paused: boolean) {
 }
 
 /**
+ * Build admin contract call to batch update reputation for multiple users.
+ * @param updates - Array of {address, score} tuples (max 10)
+ */
+export function buildBatchUpdateReputation(updates: Array<{ address: string; score: number }>) {
+  if (updates.length === 0) throw new Error('buildBatchUpdateReputation: updates array is empty');
+  if (updates.length > 10) throw new Error('buildBatchUpdateReputation: max 10 updates per batch');
+
+  for (const u of updates) {
+    if (!u.address) throw new Error('buildBatchUpdateReputation: each entry must have an address');
+    if (u.score < 0 || u.score > 100) throw new Error('buildBatchUpdateReputation: score must be 0-100');
+  }
+
+  // Build Clarity list of tuples
+  const listItems = updates.map((u) => ({
+    user: toPrincipalCV(u.address),
+    score: toUIntCV(u.score),
+  }));
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'batch-update-reputation',
+    functionArgs: [listItems],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
  * Build contract call for requesting verification.
  */
 export function buildRequestVerification() {
