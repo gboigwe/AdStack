@@ -401,7 +401,7 @@
 
     ;; Check daily budget
     (let ((effective-daily-spent
-            (if (>= (- stacks-block-height (get last-spend-block campaign)) u144)
+            (if (>= (- stacks-block-height (get last-spend-block campaign)) BLOCKS_PER_DAY)
               u0
               (get daily-spent campaign))))
       (asserts! (<= (+ effective-daily-spent amount) (get daily-budget campaign)) ERR_DAILY_BUDGET_EXCEEDED)
