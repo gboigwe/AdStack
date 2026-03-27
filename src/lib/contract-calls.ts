@@ -213,6 +213,12 @@ export function buildSubmitView(
  * Calls vote-handler.create-proposal with title, description, duration.
  */
 export function buildCreateProposal(params: CreateProposalParams) {
+  if (!params.title || params.title.length === 0) throw new Error('buildCreateProposal: title is required');
+  if (params.title.length > 64) throw new Error('buildCreateProposal: title exceeds max length (64)');
+  if (!params.description || params.description.length === 0) throw new Error('buildCreateProposal: description is required');
+  if (params.description.length > 256) throw new Error('buildCreateProposal: description exceeds max length (256)');
+  if (params.duration <= 0) throw new Error('buildCreateProposal: duration must be positive');
+
   const durationBlocks = Math.ceil(
     params.duration / BLOCK_TIME.SECONDS_PER_BLOCK,
   );
