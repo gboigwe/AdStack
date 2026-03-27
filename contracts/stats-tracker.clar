@@ -27,6 +27,8 @@
 (define-constant MAX_DAILY_VIEWS_PER_VIEWER u10)
 ;; Blocks per day approximation
 (define-constant BLOCKS_PER_DAY u144)
+;; Maximum views allowed per single block per viewer per campaign
+(define-constant MAX_VIEWS_PER_BLOCK u3)
 
 ;; --- Data Variables ---
 
