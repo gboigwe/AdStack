@@ -246,6 +246,17 @@
   (var-get total-suspensions)
 )
 
+(define-read-only (is-user-active (user principal) (within-blocks uint))
+  (match (map-get? profiles { user: user })
+    profile
+      (ok (and
+        (is-eq (get status profile) STATUS_ACTIVE)
+        (<= (- stacks-block-height (get last-active profile)) within-blocks)
+      ))
+    ERR_NOT_REGISTERED
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
