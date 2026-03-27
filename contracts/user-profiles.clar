@@ -108,6 +108,10 @@
           (is-eq role ROLE_VIEWER)))
 )
 
+(define-private (has-non-space-char (name (string-ascii 48)))
+  (not (is-eq name "                                                "))
+)
+
 (define-private (increment-role-counter (role uint))
   (if (is-eq role ROLE_ADVERTISER)
     (var-set total-advertisers (+ (var-get total-advertisers) u1))
