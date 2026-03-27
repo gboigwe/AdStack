@@ -139,6 +139,17 @@
   (var-get total-releases-count)
 )
 
+;; Returns released/deposited utilization as percentage (0-100)
+(define-read-only (get-escrow-utilization (campaign-id uint))
+  (match (map-get? escrows { campaign-id: campaign-id })
+    escrow (ok (if (is-eq (get deposited escrow) u0)
+      u0
+      (/ (* (get released escrow) u100) (get deposited escrow))
+    ))
+    ERR_ESCROW_NOT_FOUND
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
