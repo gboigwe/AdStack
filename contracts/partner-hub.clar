@@ -391,6 +391,31 @@
 ;; Read-Only Functions
 ;; ============================================================
 
+;; Deactivate a campaign enrollment within a partnership
+(define-public (deactivate-campaign-enrollment (partnership-id uint) (campaign-id uint))
+  (let (
+    (enrollment (unwrap! (map-get? partnership-campaigns { partnership-id: partnership-id, campaign-id: campaign-id }) ERR_NOT_FOUND))
+    (partnership (unwrap! (map-get? partnerships { partnership-id: partnership-id }) ERR_NOT_FOUND))
+  )
+    (asserts! (or (is-eq tx-sender (get advertiser partnership)) (is-admin)) ERR_UNAUTHORIZED)
+    (asserts! (get is-active enrollment) ERR_INACTIVE)
+
+    (map-set partnership-campaigns
+      { partnership-id: partnership-id, campaign-id: campaign-id }
+      (merge enrollment { is-active: false })
+    )
+
+    (print {
+      event: "campaign-enrollment-deactivated",
+      partnership-id: partnership-id,
+      campaign-id: campaign-id,
+      timestamp: stacks-block-time
+    })
+
+    (ok true)
+  )
+)
+
 (define-read-only (get-partnership (partnership-id uint))
   (map-get? partnerships { partnership-id: partnership-id })
 )
