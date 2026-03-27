@@ -128,6 +128,8 @@
     escrowed: (var-get total-escrowed),
     released: (var-get total-released),
     refunded: (var-get total-refunded),
+    total-escrows-created: (var-get total-escrows-created),
+    total-releases-count: (var-get total-releases-count),
   }
 )
 
