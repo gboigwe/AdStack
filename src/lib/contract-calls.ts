@@ -85,6 +85,8 @@ export function buildPauseCampaign(campaignId: number) {
  * Build contract call options for resuming a paused campaign.
  */
 export function buildResumeCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildResumeCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
