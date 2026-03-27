@@ -32,6 +32,7 @@
 
 ;; Configurable limits
 (define-constant MAX_CLAIMS_PER_BLOCK u10)
+(define-constant BLOCKS_PER_DAY u144)
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
