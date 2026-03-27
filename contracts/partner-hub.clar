@@ -299,6 +299,8 @@
   )
     (asserts! (is-eq tx-sender (get advertiser partnership)) ERR_UNAUTHORIZED)
     (asserts! (is-eq (get status partnership) STATUS_ACTIVE) ERR_INACTIVE)
+    ;; Prevent duplicate enrollment
+    (asserts! (is-none (map-get? partnership-campaigns { partnership-id: partnership-id, campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
 
     (map-set partnership-campaigns
       { partnership-id: partnership-id, campaign-id: campaign-id }
