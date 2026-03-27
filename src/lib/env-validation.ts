@@ -63,11 +63,22 @@ export function validateEnv(): EnvConfig {
     }
   }
 
+  // Validate contract address matches network prefix
+  if (contractAddress) {
+    const expectedPrefix = network === 'mainnet' ? 'SP' : 'ST';
+    if (!contractAddress.startsWith(expectedPrefix)) {
+      console.warn(
+        `[env] Contract address "${contractAddress}" uses wrong prefix for ${network}. ` +
+        `Expected "${expectedPrefix}" prefix.`
+      );
+    }
+  }
+
   return {
     network,
-    contractAddress: contractAddress || 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD',
-    apiUrl: apiUrl || 'https://api.hiro.so',
-    walletConnectProjectId: walletConnectId || 'demo-project-id',
+    contractAddress: contractAddress || (network === 'devnet' ? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM' : 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD'),
+    apiUrl: apiUrl || (network === 'devnet' ? 'http://localhost:3999' : 'https://api.hiro.so'),
+    walletConnectProjectId: walletConnectId || '',
   };
 }
 
