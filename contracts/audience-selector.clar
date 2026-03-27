@@ -241,6 +241,8 @@
   )
     (asserts! (> (len category) u0) ERR_INVALID_INPUT)
     (asserts! (> (len region) u0) ERR_INVALID_INPUT)
+    (asserts! (> (len language) u0) ERR_INVALID_INPUT)
+    (asserts! (> audience-size u0) ERR_INVALID_INPUT)
 
     (map-set publisher-profiles
       { publisher: tx-sender }
