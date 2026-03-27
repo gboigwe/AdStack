@@ -258,6 +258,7 @@
       (new-status (if (and
         (>= (get total-voters proposal) QUORUM_THRESHOLD)
         (> (get votes-for proposal) (get votes-against proposal))
+        (>= (- (get votes-for proposal) (get votes-against proposal)) MIN_PASSING_MARGIN)
       )
         STATUS_PASSED
         STATUS_REJECTED
