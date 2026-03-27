@@ -260,6 +260,7 @@
     (payout-id (increment-payout-nonce))
     (totals (get-publisher-totals publisher))
   )
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (not (var-get payouts-paused)) ERR_PAYOUT_PAUSED)
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
