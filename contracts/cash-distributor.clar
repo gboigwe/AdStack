@@ -264,6 +264,8 @@
     (asserts! (not (var-get payouts-paused)) ERR_PAYOUT_PAUSED)
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
+    ;; Prevent single payout from draining contract
+    (asserts! (<= claimable MAX_SINGLE_PAYOUT) ERR_INVALID_AMOUNT)
 
     ;; Update earnings claimed amount BEFORE transfer to prevent reentrancy
     (map-set publisher-earnings
