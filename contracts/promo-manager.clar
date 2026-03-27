@@ -61,6 +61,9 @@
 (define-data-var total-stx-locked uint u0)
 (define-data-var contract-paused bool false)
 (define-data-var deploy-time uint u0)
+(define-data-var total-stx-spent uint u0)
+(define-data-var total-campaigns-completed uint u0)
+(define-data-var total-campaigns-cancelled uint u0)
 
 ;; --- Data Maps ---
 
