@@ -127,6 +127,10 @@
   CONTRACT_VERSION
 )
 
+(define-read-only (get-contract-paused)
+  (var-get contract-paused)
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new escrow for a campaign (called during campaign creation)
