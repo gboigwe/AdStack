@@ -8,47 +8,47 @@ cache_dir = "./.cache"
 [contracts.promo-manager]
 path = "contracts/promo-manager.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.user-profiles]
 path = "contracts/user-profiles.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.stats-tracker]
 path = "contracts/stats-tracker.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.vote-handler]
 path = "contracts/vote-handler.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.funds-keeper]
 path = "contracts/funds-keeper.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.cash-distributor]
 path = "contracts/cash-distributor.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.threat-detector]
 path = "contracts/threat-detector.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.audience-selector]
 path = "contracts/audience-selector.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [contracts.partner-hub]
 path = "contracts/partner-hub.clar"
 clarity_version = 4
-epoch = 'latest'
+epoch = '3.0'
 
 [repl.analysis]
 passes = ["check_checker"]
