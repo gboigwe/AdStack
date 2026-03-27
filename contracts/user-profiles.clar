@@ -302,7 +302,7 @@
         status: STATUS_ACTIVE,
         verification-status: VERIFICATION_UNVERIFIED,
         verification-expires: u0,
-        reputation-score: u50,
+        reputation-score: (/ MAX_REPUTATION u2),
         join-height: stacks-block-height,
         last-active: stacks-block-height,
         total-campaigns: u0,
