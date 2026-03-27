@@ -22,6 +22,7 @@
 (define-constant ERR_ALREADY_SUSPENDED (err u213))
 (define-constant ERR_NOT_SUSPENDED (err u214))
 (define-constant ERR_CONTRACT_PAUSED (err u215))
+(define-constant ERR_EMPTY_NAME (err u216))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
