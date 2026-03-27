@@ -129,8 +129,8 @@
     created-timestamp: uint,
     last-updated-timestamp: uint,
   }))
-  ;; Reset daily spend if we've passed a day boundary (144 blocks)
-  (if (>= (- stacks-block-height (get last-spend-block campaign-data)) u144)
+  ;; Reset daily spend if we've passed a day boundary
+  (if (>= (- stacks-block-height (get last-spend-block campaign-data)) BLOCKS_PER_DAY)
     (map-set campaigns
       { campaign-id: campaign-id }
       (merge campaign-data {
