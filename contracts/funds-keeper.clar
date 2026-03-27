@@ -324,7 +324,11 @@
 (define-public (refund-advertiser (campaign-id uint))
   (let (
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
-    (remaining (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
+    (outflows (+ (get released escrow) (get refunded escrow)))
+    (remaining (if (>= (get deposited escrow) outflows)
+      (- (get deposited escrow) outflows)
+      u0
+    ))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
