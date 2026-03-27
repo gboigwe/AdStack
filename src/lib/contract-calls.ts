@@ -168,6 +168,9 @@ export function buildClaimPayout(
   campaignId: number,
   maxPayoutSTX: number,
 ) {
+  if (campaignId < 0) throw new Error('buildClaimPayout: campaignId must be non-negative');
+  if (maxPayoutSTX <= 0) throw new Error('buildClaimPayout: maxPayoutSTX must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.CASH_DISTRIBUTOR,
