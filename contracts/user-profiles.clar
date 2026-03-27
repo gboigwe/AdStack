@@ -4,7 +4,7 @@
 
 ;; --- Constants ---
 
-(define-constant CONTRACT_VERSION "4.0.0")
+(define-constant CONTRACT_VERSION "4.1.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u200))
 (define-constant ERR_ALREADY_REGISTERED (err u201))
@@ -16,6 +16,15 @@
 (define-constant ERR_VERIFICATION_PENDING (err u207))
 (define-constant ERR_INVALID_SCORE (err u208))
 (define-constant ERR_NOT_ACTIVE (err u209))
+(define-constant ERR_MAX_CAMPAIGNS_EXCEEDED (err u210))
+(define-constant ERR_REPUTATION_OUT_OF_RANGE (err u211))
+(define-constant ERR_VERIFICATION_EXPIRED (err u212))
+(define-constant ERR_ALREADY_SUSPENDED (err u213))
+(define-constant ERR_NOT_SUSPENDED (err u214))
+(define-constant ERR_CONTRACT_PAUSED (err u215))
+(define-constant ERR_EMPTY_NAME (err u216))
+(define-constant ERR_INVALID_ROLE_CHANGE (err u217))
+(define-constant ERR_DISPLAY_NAME_UNCHANGED (err u218))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
@@ -38,8 +47,19 @@
 ;; Maximum number of campaigns per user
 (define-constant MAX_CAMPAIGNS_PER_USER u100)
 
-;; Maximum display name length
-(define-constant MAX_NAME_LENGTH u48)
+;; Reputation bounds
+(define-constant MAX_REPUTATION u100)
+(define-constant MIN_REPUTATION u0)
+
+;; Reputation decays 1 point per REPUTATION_DECAY_BLOCKS of inactivity
+(define-constant REPUTATION_DECAY_BLOCKS u1440)
+
+;; Default window for "active user" checks (~5 days)
+(define-constant DEFAULT_ACTIVE_WINDOW u720)
+
+;; Maximum display name length (use MAX_DISPLAY_NAME_LENGTH going forward)
+(define-constant MAX_DISPLAY_NAME_LENGTH u48)
+(define-constant MAX_NAME_LENGTH MAX_DISPLAY_NAME_LENGTH)
 
 ;; --- Data Variables ---
 
@@ -47,6 +67,9 @@
 (define-data-var total-advertisers uint u0)
 (define-data-var total-publishers uint u0)
 (define-data-var total-viewers uint u0)
+(define-data-var contract-paused bool false)
+(define-data-var total-verifications uint u0)
+(define-data-var total-suspensions uint u0)
 
 ;; --- Data Maps ---
 
@@ -66,7 +89,8 @@
   }
 )
 
-;; Track whether an address has ever registered (prevents re-registration)
+;; Legacy registered map - kept for backward compatibility but
+;; prefer checking (is-some (map-get? profiles ...)) directly.
 (define-map registered
   { user: principal }
   { is-registered: bool }
@@ -78,10 +102,18 @@
   (is-eq tx-sender CONTRACT_OWNER)
 )
 
+(define-private (is-not-paused)
+  (not (var-get contract-paused))
+)
+
 (define-private (is-valid-role (role uint))
   (or (is-eq role ROLE_ADVERTISER)
       (or (is-eq role ROLE_PUBLISHER)
           (is-eq role ROLE_VIEWER)))
+)
+
+(define-private (has-non-space-char (name (string-ascii 48)))
+  (not (is-eq name "                                                "))
 )
 
 (define-private (increment-role-counter (role uint))
@@ -97,12 +129,28 @@
 ;; --- Read-Only Functions ---
 
 (define-read-only (get-profile (user principal))
-  (map-get? profiles { user: user })
+  (match (map-get? profiles { user: user })
+    profile
+      (some (merge profile {
+        verification-status: (if (and
+          (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+          (>= stacks-block-height (get verification-expires profile))
+          (> (get verification-expires profile) u0)
+        )
+          VERIFICATION_UNVERIFIED
+          (get verification-status profile)
+        )
+      }))
+    none
+  )
 )
 
 (define-read-only (is-registered (user principal))
-  (default-to false
-    (get is-registered (map-get? registered { user: user }))
+  (or
+    (is-some (map-get? profiles { user: user }))
+    (default-to false
+      (get is-registered (map-get? registered { user: user }))
+    )
   )
 )
 
@@ -147,16 +195,106 @@
   CONTRACT_VERSION
 )
 
+(define-read-only (get-verification-remaining (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (if (and
+        (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+        (> (get verification-expires profile) stacks-block-height)
+      )
+        (ok (- (get verification-expires profile) stacks-block-height))
+        (ok u0)
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
+(define-read-only (is-verification-expiring-soon (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (if (and
+        (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+        (> (get verification-expires profile) stacks-block-height)
+        (<= (- (get verification-expires profile) stacks-block-height) DEFAULT_ACTIVE_WINDOW)
+      )
+        (ok true)
+        (ok false)
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
+(define-read-only (get-user-activity-summary (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (ok {
+        last-active: (get last-active profile),
+        blocks-since-active: (- stacks-block-height (get last-active profile)),
+        total-campaigns: (get total-campaigns profile),
+        reputation-score: (get reputation-score profile),
+        is-verified: (and
+          (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+          (< stacks-block-height (get verification-expires profile))
+        ),
+      })
+    ERR_NOT_REGISTERED
+  )
+)
+
+(define-read-only (get-total-verifications)
+  (var-get total-verifications)
+)
+
+(define-read-only (get-total-suspensions)
+  (var-get total-suspensions)
+)
+
+(define-read-only (is-user-active (user principal) (within-blocks uint))
+  (match (map-get? profiles { user: user })
+    profile
+      (ok (and
+        (is-eq (get status profile) STATUS_ACTIVE)
+        (<= (- stacks-block-height (get last-active profile)) within-blocks)
+      ))
+    ERR_NOT_REGISTERED
+  )
+)
+
+;; Calculate reputation after applying inactivity decay.
+;; Loses 1 point per REPUTATION_DECAY_BLOCKS of inactivity.
+(define-read-only (get-reputation-with-decay (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (let (
+        (blocks-inactive (- stacks-block-height (get last-active profile)))
+        (decay-points (/ blocks-inactive REPUTATION_DECAY_BLOCKS))
+        (current-rep (get reputation-score profile))
+      )
+        (ok (if (>= decay-points current-rep)
+          MIN_REPUTATION
+          (- current-rep decay-points)
+        ))
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
+(define-read-only (is-contract-paused)
+  (var-get contract-paused)
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
 (define-public (register (role uint) (display-name (string-ascii 48)))
   (begin
     ;; Validations
+    (asserts! (is-not-paused) ERR_CONTRACT_PAUSED)
     (asserts! (not (is-registered tx-sender)) ERR_ALREADY_REGISTERED)
     (asserts! (is-valid-role role) ERR_INVALID_ROLE)
     (asserts! (> (len display-name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len display-name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
+    (asserts! (has-non-space-char display-name) ERR_EMPTY_NAME)
 
     ;; Create profile
     (map-set profiles
@@ -167,7 +305,7 @@
         status: STATUS_ACTIVE,
         verification-status: VERIFICATION_UNVERIFIED,
         verification-expires: u0,
-        reputation-score: u50,
+        reputation-score: (/ MAX_REPUTATION u2),
         join-height: stacks-block-height,
         last-active: stacks-block-height,
         total-campaigns: u0,
@@ -175,10 +313,10 @@
       }
     )
 
-    ;; Mark as registered
+    ;; Mark as registered (legacy map, kept for backward compatibility)
     (map-set registered { user: tx-sender } { is-registered: true })
 
-    ;; Update counters
+    ;; Update counters (overflow protection: uint max is ~2^128, practically unreachable)
     (var-set total-users (+ (var-get total-users) u1))
     (increment-role-counter role)
 
@@ -197,20 +335,31 @@
 ;; Update display name
 (define-public (update-display-name (new-name (string-ascii 48)))
   (let ((profile (unwrap! (map-get? profiles { user: tx-sender }) ERR_NOT_REGISTERED)))
+    (asserts! (is-not-paused) ERR_CONTRACT_PAUSED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (asserts! (> (len new-name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len new-name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
+    (asserts! (has-non-space-char new-name) ERR_EMPTY_NAME)
+    (asserts! (not (is-eq new-name (get display-name profile))) ERR_DISPLAY_NAME_UNCHANGED)
 
-    (map-set profiles
-      { user: tx-sender }
-      (merge profile {
-        display-name: new-name,
-        last-active: stacks-block-height,
+    (let ((old-name (get display-name profile)))
+      (map-set profiles
+        { user: tx-sender }
+        (merge profile {
+          display-name: new-name,
+          last-active: stacks-block-height,
+        })
+      )
+
+      (print {
+        event: "name-updated",
+        user: tx-sender,
+        old-name: old-name,
+        new-name: new-name,
+        timestamp: stacks-block-time,
       })
+      (ok true)
     )
-
-    (print { event: "name-updated", user: tx-sender, timestamp: stacks-block-time })
-    (ok true)
   )
 )
 
@@ -243,11 +392,21 @@
     ;; Only the user or contract owner can update activity
     (asserts! (or (is-eq tx-sender user) (is-contract-owner)) ERR_NOT_AUTHORIZED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (map-set profiles
-      { user: user }
-      (merge profile { last-active: stacks-block-height })
+    (let ((old-last-active (get last-active profile)))
+      (map-set profiles
+        { user: user }
+        (merge profile { last-active: stacks-block-height })
+      )
+
+      (print {
+        event: "activity-updated",
+        user: user,
+        old-last-active: old-last-active,
+        new-last-active: stacks-block-height,
+        timestamp: stacks-block-time,
+      })
+      (ok true)
     )
-    (ok true)
   )
 )
 
@@ -257,16 +416,26 @@
     ;; Only contract owner (or authorized caller contracts) can increment
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (map-set profiles
-      { user: user }
-      (merge profile {
-        total-campaigns: (+ (get total-campaigns profile) u1),
-        last-active: stacks-block-height,
-      })
-    )
+    (asserts! (< (get total-campaigns profile) MAX_CAMPAIGNS_PER_USER) ERR_MAX_CAMPAIGNS_EXCEEDED)
+    (let ((old-count (get total-campaigns profile))
+          (new-count (+ old-count u1)))
+      (map-set profiles
+        { user: user }
+        (merge profile {
+          total-campaigns: new-count,
+          last-active: stacks-block-height,
+        })
+      )
 
-    (print { event: "campaigns-incremented", user: user, timestamp: stacks-block-time })
-    (ok true)
+      (print {
+        event: "campaigns-incremented",
+        user: user,
+        old-count: old-count,
+        new-count: new-count,
+        timestamp: stacks-block-time,
+      })
+      (ok true)
+    )
   )
 )
 
@@ -289,10 +458,17 @@
       })
     )
 
+    ;; Increment verification counter when approving
+    (if (is-eq status VERIFICATION_VERIFIED)
+      (var-set total-verifications (+ (var-get total-verifications) u1))
+      true
+    )
+
     (print {
       event: "verification-updated",
       user: user,
-      status: status,
+      old-status: (get verification-status profile),
+      new-status: status,
       expires: (if (is-eq status VERIFICATION_VERIFIED)
         (+ stacks-block-height VERIFICATION_VALIDITY_BLOCKS)
         u0
@@ -308,13 +484,22 @@
 (define-public (suspend-user (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ALREADY_SUSPENDED)
 
     (map-set profiles
       { user: user }
       (merge profile { status: STATUS_SUSPENDED })
     )
 
-    (print { event: "user-suspended", user: user, timestamp: stacks-block-time })
+    (var-set total-suspensions (+ (var-get total-suspensions) u1))
+
+    (print {
+      event: "user-suspended",
+      user: user,
+      old-status: (get status profile),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
@@ -323,14 +508,19 @@
 (define-public (reinstate-user (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    (asserts! (is-eq (get status profile) STATUS_SUSPENDED) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status profile) STATUS_SUSPENDED) ERR_NOT_SUSPENDED)
 
     (map-set profiles
       { user: user }
       (merge profile { status: STATUS_ACTIVE })
     )
 
-    (print { event: "user-reinstated", user: user, timestamp: stacks-block-time })
+    (print {
+      event: "user-reinstated",
+      user: user,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
@@ -339,15 +529,94 @@
 (define-public (update-reputation (user principal) (new-score uint))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    ;; Clamp reputation to 0-100
-    (let ((clamped-score (if (> new-score u100) u100 new-score)))
+    ;; Clamp reputation to bounds
+    (let ((old-score (get reputation-score profile))
+          (clamped-score (if (> new-score MAX_REPUTATION) MAX_REPUTATION
+                           (if (< new-score MIN_REPUTATION) MIN_REPUTATION new-score))))
       (map-set profiles
         { user: user }
         (merge profile { reputation-score: clamped-score })
       )
 
-      (print { event: "reputation-updated", user: user, score: clamped-score, timestamp: stacks-block-time })
+      (print {
+        event: "reputation-updated",
+        user: user,
+        old-score: old-score,
+        new-score: clamped-score,
+        admin: tx-sender,
+        timestamp: stacks-block-time,
+      })
       (ok true)
+    )
+  )
+)
+
+;; Set contract paused state (admin only)
+(define-public (set-contract-paused (paused bool))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (var-set contract-paused paused)
+    (print {
+      event: "contract-pause-toggled",
+      paused: paused,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+;; Transfer admin ownership to a new principal (admin only)
+;; NOTE: CONTRACT_OWNER is a constant and cannot be changed at runtime
+;; in Clarity. This function provides a governance event for off-chain
+;; admin transfer tracking. A contract upgrade is needed for full transfer.
+(define-public (transfer-admin (new-admin principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (print {
+      event: "admin-transfer-requested",
+      old-admin: tx-sender,
+      new-admin: new-admin,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+;; Batch update reputation for multiple users (admin only)
+;; Accepts a list of {user, score} tuples up to 10 entries.
+(define-public (batch-update-reputation
+  (updates (list 10 { user: principal, score: uint }))
+)
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map batch-update-reputation-single updates)
+    (print {
+      event: "batch-reputation-updated",
+      count: (len updates),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+(define-private (batch-update-reputation-single (entry { user: principal, score: uint }))
+  (let (
+    (user (get user entry))
+    (new-score (get score entry))
+    (clamped (if (> new-score MAX_REPUTATION) MAX_REPUTATION new-score))
+  )
+    (match (map-get? profiles { user: user })
+      profile
+        (begin
+          (map-set profiles
+            { user: user }
+            (merge profile { reputation-score: clamped })
+          )
+          true
+        )
+      false
     )
   )
 )

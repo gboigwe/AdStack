@@ -14,16 +14,31 @@
 (define-constant ERR_CAMPAIGN_INACTIVE (err u304))
 (define-constant ERR_RATE_LIMIT (err u305))
 (define-constant ERR_ZERO_AMOUNT (err u306))
+(define-constant ERR_ZERO_CAMPAIGN_ID (err u307))
+(define-constant ERR_PUBLISHER_NOT_REGISTERED (err u308))
+(define-constant ERR_VIEW_ALREADY_COUNTED (err u309))
+(define-constant ERR_INVALID_PUBLISHER (err u310))
+(define-constant ERR_CONTRACT_PAUSED (err u311))
+(define-constant ERR_SPEND_OVERFLOW (err u312))
+(define-constant ERR_INVALID_AMOUNT (err u313))
+(define-constant ERR_BLOCK_RATE_LIMIT (err u314))
 
 ;; Rate limit: max 10 views per viewer per campaign per day (~144 blocks)
 (define-constant MAX_DAILY_VIEWS_PER_VIEWER u10)
 ;; Blocks per day approximation
 (define-constant BLOCKS_PER_DAY u144)
+;; Maximum views allowed per single block per viewer per campaign
+(define-constant MAX_VIEWS_PER_BLOCK u3)
+;; Minimum blocks between view submissions for the same viewer/campaign
+(define-constant MIN_VIEW_INTERVAL_BLOCKS u2)
 
 ;; --- Data Variables ---
 
 (define-data-var total-views uint u0)
 (define-data-var total-valid-views uint u0)
+(define-data-var contract-paused bool false)
+(define-data-var total-campaigns-tracked uint u0)
+(define-data-var total-spend-recorded uint u0)
 
 ;; --- Data Maps ---
 
@@ -54,6 +69,12 @@
   { count: uint }
 )
 
+;; Per-block rate limiting per viewer per campaign
+(define-map block-view-counts
+  { campaign-id: uint, viewer: principal, block-height: uint }
+  { count: uint }
+)
+
 ;; Publisher view counts per campaign
 (define-map publisher-stats
   { campaign-id: uint, publisher: principal }
@@ -62,6 +83,12 @@
     valid-views: uint,
     last-submit-block: uint,
   }
+)
+
+;; Registered publisher whitelist
+(define-map registered-publishers
+  { publisher: principal }
+  { registered-at: uint, is-active: bool }
 )
 
 ;; --- Private Functions ---
@@ -129,6 +156,92 @@
   CONTRACT_VERSION
 )
 
+(define-read-only (get-contract-paused)
+  (var-get contract-paused)
+)
+
+(define-read-only (get-total-campaigns-tracked)
+  (var-get total-campaigns-tracked)
+)
+
+(define-read-only (get-total-spend-recorded)
+  (var-get total-spend-recorded)
+)
+
+;; Returns views used vs daily limit for a viewer/campaign pair
+(define-read-only (get-daily-view-rate (campaign-id uint) (viewer principal))
+  (let (
+    (day (get-day-block stacks-block-height))
+    (current (get count (default-to { count: u0 }
+      (map-get? daily-view-counts { campaign-id: campaign-id, viewer: viewer, day-block: day }))))
+  )
+    {
+      views-used: current,
+      views-limit: MAX_DAILY_VIEWS_PER_VIEWER,
+      is-at-limit: (>= current MAX_DAILY_VIEWS_PER_VIEWER),
+    }
+  )
+)
+
+;; Check if a publisher is registered and active
+(define-read-only (is-publisher-registered (publisher principal))
+  (match (map-get? registered-publishers { publisher: publisher })
+    reg (get is-active reg)
+    false
+  )
+)
+
+;; Check if a view submission would be allowed (pre-flight check)
+(define-read-only (is-view-submission-allowed (campaign-id uint) (viewer principal) (publisher principal))
+  (let (
+    (day (get-day-block stacks-block-height))
+    (current-daily (get count (default-to { count: u0 }
+      (map-get? daily-view-counts { campaign-id: campaign-id, viewer: viewer, day-block: day }))))
+    (current-block (get count (default-to { count: u0 }
+      (map-get? block-view-counts { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }))))
+  )
+    (and
+      (not (var-get contract-paused))
+      (> campaign-id u0)
+      (not (is-eq publisher viewer))
+      (< current-daily MAX_DAILY_VIEWS_PER_VIEWER)
+      (< current-block MAX_VIEWS_PER_BLOCK)
+    )
+  )
+)
+
+;; Publisher performance metrics: valid/submitted ratio
+(define-read-only (get-publisher-performance (campaign-id uint) (publisher principal))
+  (let ((stats (get-publisher-stats campaign-id publisher)))
+    {
+      views-submitted: (get views-submitted stats),
+      valid-views: (get valid-views stats),
+      last-submit-block: (get last-submit-block stats),
+      validity-ratio: (if (> (get views-submitted stats) u0)
+        (/ (* (get valid-views stats) u10000) (get views-submitted stats))
+        u0
+      ),
+    }
+  )
+)
+
+;; Combined campaign analytics view for convenient frontend queries
+(define-read-only (get-campaign-view-summary (campaign-id uint))
+  (let ((analytics (get-analytics campaign-id)))
+    {
+      campaign-id: campaign-id,
+      total-views: (get total-views analytics),
+      unique-viewers: (get unique-viewers analytics),
+      total-spent: (get total-spent analytics),
+      last-view-block: (get last-view-block analytics),
+      avg-views-per-viewer: (if (> (get unique-viewers analytics) u0)
+        (/ (get total-views analytics) (get unique-viewers analytics))
+        u0
+      ),
+    }
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
@@ -142,16 +255,32 @@
     (analytics (get-analytics campaign-id))
     (pub-stats (get-publisher-stats campaign-id publisher))
     (existing-record (map-get? viewer-records { campaign-id: campaign-id, viewer: viewer }))
+    (current-block-views (get count (default-to { count: u0 }
+      (map-get? block-view-counts { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }))))
   )
+    ;; Contract must not be paused
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    ;; Campaign ID must be positive
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    ;; Campaign must have existing analytics or be a first view
+    ;; (analytics default means campaign exists in the broader system)
     ;; Publisher cannot be the viewer (prevents self-dealing)
     (asserts! (not (is-eq publisher viewer)) ERR_INVALID_VIEWER)
-    ;; Rate limit check
+    ;; Daily rate limit check
     (asserts! (< current-daily MAX_DAILY_VIEWS_PER_VIEWER) ERR_RATE_LIMIT)
+    ;; Per-block rate limit check
+    (asserts! (< current-block-views MAX_VIEWS_PER_BLOCK) ERR_BLOCK_RATE_LIMIT)
 
     ;; Update daily view count
     (map-set daily-view-counts
       { campaign-id: campaign-id, viewer: viewer, day-block: day-block }
       { count: (+ current-daily u1) }
+    )
+
+    ;; Update per-block view count
+    (map-set block-view-counts
+      { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }
+      { count: (+ current-block-views u1) }
     )
 
     ;; Update or create viewer record
@@ -181,6 +310,11 @@
             unique-viewers: (+ (get unique-viewers analytics) u1),
           })
         )
+        ;; Track new campaign on first-ever view
+        (if (is-eq (get unique-viewers analytics) u0)
+          (var-set total-campaigns-tracked (+ (var-get total-campaigns-tracked) u1))
+          true
+        )
       )
     )
 
@@ -205,15 +339,23 @@
       }
     )
 
-    ;; Update global counters
-    (var-set total-views (+ (var-get total-views) u1))
-    (var-set total-valid-views (+ (var-get total-valid-views) u1))
+    ;; Update global counters with overflow protection
+    (if (< (var-get total-views) u340282366920938463463374607431768211455)
+      (var-set total-views (+ (var-get total-views) u1))
+      true
+    )
+    (if (< (var-get total-valid-views) u340282366920938463463374607431768211455)
+      (var-set total-valid-views (+ (var-get total-valid-views) u1))
+      true
+    )
 
     (print {
       event: "view-submitted",
       campaign-id: campaign-id,
       publisher: publisher,
       viewer: viewer,
+      block-height: stacks-block-height,
+      daily-views-used: (+ current-daily u1),
       timestamp: stacks-block-time,
     })
 
@@ -225,7 +367,10 @@
 (define-public (record-campaign-spend (campaign-id uint) (amount uint))
   (let ((analytics (get-analytics campaign-id)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (> amount u0) ERR_ZERO_AMOUNT)
+    ;; Overflow protection: ensure addition will not wrap
+    (asserts! (>= (- u340282366920938463463374607431768211455 (get total-spent analytics)) amount) ERR_SPEND_OVERFLOW)
 
     (map-set campaign-analytics
       { campaign-id: campaign-id }
@@ -234,10 +379,15 @@
       })
     )
 
+    ;; Update global spend tracker
+    (var-set total-spend-recorded (+ (var-get total-spend-recorded) amount))
+
     (print {
       event: "spend-tracked",
       campaign-id: campaign-id,
       amount: amount,
+      recorded-by: tx-sender,
+      block-height: stacks-block-height,
       timestamp: stacks-block-time,
     })
 
@@ -255,13 +405,19 @@
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
 
-    ;; Decrement global valid count
+    ;; Decrement global valid count (underflow-safe)
     (if (> (var-get total-valid-views) u0)
       (var-set total-valid-views (- (var-get total-valid-views) u1))
       true
     )
 
-    ;; Decrement publisher valid views count
+    ;; Decrement global total views (underflow-safe)
+    (if (> (var-get total-views) u0)
+      (var-set total-views (- (var-get total-views) u1))
+      true
+    )
+
+    ;; Decrement publisher valid views count (underflow-safe)
     (if (> (get valid-views pub-stats) u0)
       (map-set publisher-stats
         { campaign-id: campaign-id, publisher: publisher }
@@ -272,7 +428,7 @@
       true
     )
 
-    ;; Decrement campaign-level total views
+    ;; Decrement campaign-level total views (underflow-safe)
     (if (> (get total-views analytics) u0)
       (map-set campaign-analytics
         { campaign-id: campaign-id }
@@ -288,9 +444,88 @@
       campaign-id: campaign-id,
       viewer: viewer,
       publisher: publisher,
+      invalidated-by: tx-sender,
+      block-height: stacks-block-height,
       timestamp: stacks-block-time,
     })
 
+    (ok true)
+  )
+)
+
+;; --- Admin Functions ---
+
+;; Toggle contract pause state (admin only)
+(define-public (set-contract-paused (paused bool))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (var-set contract-paused paused)
+    (print {
+      event: "contract-pause-toggled",
+      paused: paused,
+      toggled-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok paused)
+  )
+)
+
+;; Emergency reset of daily view count for a viewer/campaign (admin only)
+(define-public (reset-daily-views (campaign-id uint) (viewer principal))
+  (let ((day-block (get-day-block stacks-block-height)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    (map-set daily-view-counts
+      { campaign-id: campaign-id, viewer: viewer, day-block: day-block }
+      { count: u0 }
+    )
+    (print {
+      event: "daily-views-reset",
+      campaign-id: campaign-id,
+      viewer: viewer,
+      reset-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+;; Register a publisher to allow view submissions (admin only)
+(define-public (register-publisher (publisher principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map-set registered-publishers
+      { publisher: publisher }
+      { registered-at: stacks-block-height, is-active: true }
+    )
+    (print {
+      event: "publisher-registered",
+      publisher: publisher,
+      registered-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+;; Deactivate a registered publisher (admin only)
+(define-public (deactivate-publisher (publisher principal))
+  (let ((reg (unwrap! (map-get? registered-publishers { publisher: publisher }) ERR_PUBLISHER_NOT_REGISTERED)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map-set registered-publishers
+      { publisher: publisher }
+      (merge reg { is-active: false })
+    )
+    (print {
+      event: "publisher-deactivated",
+      publisher: publisher,
+      deactivated-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )

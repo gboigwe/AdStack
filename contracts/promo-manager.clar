@@ -24,6 +24,14 @@
 (define-constant ERR_CAMPAIGN_EXPIRED (err u108))
 (define-constant ERR_DAILY_BUDGET_EXCEEDED (err u109))
 (define-constant ERR_CONTRACT_PAUSED (err u110))
+(define-constant ERR_ZERO_AMOUNT (err u111))
+(define-constant ERR_ALREADY_COMPLETED (err u112))
+(define-constant ERR_ALREADY_CANCELLED (err u113))
+(define-constant ERR_MAX_CAMPAIGNS_REACHED (err u114))
+(define-constant ERR_BUDGET_OVERFLOW (err u115))
+(define-constant ERR_CAMPAIGN_NOT_PAUSED (err u116))
+(define-constant ERR_INVALID_DAILY_BUDGET (err u117))
+(define-constant ERR_SELF_FUND (err u118))
 
 ;; Minimum budget: 1 STX (1,000,000 micro-STX)
 (define-constant MIN_BUDGET u1000000)
@@ -33,6 +41,10 @@
 (define-constant MAX_DURATION_BLOCKS u12960)
 ;; Minimum campaign duration in blocks (~1 day)
 (define-constant MIN_DURATION_BLOCKS u144)
+;; Blocks per day for daily budget reset calculation
+(define-constant BLOCKS_PER_DAY u144)
+;; Maximum campaigns per advertiser to prevent spam
+(define-constant MAX_CAMPAIGNS_PER_ADVERTISER u50)
 
 ;; Status constants
 (define-constant STATUS_DRAFT u0)
@@ -40,6 +52,7 @@
 (define-constant STATUS_PAUSED u2)
 (define-constant STATUS_COMPLETED u3)
 (define-constant STATUS_CANCELLED u4)
+(define-constant STATUS_EXPIRED u5)
 
 ;; --- Data Variables ---
 
@@ -48,6 +61,9 @@
 (define-data-var total-stx-locked uint u0)
 (define-data-var contract-paused bool false)
 (define-data-var deploy-time uint u0)
+(define-data-var total-stx-spent uint u0)
+(define-data-var total-campaigns-completed uint u0)
+(define-data-var total-campaigns-cancelled uint u0)
 
 ;; --- Data Maps ---
 
@@ -90,6 +106,11 @@
   )
 )
 
+;; Validate that budget + existing locked doesn't overflow
+(define-private (check-budget-overflow (additional uint))
+  (<= (+ (var-get total-stx-locked) additional) u340282366920938463463374607431768211455)
+)
+
 (define-private (increment-nonce)
   (let ((current (var-get campaign-nonce)))
     (var-set campaign-nonce (+ current u1))
@@ -113,8 +134,8 @@
     created-timestamp: uint,
     last-updated-timestamp: uint,
   }))
-  ;; Reset daily spend if we've passed a day boundary (144 blocks)
-  (if (>= (- stacks-block-height (get last-spend-block campaign-data)) u144)
+  ;; Reset daily spend if we've passed a day boundary
+  (if (>= (- stacks-block-height (get last-spend-block campaign-data)) BLOCKS_PER_DAY)
     (map-set campaigns
       { campaign-id: campaign-id }
       (merge campaign-data {
@@ -182,6 +203,82 @@
   CONTRACT_VERSION
 )
 
+;; Get current campaign nonce (next available ID)
+(define-read-only (get-campaign-nonce)
+  (var-get campaign-nonce)
+)
+
+;; Check if a campaign has expired based on block height
+(define-read-only (is-campaign-expired (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (> stacks-block-height (get end-height campaign))
+    false
+  )
+)
+
+;; Get remaining blocks until campaign expires
+(define-read-only (get-campaign-time-remaining (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (if (> (get end-height campaign) stacks-block-height)
+      (- (get end-height campaign) stacks-block-height)
+      u0
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
+;; Get daily budget remaining for current period
+(define-read-only (get-daily-budget-remaining (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (let ((effective-daily-spent
+                  (if (>= (- stacks-block-height (get last-spend-block campaign)) BLOCKS_PER_DAY)
+                    u0
+                    (get daily-spent campaign))))
+              (if (> (get daily-budget campaign) effective-daily-spent)
+                (- (get daily-budget campaign) effective-daily-spent)
+                u0)))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
+;; Get platform-wide statistics summary
+(define-read-only (get-platform-stats)
+  {
+    total-campaigns: (var-get total-campaigns-created),
+    total-locked: (var-get total-stx-locked),
+    total-spent: (var-get total-stx-spent),
+    total-completed: (var-get total-campaigns-completed),
+    total-cancelled: (var-get total-campaigns-cancelled),
+    next-campaign-id: (var-get campaign-nonce),
+    is-paused: (var-get contract-paused),
+  }
+)
+
+;; Get campaign budget utilization as a percentage (0-100)
+(define-read-only (get-campaign-utilization (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (if (> (get budget campaign) u0)
+      (/ (* (get spent campaign) u100) (get budget campaign))
+      u0
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
+;; Check if spending is allowed for a campaign (active, not expired, not paused, within budget)
+(define-read-only (can-record-spend (campaign-id uint) (amount uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (and
+      (not (var-get contract-paused))
+      (is-eq (get status campaign) STATUS_ACTIVE)
+      (<= stacks-block-height (get end-height campaign))
+      (> amount u0)
+      (<= (+ (get spent campaign) amount) (get budget campaign))
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
@@ -197,7 +294,8 @@
     (advertiser-count (get count (get-advertiser-campaigns tx-sender)))
   )
     ;; Validations
-    (asserts! (not (var-get contract-paused)) ERR_NOT_AUTHORIZED)
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (<= advertiser-count MAX_CAMPAIGNS_PER_ADVERTISER) ERR_MAX_CAMPAIGNS_REACHED)
     (asserts! (>= budget MIN_BUDGET) ERR_INVALID_BUDGET)
     (asserts! (> (len name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
@@ -205,6 +303,8 @@
     (asserts! (<= duration MAX_DURATION_BLOCKS) ERR_INVALID_DURATION)
     (asserts! (<= daily-budget budget) ERR_INVALID_BUDGET)
     (asserts! (> daily-budget u0) ERR_INVALID_BUDGET)
+    ;; Prevent total locked STX overflow
+    (asserts! (check-budget-overflow budget) ERR_BUDGET_OVERFLOW)
 
     ;; Clarity 4: escrow through CONTRACT_OWNER admin wallet
     (try! (stx-transfer? budget tx-sender CONTRACT_OWNER))
@@ -243,8 +343,12 @@
       event: "campaign-created",
       campaign-id: campaign-id,
       advertiser: tx-sender,
+      name: name,
       budget: budget,
+      daily-budget: daily-budget,
       duration: duration,
+      start-height: stacks-block-height,
+      end-height: end-block,
       timestamp: stacks-block-time,
     })
 
@@ -267,7 +371,7 @@
       })
     )
 
-    (print { event: "campaign-paused", campaign-id: campaign-id, timestamp: stacks-block-time })
+    (print { event: "campaign-paused", campaign-id: campaign-id, advertiser: tx-sender, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -288,7 +392,106 @@
       })
     )
 
-    (print { event: "campaign-resumed", campaign-id: campaign-id, timestamp: stacks-block-time })
+    (print { event: "campaign-resumed", campaign-id: campaign-id, advertiser: tx-sender, timestamp: stacks-block-time })
+    (ok true)
+  )
+)
+
+;; Extend campaign duration (advertiser only, active campaigns)
+(define-public (extend-campaign-duration (campaign-id uint) (additional-blocks uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> additional-blocks u0) ERR_INVALID_DURATION)
+    (asserts! (<= additional-blocks MAX_DURATION_BLOCKS) ERR_INVALID_DURATION)
+
+    (let ((new-end-height (+ (get end-height campaign) additional-blocks)))
+      (map-set campaigns
+        { campaign-id: campaign-id }
+        (merge campaign {
+          end-height: new-end-height,
+          last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
+        })
+      )
+
+      (print {
+        event: "campaign-duration-extended",
+        campaign-id: campaign-id,
+        additional-blocks: additional-blocks,
+        new-end-height: new-end-height,
+        timestamp: stacks-block-time,
+      })
+      (ok new-end-height)
+    )
+  )
+)
+
+;; Increase campaign budget (advertiser only, requires additional STX deposit)
+(define-public (increase-campaign-budget (campaign-id uint) (additional-budget uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (or
+      (is-eq (get status campaign) STATUS_ACTIVE)
+      (is-eq (get status campaign) STATUS_PAUSED)
+    ) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (>= additional-budget MIN_BUDGET) ERR_INVALID_BUDGET)
+
+    ;; Transfer additional STX to CONTRACT_OWNER escrow
+    (try! (stx-transfer? additional-budget tx-sender CONTRACT_OWNER))
+
+    (let ((new-budget (+ (get budget campaign) additional-budget)))
+      (map-set campaigns
+        { campaign-id: campaign-id }
+        (merge campaign {
+          budget: new-budget,
+          last-updated: stacks-block-height,
+          last-updated-timestamp: stacks-block-time,
+        })
+      )
+
+      ;; Update total locked
+      (var-set total-stx-locked (+ (var-get total-stx-locked) additional-budget))
+
+      (print {
+        event: "campaign-budget-increased",
+        campaign-id: campaign-id,
+        additional-budget: additional-budget,
+        new-budget: new-budget,
+        timestamp: stacks-block-time,
+      })
+      (ok new-budget)
+    )
+  )
+)
+
+;; Update daily budget for a campaign (advertiser only)
+(define-public (update-daily-budget (campaign-id uint) (new-daily-budget uint))
+  (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (is-eq tx-sender (get advertiser campaign)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> new-daily-budget u0) ERR_INVALID_DAILY_BUDGET)
+    (asserts! (<= new-daily-budget (get budget campaign)) ERR_INVALID_DAILY_BUDGET)
+
+    (map-set campaigns
+      { campaign-id: campaign-id }
+      (merge campaign {
+        daily-budget: new-daily-budget,
+        last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
+      })
+    )
+
+    (print {
+      event: "daily-budget-updated",
+      campaign-id: campaign-id,
+      old-daily-budget: (get daily-budget campaign),
+      new-daily-budget: new-daily-budget,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
@@ -322,9 +525,13 @@
       (var-set total-stx-locked u0)
     )
 
+    ;; Track aggregate cancellation count
+    (var-set total-campaigns-cancelled (+ (var-get total-campaigns-cancelled) u1))
+
     (print {
       event: "campaign-cancelled",
       campaign-id: campaign-id,
+      advertiser: (get advertiser campaign),
       refunded: remaining,
       timestamp: stacks-block-time,
     })
@@ -363,6 +570,8 @@
       event: "campaign-budget-refunded",
       campaign-id: campaign-id,
       amount: remaining,
+      total-budget: (get budget campaign),
+      total-spent: (get spent campaign),
       recipient: (get advertiser campaign),
       timestamp: stacks-block-time,
     })
@@ -374,54 +583,65 @@
 (define-public (record-spend (campaign-id uint) (amount uint))
   (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
     ;; Reject spend recording when contract is paused
-    (asserts! (not (var-get contract-paused)) ERR_NOT_AUTHORIZED)
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
     ;; Only contract owner or authorized contracts can record spending
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
-    (asserts! (> amount u0) ERR_INVALID_BUDGET)
+    (asserts! (> amount u0) ERR_ZERO_AMOUNT)
     ;; Check campaign has not expired
     (asserts! (<= stacks-block-height (get end-height campaign)) ERR_CAMPAIGN_EXPIRED)
     (asserts! (<= (+ (get spent campaign) amount) (get budget campaign)) ERR_BUDGET_EXCEEDED)
 
     ;; Check daily budget
     (let ((effective-daily-spent
-            (if (>= (- stacks-block-height (get last-spend-block campaign)) u144)
+            (if (>= (- stacks-block-height (get last-spend-block campaign)) BLOCKS_PER_DAY)
               u0
               (get daily-spent campaign))))
       (asserts! (<= (+ effective-daily-spent amount) (get daily-budget campaign)) ERR_DAILY_BUDGET_EXCEEDED)
 
-      (map-set campaigns
-        { campaign-id: campaign-id }
-        (merge campaign {
-          spent: (+ (get spent campaign) amount),
-          daily-spent: (+ effective-daily-spent amount),
-          last-spend-block: stacks-block-height,
-          last-updated: stacks-block-height,
-          last-updated-timestamp: stacks-block-time,
-        })
-      )
-
-      ;; Auto-complete if budget is fully spent
-      (if (>= (+ (get spent campaign) amount) (get budget campaign))
+      ;; Single atomic update: set status to COMPLETED if budget fully spent
+      (let ((new-spent (+ (get spent campaign) amount))
+            (new-daily (+ effective-daily-spent amount))
+            (budget-exhausted (>= (+ (get spent campaign) amount) (get budget campaign))))
         (map-set campaigns
           { campaign-id: campaign-id }
           (merge campaign {
-            spent: (+ (get spent campaign) amount),
-            daily-spent: (+ effective-daily-spent amount),
+            spent: new-spent,
+            daily-spent: new-daily,
             last-spend-block: stacks-block-height,
             last-updated: stacks-block-height,
             last-updated-timestamp: stacks-block-time,
-            status: STATUS_COMPLETED,
+            status: (if budget-exhausted STATUS_COMPLETED (get status campaign)),
           })
         )
-        true
+
+        ;; Track aggregate spend
+        (var-set total-stx-spent (+ (var-get total-stx-spent) amount))
+
+        ;; Emit auto-complete event if budget exhausted
+        (if budget-exhausted
+          (begin
+            (var-set total-campaigns-completed (+ (var-get total-campaigns-completed) u1))
+            (print {
+              event: "campaign-auto-completed",
+              campaign-id: campaign-id,
+              total-spent: new-spent,
+              timestamp: stacks-block-time,
+            })
+            true
+          )
+          true
+        )
       )
     )
 
     (print {
       event: "spend-recorded",
       campaign-id: campaign-id,
+      advertiser: (get advertiser campaign),
       amount: amount,
+      total-spent: (+ (get spent campaign) amount),
+      remaining-budget: (- (get budget campaign) (+ (get spent campaign) amount)),
       timestamp: stacks-block-time,
     })
     (ok true)
@@ -472,10 +692,15 @@
         (var-set total-stx-locked u0)
       )
 
+      ;; Track aggregate completion count
+      (var-set total-campaigns-completed (+ (var-get total-campaigns-completed) u1))
+
       (print {
         event: "campaign-completed",
         campaign-id: campaign-id,
+        advertiser: (get advertiser campaign),
         refundable: remaining,
+        total-spent: (get spent campaign),
         timestamp: stacks-block-time,
       })
       (ok remaining)

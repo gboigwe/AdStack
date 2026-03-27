@@ -10,6 +10,7 @@ import {
   getContractId,
   stxToMicroStx,
   BLOCK_TIME,
+  CAMPAIGN_LIMITS,
 } from './stacks-config';
 import { toUIntCV, toStringAsciiCV, toPrincipalCV, toBoolCV } from './clarity-converters';
 import {
@@ -39,10 +40,13 @@ export function buildCreateCampaign(
   params: CreateCampaignParams,
 ) {
   if (!senderAddress) throw new Error('buildCreateCampaign: senderAddress is required');
-  if (!params.name || params.name.length === 0) throw new Error('buildCreateCampaign: name is required');
+  if (!params.name || params.name.trim().length === 0) throw new Error('buildCreateCampaign: name is required and cannot be whitespace-only');
+  if (params.name.length > CAMPAIGN_LIMITS.MAX_NAME_LENGTH) throw new Error(`buildCreateCampaign: name exceeds max length (${CAMPAIGN_LIMITS.MAX_NAME_LENGTH})`);
   if (Number(params.budget) <= 0) throw new Error('buildCreateCampaign: budget must be positive');
   if (Number(params.dailyBudget) <= 0) throw new Error('buildCreateCampaign: dailyBudget must be positive');
   if (Number(params.dailyBudget) > Number(params.budget)) throw new Error('buildCreateCampaign: dailyBudget cannot exceed total budget');
+  if (params.duration < CAMPAIGN_LIMITS.MIN_DURATION_BLOCKS) throw new Error(`buildCreateCampaign: duration must be at least ${CAMPAIGN_LIMITS.MIN_DURATION_BLOCKS} blocks`);
+  if (params.duration > CAMPAIGN_LIMITS.MAX_DURATION_BLOCKS) throw new Error(`buildCreateCampaign: duration exceeds max (${CAMPAIGN_LIMITS.MAX_DURATION_BLOCKS} blocks)`);
 
   const budgetMicro = stxToMicroStx(Number(params.budget));
   const dailyMicro = stxToMicroStx(Number(params.dailyBudget));
@@ -69,6 +73,8 @@ export function buildCreateCampaign(
  * Build contract call options for pausing a campaign.
  */
 export function buildPauseCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildPauseCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
@@ -83,6 +89,8 @@ export function buildPauseCampaign(campaignId: number) {
  * Build contract call options for resuming a paused campaign.
  */
 export function buildResumeCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildResumeCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
@@ -125,6 +133,8 @@ export function buildRegisterUser(params: RegisterUserParams) {
  * and refund remaining escrowed STX back to the advertiser.
  */
 export function buildCancelCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildCancelCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
@@ -141,12 +151,78 @@ export function buildCancelCampaign(campaignId: number) {
  * permissionless so anyone can trigger cleanup of expired campaigns.
  */
 export function buildCompleteExpiredCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildCompleteExpiredCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
     functionName: 'complete-expired-campaign',
     functionArgs: [toUIntCV(campaignId)],
     postConditionMode: PC_MODE.ALLOW,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for extending campaign duration.
+ * Calls promo-manager.extend-campaign-duration. Only the advertiser can extend.
+ */
+export function buildExtendCampaignDuration(campaignId: number, additionalBlocks: number) {
+  if (campaignId < 0) throw new Error('buildExtendCampaignDuration: campaignId must be non-negative');
+  if (additionalBlocks <= 0) throw new Error('buildExtendCampaignDuration: additionalBlocks must be positive');
+  if (additionalBlocks > 12960) throw new Error('buildExtendCampaignDuration: additionalBlocks exceeds MAX_DURATION_BLOCKS');
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'extend-campaign-duration',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(additionalBlocks)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for increasing campaign budget.
+ * Requires additional STX deposit from advertiser to CONTRACT_OWNER.
+ */
+export function buildIncreaseCampaignBudget(
+  senderAddress: string,
+  campaignId: number,
+  additionalBudgetSTX: number,
+) {
+  if (!senderAddress) throw new Error('buildIncreaseCampaignBudget: senderAddress is required');
+  if (campaignId < 0) throw new Error('buildIncreaseCampaignBudget: campaignId must be non-negative');
+  if (additionalBudgetSTX <= 0) throw new Error('buildIncreaseCampaignBudget: additionalBudgetSTX must be positive');
+
+  const additionalMicro = stxToMicroStx(additionalBudgetSTX);
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'increase-campaign-budget',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(additionalMicro)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: createCampaignFundingPostConditions(senderAddress, additionalBudgetSTX),
+  };
+}
+
+/**
+ * Build contract call for updating campaign daily budget.
+ * Only the advertiser can update the daily spend limit.
+ */
+export function buildUpdateDailyBudget(campaignId: number, newDailyBudgetSTX: number) {
+  if (campaignId < 0) throw new Error('buildUpdateDailyBudget: campaignId must be non-negative');
+  if (newDailyBudgetSTX <= 0) throw new Error('buildUpdateDailyBudget: newDailyBudgetSTX must be positive');
+
+  const dailyMicro = stxToMicroStx(newDailyBudgetSTX);
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'update-daily-budget',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(dailyMicro)],
+    postConditionMode: PC_MODE.DENY,
     postConditions: [],
   };
 }
@@ -348,6 +424,83 @@ export function buildReadIsCampaignActive(campaignId: number) {
 }
 
 /**
+ * Build read-only call to check if a campaign has expired.
+ */
+export function buildReadIsCampaignExpired(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'is-campaign-expired',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get remaining blocks until campaign expires.
+ */
+export function buildReadCampaignTimeRemaining(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-time-remaining',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get daily budget remaining for current period.
+ */
+export function buildReadDailyBudgetRemaining(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-daily-budget-remaining',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get platform-wide stats summary.
+ */
+export function buildReadPlatformStats() {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-platform-stats',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build read-only call to get campaign budget utilization (0-100%).
+ */
+export function buildReadCampaignUtilization(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-utilization',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to check if spending is allowed for a campaign.
+ */
+export function buildReadCanRecordSpend(campaignId: number, amount: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'can-record-spend',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(amount)],
+  };
+}
+
+/**
+ * Build read-only call to get the next available campaign ID.
+ */
+export function buildReadCampaignNonce() {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-nonce',
+    functionArgs: [],
+  };
+}
+
+/**
  * Build read-only call arguments for fetching analytics.
  */
 export function buildReadAnalytics(campaignId: number) {
@@ -426,6 +579,50 @@ export function buildUpdateDisplayName(newName: string) {
     contractName: CONTRACTS.USER_PROFILES,
     functionName: 'update-display-name',
     functionArgs: [toStringAsciiCV(newName)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build admin contract call to pause/unpause the user-profiles contract.
+ * @param paused - Whether to pause (true) or unpause (false) the contract
+ */
+export function buildSetUserProfilesPaused(paused: boolean) {
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'set-contract-paused',
+    functionArgs: [toBoolCV(paused)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build admin contract call to batch update reputation for multiple users.
+ * @param updates - Array of {address, score} tuples (max 10)
+ */
+export function buildBatchUpdateReputation(updates: Array<{ address: string; score: number }>) {
+  if (updates.length === 0) throw new Error('buildBatchUpdateReputation: updates array is empty');
+  if (updates.length > 10) throw new Error('buildBatchUpdateReputation: max 10 updates per batch');
+
+  for (const u of updates) {
+    if (!u.address) throw new Error('buildBatchUpdateReputation: each entry must have an address');
+    if (u.score < 0 || u.score > 100) throw new Error('buildBatchUpdateReputation: score must be 0-100');
+  }
+
+  // Build Clarity list of tuples
+  const listItems = updates.map((u) => ({
+    user: toPrincipalCV(u.address),
+    score: toUIntCV(u.score),
+  }));
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.USER_PROFILES,
+    functionName: 'batch-update-reputation',
+    functionArgs: [listItems],
     postConditionMode: PC_MODE.DENY,
     postConditions: [],
   };
@@ -616,6 +813,31 @@ export function buildReadDistributionStats() {
 }
 
 /**
+ * Build read-only call to get payout history for a publisher.
+ * @param publisherAddress - The publisher's Stacks address
+ */
+export function buildReadPayoutHistory(publisherAddress: string) {
+  if (!publisherAddress) throw new Error('buildReadPayoutHistory: publisherAddress is required');
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-payout-history',
+    functionArgs: [toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
+ * Build read-only call to get platform revenue summary.
+ * Returns total fees, distributions, payout count, publisher count, and fee config.
+ */
+export function buildReadPlatformRevenue() {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-platform-revenue',
+    functionArgs: [],
+  };
+}
+
+/**
  * Build contract call to record publisher earnings (admin only).
  */
 export function buildRecordEarnings(
@@ -623,9 +845,11 @@ export function buildRecordEarnings(
   publisherAddress: string,
   amount: number,
 ) {
-  if (campaignId < 0) throw new Error('buildRecordEarnings: campaignId must be non-negative');
+  if (campaignId <= 0) throw new Error('buildRecordEarnings: campaignId must be positive');
+  if (!Number.isInteger(campaignId)) throw new Error('buildRecordEarnings: campaignId must be an integer');
   if (!publisherAddress) throw new Error('buildRecordEarnings: publisherAddress is required');
   if (amount <= 0) throw new Error('buildRecordEarnings: amount must be positive');
+  if (!Number.isFinite(amount)) throw new Error('buildRecordEarnings: amount must be finite');
 
   return {
     contractAddress: CONTRACT_ADDRESS,
@@ -635,6 +859,63 @@ export function buildRecordEarnings(
       toUIntCV(campaignId),
       toPrincipalCV(publisherAddress),
       toUIntCV(amount),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for updating the platform fee rate (admin only).
+ * @param newRateBps - New fee rate in basis points (0-100, representing 0-10%)
+ * @throws {Error} If newRateBps is outside valid bounds
+ */
+export function buildUpdateFeeRate(newRateBps: number) {
+  if (!Number.isInteger(newRateBps)) throw new Error('buildUpdateFeeRate: newRateBps must be an integer');
+  if (newRateBps < 0) throw new Error('buildUpdateFeeRate: newRateBps must be non-negative');
+  if (newRateBps > 100) throw new Error('buildUpdateFeeRate: newRateBps must be <= 100 (10%)');
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'update-fee-rate',
+    functionArgs: [toUIntCV(newRateBps)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
+ * Build contract call for batch recording publisher earnings (admin only).
+ * Records earnings for two publishers in a single transaction.
+ * @param campaignId - The campaign ID (must be > 0)
+ * @param entries - Array of exactly 2 entries with publisherAddress and amount
+ * @throws {Error} If campaignId is invalid or entries array is malformed
+ */
+export function buildBatchRecordEarnings(
+  campaignId: number,
+  entries: Array<{ publisherAddress: string; amount: number }>,
+) {
+  if (campaignId <= 0) throw new Error('buildBatchRecordEarnings: campaignId must be positive');
+  if (!Number.isInteger(campaignId)) throw new Error('buildBatchRecordEarnings: campaignId must be an integer');
+  if (!Array.isArray(entries)) throw new Error('buildBatchRecordEarnings: entries must be an array');
+  if (entries.length !== 2) throw new Error('buildBatchRecordEarnings: entries must have exactly 2 elements');
+  for (const entry of entries) {
+    if (!entry.publisherAddress) throw new Error('buildBatchRecordEarnings: publisherAddress is required');
+    if (entry.amount <= 0) throw new Error('buildBatchRecordEarnings: amount must be positive');
+    if (!Number.isFinite(entry.amount)) throw new Error('buildBatchRecordEarnings: amount must be finite');
+  }
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'batch-record-earnings',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toPrincipalCV(entries[0].publisherAddress),
+      toUIntCV(entries[0].amount),
+      toPrincipalCV(entries[1].publisherAddress),
+      toUIntCV(entries[1].amount),
     ],
     postConditionMode: PC_MODE.DENY,
     postConditions: [],

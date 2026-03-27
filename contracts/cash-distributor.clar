@@ -20,6 +20,22 @@
 (define-constant ERR_PAYOUT_PAUSED (err u606))
 (define-constant ERR_MIN_PAYOUT_NOT_MET (err u607))
 (define-constant ERR_SELF_PAYOUT (err u608))
+(define-constant ERR_ZERO_CAMPAIGN_ID (err u609))
+(define-constant ERR_PUBLISHER_NOT_FOUND (err u610))
+(define-constant ERR_CLAIM_BELOW_MINIMUM (err u611))
+(define-constant ERR_INSUFFICIENT_CONTRACT_BALANCE (err u612))
+(define-constant ERR_FEE_CALCULATION_ERROR (err u613))
+(define-constant ERR_DUPLICATE_EARNINGS (err u614))
+(define-constant ERR_MAX_CLAIMS_REACHED (err u615))
+(define-constant ERR_EARNINGS_OVERFLOW (err u616))
+(define-constant ERR_FEE_RATE_OUT_OF_BOUNDS (err u617))
+
+;; Configurable limits
+(define-constant MAX_CLAIMS_PER_BLOCK u10)
+(define-constant BLOCKS_PER_DAY u144)
+(define-constant MAX_EARNINGS_PER_RECORD u1000000000000)
+;; Maximum single payout: 10000 STX (prevents draining)
+(define-constant MAX_SINGLE_PAYOUT u10000000000)
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
@@ -39,6 +55,9 @@
 (define-data-var total-distributed uint u0)
 (define-data-var total-fees-collected uint u0)
 (define-data-var payouts-paused bool false)
+(define-data-var total-payouts-count uint u0)
+(define-data-var total-publishers-paid uint u0)
+(define-data-var current-fee-rate uint PLATFORM_FEE_BPS)
 
 ;; --- Data Maps ---
 
@@ -68,6 +87,12 @@
   }
 )
 
+;; Claim rate limiting per block
+(define-map claim-counts-per-block
+  { block-height: uint }
+  { count: uint }
+)
+
 ;; Total earnings per publisher (across all campaigns)
 (define-map publisher-totals
   { publisher: principal }
@@ -93,7 +118,11 @@
 )
 
 (define-private (calculate-fee (amount uint))
-  (/ (* amount PLATFORM_FEE_BPS) FEE_DENOMINATOR)
+  (let ((fee-rate (var-get current-fee-rate)))
+    ;; Multiply before divide to minimize precision loss
+    ;; Add (FEE_DENOMINATOR - 1) for ceiling rounding to prevent fee undercount
+    (/ (+ (* amount fee-rate) (- FEE_DENOMINATOR u1)) FEE_DENOMINATOR)
+  )
 )
 
 ;; --- Read-Only Functions ---
@@ -129,7 +158,10 @@
 
 (define-read-only (get-claimable-amount (campaign-id uint) (publisher principal))
   (let ((earnings (get-publisher-earnings campaign-id publisher)))
-    (- (get net-earnings earnings) (get claimed earnings))
+    (if (>= (get net-earnings earnings) (get claimed earnings))
+      (- (get net-earnings earnings) (get claimed earnings))
+      u0
+    )
   )
 )
 
@@ -158,6 +190,66 @@
   }
 )
 
+(define-read-only (get-total-payouts-count)
+  (var-get total-payouts-count)
+)
+
+(define-read-only (get-payout-history (publisher principal))
+  (let ((totals (get-publisher-totals publisher)))
+    {
+      total-claimed: (get total-claimed totals),
+      payout-count: (get payout-count totals),
+      total-fees: (get total-fees totals),
+      total-earned: (get total-earned totals),
+    }
+  )
+)
+
+(define-read-only (calculate-net-amount (gross-amount uint))
+  (let ((fee (calculate-fee gross-amount)))
+    (if (>= gross-amount fee)
+      { net: (- gross-amount fee), fee: fee }
+      { net: u0, fee: gross-amount }
+    )
+  )
+)
+
+(define-read-only (is-claim-allowed (campaign-id uint) (publisher principal))
+  (let (
+    (earnings (get-publisher-earnings campaign-id publisher))
+    (claimable (if (>= (get net-earnings earnings) (get claimed earnings))
+                 (- (get net-earnings earnings) (get claimed earnings))
+                 u0))
+    (block-claims (default-to { count: u0 } (map-get? claim-counts-per-block { block-height: stacks-block-height })))
+  )
+    {
+      allowed: (and
+        (not (var-get payouts-paused))
+        (> claimable u0)
+        (>= claimable MIN_PAYOUT_AMOUNT)
+        (<= claimable MAX_SINGLE_PAYOUT)
+        (< (get count block-claims) MAX_CLAIMS_PER_BLOCK)
+      ),
+      reason-paused: (var-get payouts-paused),
+      reason-below-minimum: (< claimable MIN_PAYOUT_AMOUNT),
+      reason-no-earnings: (is-eq claimable u0),
+      reason-rate-limited: (>= (get count block-claims) MAX_CLAIMS_PER_BLOCK),
+      claimable-amount: claimable,
+    }
+  )
+)
+
+(define-read-only (get-platform-revenue)
+  {
+    total-fees-collected: (var-get total-fees-collected),
+    total-distributed: (var-get total-distributed),
+    total-payouts: (var-get total-payouts-processed),
+    total-publishers-paid: (var-get total-publishers-paid),
+    current-fee-rate: (var-get current-fee-rate),
+    fee-denominator: FEE_DENOMINATOR,
+  }
+)
+
 ;; --- Public Functions ---
 
 ;; Record publisher earnings for a campaign (admin or authorized contract)
@@ -168,13 +260,20 @@
   (let (
     (current (get-publisher-earnings campaign-id publisher))
     (fee (calculate-fee amount))
-    (net (- amount fee))
+    (net (if (>= amount fee) (- amount fee) u0))
     (totals (get-publisher-totals publisher))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    ;; Ensure fee does not exceed the amount (underflow protection)
+    (asserts! (>= amount fee) ERR_FEE_CALCULATION_ERROR)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    (asserts! (<= amount MAX_EARNINGS_PER_RECORD) ERR_EARNINGS_OVERFLOW)
     ;; Prevent recording earnings for the contract owner itself
-    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
+    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_SELF_PAYOUT)
+
+    ;; Overflow protection: ensure accumulated gross won't exceed uint max
+    (asserts! (>= (- u340282366920938463463374607431768211455 amount) (get gross-earnings current)) ERR_EARNINGS_OVERFLOW)
 
     ;; Update per-campaign earnings
     (map-set publisher-earnings
@@ -201,13 +300,25 @@
 
     (var-set total-fees-collected (+ (var-get total-fees-collected) fee))
 
+    ;; Emit fee collection event for accounting
+    (print {
+      event: "fee-collected",
+      campaign-id: campaign-id,
+      publisher: publisher,
+      fee-amount: fee,
+      total-fees-collected: (+ (var-get total-fees-collected) fee),
+      timestamp: stacks-block-time,
+    })
+
     (print {
       event: "earnings-recorded",
       campaign-id: campaign-id,
       publisher: publisher,
       gross: amount,
-      fee: fee,
+      fee-amount: fee,
+      fee-rate: (var-get current-fee-rate),
       net: net,
+      cumulative-gross: (+ (get gross-earnings current) amount),
       timestamp: stacks-block-time,
     })
 
@@ -220,13 +331,50 @@
   (let (
     (publisher tx-sender)
     (earnings (get-publisher-earnings campaign-id publisher))
-    (claimable (- (get net-earnings earnings) (get claimed earnings)))
+    (claimable (if (>= (get net-earnings earnings) (get claimed earnings))
+                 (- (get net-earnings earnings) (get claimed earnings))
+                 u0))
     (payout-id (increment-payout-nonce))
     (totals (get-publisher-totals publisher))
   )
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    ;; Emit denial event when payouts are paused for monitoring
+    (if (var-get payouts-paused)
+      (print {
+        event: "claim-denied",
+        publisher: publisher,
+        campaign-id: campaign-id,
+        reason: "payouts-paused",
+        timestamp: stacks-block-time,
+      })
+      true
+    )
     (asserts! (not (var-get payouts-paused)) ERR_PAYOUT_PAUSED)
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
+    ;; Emit denial event for below-minimum claims
+    (if (and (> claimable u0) (< claimable MIN_PAYOUT_AMOUNT))
+      (print {
+        event: "claim-denied",
+        publisher: publisher,
+        campaign-id: campaign-id,
+        reason: "below-minimum",
+        claimable: claimable,
+        minimum: MIN_PAYOUT_AMOUNT,
+        timestamp: stacks-block-time,
+      })
+      true
+    )
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
+    ;; Prevent single payout from draining contract
+    (asserts! (<= claimable MAX_SINGLE_PAYOUT) ERR_INVALID_AMOUNT)
+    ;; Rate limiting: max claims per block
+    (let ((block-claims (default-to { count: u0 } (map-get? claim-counts-per-block { block-height: stacks-block-height }))))
+      (asserts! (< (get count block-claims) MAX_CLAIMS_PER_BLOCK) ERR_MAX_CLAIMS_REACHED)
+      (map-set claim-counts-per-block
+        { block-height: stacks-block-height }
+        { count: (+ (get count block-claims) u1) }
+      )
+    )
 
     ;; Update earnings claimed amount BEFORE transfer to prevent reentrancy
     (map-set publisher-earnings
@@ -259,6 +407,12 @@
 
     (var-set total-distributed (+ (var-get total-distributed) claimable))
     (var-set total-payouts-processed (+ (var-get total-payouts-processed) u1))
+    (var-set total-payouts-count (+ (var-get total-payouts-count) u1))
+    ;; Track unique publishers: increment on first payout
+    (if (is-eq (get payout-count totals) u0)
+      (var-set total-publishers-paid (+ (var-get total-publishers-paid) u1))
+      true
+    )
 
     ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
     ;; Transfer AFTER all state updates to prevent reentrancy attacks
@@ -272,6 +426,8 @@
       publisher: publisher,
       campaign-id: campaign-id,
       amount: claimable,
+      total-claimed-by-publisher: (+ (get total-claimed totals) claimable),
+      payout-number: (+ (get payout-count totals) u1),
       timestamp: stacks-block-time,
     })
 
@@ -286,9 +442,52 @@
   (begin
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (var-set payouts-paused paused)
-    (print { event: "payouts-pause-toggled", paused: paused, timestamp: stacks-block-time })
+    (print {
+      event: "payouts-pause-toggled",
+      paused: paused,
+      admin: tx-sender,
+      total-payouts-at-toggle: (var-get total-payouts-processed),
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
+)
+
+;; Batch record earnings for multiple publishers (admin only, up to 10 entries)
+(define-public (batch-record-earnings
+    (campaign-id uint)
+    (publisher-1 principal) (amount-1 uint)
+    (publisher-2 principal) (amount-2 uint)
+  )
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    (try! (record-earnings campaign-id publisher-1 amount-1))
+    (try! (record-earnings campaign-id publisher-2 amount-2))
+    (ok true)
+  )
+)
+
+;; Update platform fee rate with bounds checking (admin only)
+(define-public (update-fee-rate (new-rate uint))
+  (let ((old-rate (var-get current-fee-rate)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    ;; Fee rate must be between 0 and 100 BPS (0-10%)
+    (asserts! (<= new-rate u100) ERR_FEE_RATE_OUT_OF_BOUNDS)
+    (var-set current-fee-rate new-rate)
+    (print {
+      event: "fee-rate-updated",
+      old-rate: old-rate,
+      new-rate: new-rate,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
+(define-read-only (get-current-fee-rate)
+  (var-get current-fee-rate)
 )
 
 (define-read-only (get-contract-version)

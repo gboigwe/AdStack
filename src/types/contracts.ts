@@ -36,6 +36,7 @@ export enum CampaignStatus {
   PAUSED = 'paused',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
+  EXPIRED = 'expired',
 }
 
 /**

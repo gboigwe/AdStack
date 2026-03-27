@@ -107,6 +107,85 @@ export function useContractVersion(contractName: string) {
 }
 
 /**
+ * Hook to check if a campaign has expired based on block height.
+ */
+export function useIsCampaignExpired(campaignId: number | undefined) {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'is-campaign-expired',
+    args: campaignId !== undefined ? [encodeCampaignIdArg(campaignId)] : [],
+    enabled: campaignId !== undefined,
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Hook to get remaining blocks until a campaign expires.
+ */
+export function useCampaignTimeRemaining(campaignId: number | undefined) {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-campaign-time-remaining',
+    args: campaignId !== undefined ? [encodeCampaignIdArg(campaignId)] : [],
+    enabled: campaignId !== undefined,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+  });
+}
+
+/**
+ * Hook to get daily budget remaining for the current period.
+ */
+export function useDailyBudgetRemaining(campaignId: number | undefined) {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-daily-budget-remaining',
+    args: campaignId !== undefined ? [encodeCampaignIdArg(campaignId)] : [],
+    enabled: campaignId !== undefined,
+    staleTime: 15_000,
+  });
+}
+
+/**
+ * Hook to get platform-wide campaign statistics summary.
+ * Includes total campaigns, locked STX, spent, completed, and cancelled counts.
+ */
+export function usePlatformStats(refetchInterval = 120_000) {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-platform-stats',
+    args: [],
+    staleTime: 60_000,
+    refetchInterval,
+  });
+}
+
+/**
+ * Hook to get campaign budget utilization percentage (0-100).
+ */
+export function useCampaignUtilization(campaignId: number | undefined) {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-campaign-utilization',
+    args: campaignId !== undefined ? [encodeCampaignIdArg(campaignId)] : [],
+    enabled: campaignId !== undefined,
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Hook to get the next available campaign ID (campaign nonce).
+ */
+export function useCampaignNonce() {
+  return useReadOnlyCall({
+    contractName: CONTRACTS.PROMO_MANAGER,
+    functionName: 'get-campaign-nonce',
+    args: [],
+    staleTime: 30_000,
+  });
+}
+
+/**
  * Convert a raw Clarity 4 campaign-created event timestamp to a JS Date.
  * Used when parsing print events from the Hiro API.
  */
