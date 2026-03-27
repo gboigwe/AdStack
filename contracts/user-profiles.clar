@@ -215,7 +215,7 @@
       (if (and
         (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
         (> (get verification-expires profile) stacks-block-height)
-        (<= (- (get verification-expires profile) stacks-block-height) u720)
+        (<= (- (get verification-expires profile) stacks-block-height) DEFAULT_ACTIVE_WINDOW)
       )
         (ok true)
         (ok false)
