@@ -40,10 +40,13 @@ export function buildCreateCampaign(
   params: CreateCampaignParams,
 ) {
   if (!senderAddress) throw new Error('buildCreateCampaign: senderAddress is required');
-  if (!params.name || params.name.length === 0) throw new Error('buildCreateCampaign: name is required');
+  if (!params.name || params.name.trim().length === 0) throw new Error('buildCreateCampaign: name is required and cannot be whitespace-only');
+  if (params.name.length > CAMPAIGN_LIMITS.MAX_NAME_LENGTH) throw new Error(`buildCreateCampaign: name exceeds max length (${CAMPAIGN_LIMITS.MAX_NAME_LENGTH})`);
   if (Number(params.budget) <= 0) throw new Error('buildCreateCampaign: budget must be positive');
   if (Number(params.dailyBudget) <= 0) throw new Error('buildCreateCampaign: dailyBudget must be positive');
   if (Number(params.dailyBudget) > Number(params.budget)) throw new Error('buildCreateCampaign: dailyBudget cannot exceed total budget');
+  if (params.duration < CAMPAIGN_LIMITS.MIN_DURATION_BLOCKS) throw new Error(`buildCreateCampaign: duration must be at least ${CAMPAIGN_LIMITS.MIN_DURATION_BLOCKS} blocks`);
+  if (params.duration > CAMPAIGN_LIMITS.MAX_DURATION_BLOCKS) throw new Error(`buildCreateCampaign: duration exceeds max (${CAMPAIGN_LIMITS.MAX_DURATION_BLOCKS} blocks)`);
 
   const budgetMicro = stxToMicroStx(Number(params.budget));
   const dailyMicro = stxToMicroStx(Number(params.dailyBudget));
