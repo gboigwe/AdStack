@@ -34,6 +34,8 @@
 (define-constant MAX_CLAIMS_PER_BLOCK u10)
 (define-constant BLOCKS_PER_DAY u144)
 (define-constant MAX_EARNINGS_PER_RECORD u1000000000000)
+;; Maximum single payout: 10000 STX (prevents draining)
+(define-constant MAX_SINGLE_PAYOUT u10000000000)
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
