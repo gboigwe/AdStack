@@ -182,10 +182,21 @@
     ;; Prevent release to self (advertiser cannot be publisher)
     (asserts! (not (is-eq publisher (get advertiser escrow))) ERR_INVALID_RECIPIENT)
     ;; Cooldown check: per-publisher-per-campaign to prevent rapid successive withdrawals
+    ;; Log cooldown violation attempts for monitoring before rejecting
     (asserts! (or
       (is-eq (get last-release-block pub-release) u0)
       (>= (- stacks-block-height (get last-release-block pub-release)) WITHDRAWAL_COOLDOWN)
-    ) ERR_COOLDOWN_ACTIVE)
+    ) (begin
+      (print {
+        event: "cooldown-violation-attempt",
+        campaign-id: campaign-id,
+        publisher: publisher,
+        last-release-block: (get last-release-block pub-release),
+        current-block: stacks-block-height,
+        timestamp: stacks-block-time,
+      })
+      ERR_COOLDOWN_ACTIVE
+    ))
 
     ;; Update escrow state BEFORE transfer to prevent reentrancy
     (map-set escrows
