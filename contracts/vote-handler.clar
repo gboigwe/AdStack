@@ -17,6 +17,10 @@
 (define-constant ERR_PROPOSAL_ALREADY_EXECUTED (err u407))
 (define-constant ERR_QUORUM_NOT_MET (err u408))
 (define-constant ERR_NOT_REGISTERED (err u409))
+(define-constant ERR_PROPOSAL_LIMIT_REACHED (err u410))
+
+;; Maximum active proposals per proposer to prevent spam
+(define-constant MAX_ACTIVE_PROPOSALS_PER_USER u5)
 
 ;; Proposal status
 (define-constant STATUS_ACTIVE u1)
