@@ -780,6 +780,9 @@ export function buildSetPublisherProfile(
  * Build contract call to add a tag to the publisher's profile.
  */
 export function buildAddPublisherTag(tag: string) {
+  if (!tag || tag.length === 0) throw new Error('buildAddPublisherTag: tag is required');
+  if (tag.length > 32) throw new Error('buildAddPublisherTag: tag exceeds max length (32)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
