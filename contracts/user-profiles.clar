@@ -301,11 +301,21 @@
     ;; Only the user or contract owner can update activity
     (asserts! (or (is-eq tx-sender user) (is-contract-owner)) ERR_NOT_AUTHORIZED)
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (map-set profiles
-      { user: user }
-      (merge profile { last-active: stacks-block-height })
+    (let ((old-last-active (get last-active profile)))
+      (map-set profiles
+        { user: user }
+        (merge profile { last-active: stacks-block-height })
+      )
+
+      (print {
+        event: "activity-updated",
+        user: user,
+        old-last-active: old-last-active,
+        new-last-active: stacks-block-height,
+        timestamp: stacks-block-time,
+      })
+      (ok true)
     )
-    (ok true)
   )
 )
 
