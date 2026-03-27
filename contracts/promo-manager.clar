@@ -41,6 +41,10 @@
 (define-constant MAX_DURATION_BLOCKS u12960)
 ;; Minimum campaign duration in blocks (~1 day)
 (define-constant MIN_DURATION_BLOCKS u144)
+;; Blocks per day for daily budget reset calculation
+(define-constant BLOCKS_PER_DAY u144)
+;; Maximum campaigns per advertiser to prevent spam
+(define-constant MAX_CAMPAIGNS_PER_ADVERTISER u50)
 
 ;; Status constants
 (define-constant STATUS_DRAFT u0)
