@@ -248,17 +248,27 @@
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (asserts! (> (len new-name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len new-name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
+    (asserts! (has-non-space-char new-name) ERR_EMPTY_NAME)
+    (asserts! (not (is-eq new-name (get display-name profile))) ERR_DISPLAY_NAME_UNCHANGED)
 
-    (map-set profiles
-      { user: tx-sender }
-      (merge profile {
-        display-name: new-name,
-        last-active: stacks-block-height,
+    (let ((old-name (get display-name profile)))
+      (map-set profiles
+        { user: tx-sender }
+        (merge profile {
+          display-name: new-name,
+          last-active: stacks-block-height,
+        })
+      )
+
+      (print {
+        event: "name-updated",
+        user: tx-sender,
+        old-name: old-name,
+        new-name: new-name,
+        timestamp: stacks-block-time,
       })
+      (ok true)
     )
-
-    (print { event: "name-updated", user: tx-sender, timestamp: stacks-block-time })
-    (ok true)
   )
 )
 
