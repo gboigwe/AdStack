@@ -495,6 +495,9 @@ export function buildReadTotalViews() {
  * Admin only - called to sync spend data from promo-manager.
  */
 export function buildRecordCampaignSpend(campaignId: number, amount: number) {
+  if (campaignId < 0) throw new Error('buildRecordCampaignSpend: campaignId must be non-negative');
+  if (amount <= 0) throw new Error('buildRecordCampaignSpend: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
