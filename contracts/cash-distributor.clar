@@ -19,6 +19,7 @@
 (define-constant ERR_INVALID_AMOUNT (err u605))
 (define-constant ERR_PAYOUT_PAUSED (err u606))
 (define-constant ERR_MIN_PAYOUT_NOT_MET (err u607))
+(define-constant ERR_SELF_PAYOUT (err u608))
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
