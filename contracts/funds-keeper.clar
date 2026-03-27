@@ -49,6 +49,7 @@
 (define-data-var total-refunded uint u0)
 (define-data-var contract-paused bool false)
 (define-data-var total-escrows-created uint u0)
+(define-data-var total-releases-count uint u0)
 
 ;; --- Data Maps ---
 
