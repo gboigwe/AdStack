@@ -303,6 +303,8 @@
     (asserts! (<= duration MAX_DURATION_BLOCKS) ERR_INVALID_DURATION)
     (asserts! (<= daily-budget budget) ERR_INVALID_BUDGET)
     (asserts! (> daily-budget u0) ERR_INVALID_BUDGET)
+    ;; Prevent total locked STX overflow
+    (asserts! (check-budget-overflow budget) ERR_BUDGET_OVERFLOW)
 
     ;; Clarity 4: escrow through CONTRACT_OWNER admin wallet
     (try! (stx-transfer? budget tx-sender CONTRACT_OWNER))
