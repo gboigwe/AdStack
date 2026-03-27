@@ -453,6 +453,21 @@
   )
 )
 
+;; Batch record earnings for multiple publishers (admin only, up to 10 entries)
+(define-public (batch-record-earnings
+    (campaign-id uint)
+    (publisher-1 principal) (amount-1 uint)
+    (publisher-2 principal) (amount-2 uint)
+  )
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    (try! (record-earnings campaign-id publisher-1 amount-1))
+    (try! (record-earnings campaign-id publisher-2 amount-2))
+    (ok true)
+  )
+)
+
 ;; Update platform fee rate with bounds checking (admin only)
 (define-public (update-fee-rate (new-rate uint))
   (let ((old-rate (var-get current-fee-rate)))
