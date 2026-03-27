@@ -796,6 +796,43 @@ export function buildRecordEarnings(
   };
 }
 
+/**
+ * Build contract call for batch recording publisher earnings (admin only).
+ * Records earnings for two publishers in a single transaction.
+ * @param campaignId - The campaign ID (must be > 0)
+ * @param entries - Array of exactly 2 entries with publisherAddress and amount
+ * @throws {Error} If campaignId is invalid or entries array is malformed
+ */
+export function buildBatchRecordEarnings(
+  campaignId: number,
+  entries: Array<{ publisherAddress: string; amount: number }>,
+) {
+  if (campaignId <= 0) throw new Error('buildBatchRecordEarnings: campaignId must be positive');
+  if (!Number.isInteger(campaignId)) throw new Error('buildBatchRecordEarnings: campaignId must be an integer');
+  if (!Array.isArray(entries)) throw new Error('buildBatchRecordEarnings: entries must be an array');
+  if (entries.length !== 2) throw new Error('buildBatchRecordEarnings: entries must have exactly 2 elements');
+  for (const entry of entries) {
+    if (!entry.publisherAddress) throw new Error('buildBatchRecordEarnings: publisherAddress is required');
+    if (entry.amount <= 0) throw new Error('buildBatchRecordEarnings: amount must be positive');
+    if (!Number.isFinite(entry.amount)) throw new Error('buildBatchRecordEarnings: amount must be finite');
+  }
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'batch-record-earnings',
+    functionArgs: [
+      toUIntCV(campaignId),
+      toPrincipalCV(entries[0].publisherAddress),
+      toUIntCV(entries[0].amount),
+      toPrincipalCV(entries[1].publisherAddress),
+      toUIntCV(entries[1].amount),
+    ],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
 // --- Threat-detector builders ---
 
 /**
