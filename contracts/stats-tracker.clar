@@ -183,6 +183,14 @@
   )
 )
 
+;; Check if a publisher is registered and active
+(define-read-only (is-publisher-registered (publisher principal))
+  (match (map-get? registered-publishers { publisher: publisher })
+    reg (get is-active reg)
+    false
+  )
+)
+
 ;; Check if a view submission would be allowed (pre-flight check)
 (define-read-only (is-view-submission-allowed (campaign-id uint) (viewer principal) (publisher principal))
   (let (
