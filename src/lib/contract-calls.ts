@@ -742,6 +742,11 @@ export function buildSetPublisherProfile(
   language: string,
   audienceSize: number,
 ) {
+  if (!category || category.length === 0) throw new Error('buildSetPublisherProfile: category is required');
+  if (!region || region.length === 0) throw new Error('buildSetPublisherProfile: region is required');
+  if (!language || language.length === 0) throw new Error('buildSetPublisherProfile: language is required');
+  if (audienceSize <= 0) throw new Error('buildSetPublisherProfile: audienceSize must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
