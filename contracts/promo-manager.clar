@@ -372,9 +372,12 @@
 ;; Record spending against a campaign (called by stats-tracker)
 (define-public (record-spend (campaign-id uint) (amount uint))
   (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    ;; Reject spend recording when contract is paused
+    (asserts! (not (var-get contract-paused)) ERR_NOT_AUTHORIZED)
     ;; Only contract owner or authorized contracts can record spending
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> amount u0) ERR_INVALID_BUDGET)
     (asserts! (<= (+ (get spent campaign) amount) (get budget campaign)) ERR_BUDGET_EXCEEDED)
 
     ;; Check daily budget
