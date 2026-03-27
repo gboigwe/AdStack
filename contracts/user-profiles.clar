@@ -181,6 +181,7 @@
 (define-public (register (role uint) (display-name (string-ascii 48)))
   (begin
     ;; Validations
+    (asserts! (is-not-paused) ERR_CONTRACT_PAUSED)
     (asserts! (not (is-registered tx-sender)) ERR_ALREADY_REGISTERED)
     (asserts! (is-valid-role role) ERR_INVALID_ROLE)
     (asserts! (> (len display-name) u0) ERR_INVALID_NAME)
