@@ -169,6 +169,8 @@
     (analytics (get-analytics campaign-id))
     (pub-stats (get-publisher-stats campaign-id publisher))
     (existing-record (map-get? viewer-records { campaign-id: campaign-id, viewer: viewer }))
+    (current-block-views (get count (default-to { count: u0 }
+      (map-get? block-view-counts { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }))))
   )
     ;; Contract must not be paused
     (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
@@ -178,8 +180,10 @@
     ;; (analytics default means campaign exists in the broader system)
     ;; Publisher cannot be the viewer (prevents self-dealing)
     (asserts! (not (is-eq publisher viewer)) ERR_INVALID_VIEWER)
-    ;; Rate limit check
+    ;; Daily rate limit check
     (asserts! (< current-daily MAX_DAILY_VIEWS_PER_VIEWER) ERR_RATE_LIMIT)
+    ;; Per-block rate limit check
+    (asserts! (< current-block-views MAX_VIEWS_PER_BLOCK) ERR_BLOCK_RATE_LIMIT)
 
     ;; Update daily view count
     (map-set daily-view-counts
