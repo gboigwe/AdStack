@@ -191,6 +191,12 @@
       { count: (+ current-daily u1) }
     )
 
+    ;; Update per-block view count
+    (map-set block-view-counts
+      { campaign-id: campaign-id, viewer: viewer, block-height: stacks-block-height }
+      { count: (+ current-block-views u1) }
+    )
+
     ;; Update or create viewer record
     (match existing-record
       record
