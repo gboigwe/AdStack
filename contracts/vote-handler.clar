@@ -281,6 +281,8 @@
         status: new-status,
         votes-for: (get votes-for proposal),
         votes-against: (get votes-against proposal),
+        total-voters: (get total-voters proposal),
+        quorum-met: (>= (get total-voters proposal) QUORUM_THRESHOLD),
         timestamp: stacks-block-time,
       })
 
