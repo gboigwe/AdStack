@@ -207,7 +207,7 @@
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
     (asserts! (<= amount MAX_EARNINGS_PER_RECORD) ERR_EARNINGS_OVERFLOW)
     ;; Prevent recording earnings for the contract owner itself
-    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
+    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_SELF_PAYOUT)
 
     ;; Overflow protection: ensure accumulated gross won't exceed uint max
     (asserts! (>= (- u340282366920938463463374607431768211455 amount) (get gross-earnings current)) ERR_EARNINGS_OVERFLOW)
