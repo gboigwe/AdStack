@@ -98,6 +98,10 @@
   (is-eq tx-sender CONTRACT_OWNER)
 )
 
+(define-private (is-not-paused)
+  (not (var-get contract-paused))
+)
+
 (define-private (is-valid-role (role uint))
   (or (is-eq role ROLE_ADVERTISER)
       (or (is-eq role ROLE_PUBLISHER)
