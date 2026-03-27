@@ -18,6 +18,8 @@
 (define-constant ERR_INVALID_INPUT (err u803))
 (define-constant ERR_SEGMENT_FULL (err u804))
 (define-constant ERR_CAMPAIGN_MISMATCH (err u805))
+(define-constant ERR_EMPTY_TAG (err u806))
+(define-constant ERR_PUBLISHER_NOT_FOUND (err u807))
 
 ;; Limits
 (define-constant MAX_TAGS_PER_SEGMENT u10)
