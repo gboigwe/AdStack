@@ -178,6 +178,7 @@
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    (asserts! (<= amount MAX_RELEASE_PER_TX) ERR_RELEASE_EXCEEDS_BALANCE)
     (asserts! (<= amount available) ERR_INSUFFICIENT_BALANCE)
     ;; Prevent release to self (advertiser cannot be publisher)
     (asserts! (not (is-eq publisher (get advertiser escrow))) ERR_INVALID_RECIPIENT)
