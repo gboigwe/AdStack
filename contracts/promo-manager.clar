@@ -28,6 +28,7 @@
 (define-constant ERR_ALREADY_COMPLETED (err u112))
 (define-constant ERR_ALREADY_CANCELLED (err u113))
 (define-constant ERR_MAX_CAMPAIGNS_REACHED (err u114))
+(define-constant ERR_BUDGET_OVERFLOW (err u115))
 
 ;; Minimum budget: 1 STX (1,000,000 micro-STX)
 (define-constant MIN_BUDGET u1000000)
