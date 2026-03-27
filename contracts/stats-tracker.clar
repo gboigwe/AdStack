@@ -280,6 +280,9 @@
       })
     )
 
+    ;; Update global spend tracker
+    (var-set total-spend-recorded (+ (var-get total-spend-recorded) amount))
+
     (print {
       event: "spend-tracked",
       campaign-id: campaign-id,
