@@ -396,6 +396,8 @@
       publisher: publisher,
       campaign-id: campaign-id,
       amount: claimable,
+      total-claimed-by-publisher: (+ (get total-claimed totals) claimable),
+      payout-number: (+ (get payout-count totals) u1),
       timestamp: stacks-block-time,
     })
 
