@@ -89,6 +89,142 @@ export function parseUserCounts(raw: RawClarityUserCounts): UserCounts {
   };
 }
 
+// --- Promo-manager parsers ---
+
+/** Campaign status constants matching on-chain values */
+export const CAMPAIGN_STATUS = {
+  DRAFT: 0,
+  ACTIVE: 1,
+  PAUSED: 2,
+  COMPLETED: 3,
+  CANCELLED: 4,
+  EXPIRED: 5,
+} as const;
+
+export type CampaignStatusLabel = 'draft' | 'active' | 'paused' | 'completed' | 'cancelled' | 'expired';
+
+const CAMPAIGN_STATUS_MAP: Record<number, CampaignStatusLabel> = {
+  0: 'draft',
+  1: 'active',
+  2: 'paused',
+  3: 'completed',
+  4: 'cancelled',
+  5: 'expired',
+};
+
+/** Parsed campaign object */
+export interface ParsedCampaign {
+  campaignId: number;
+  advertiser: string;
+  name: string;
+  budget: bigint;
+  spent: bigint;
+  dailyBudget: bigint;
+  dailySpent: bigint;
+  lastSpendBlock: number;
+  startHeight: number;
+  endHeight: number;
+  status: CampaignStatusLabel;
+  createdAt: number;
+  lastUpdated: number;
+  createdTimestamp: number;
+  lastUpdatedTimestamp: number;
+}
+
+/** Raw on-chain campaign shape from promo-manager */
+interface RawClarityCampaign {
+  advertiser: string;
+  name: string;
+  budget: bigint;
+  spent: bigint;
+  'daily-budget': bigint;
+  'daily-spent': bigint;
+  'last-spend-block': bigint;
+  'start-height': bigint;
+  'end-height': bigint;
+  status: bigint;
+  'created-at': bigint;
+  'last-updated': bigint;
+  'created-timestamp': bigint;
+  'last-updated-timestamp': bigint;
+}
+
+/**
+ * Parse raw campaign from promo-manager contract.
+ */
+export function parseCampaign(
+  campaignId: number,
+  raw: RawClarityCampaign,
+): ParsedCampaign {
+  const statusNum = Number(raw.status);
+
+  return {
+    campaignId,
+    advertiser: raw.advertiser,
+    name: raw.name,
+    budget: raw.budget,
+    spent: raw.spent,
+    dailyBudget: raw['daily-budget'],
+    dailySpent: raw['daily-spent'],
+    lastSpendBlock: Number(raw['last-spend-block']),
+    startHeight: Number(raw['start-height']),
+    endHeight: Number(raw['end-height']),
+    status: CAMPAIGN_STATUS_MAP[statusNum] ?? 'draft',
+    createdAt: Number(raw['created-at']),
+    lastUpdated: Number(raw['last-updated']),
+    createdTimestamp: Number(raw['created-timestamp']),
+    lastUpdatedTimestamp: Number(raw['last-updated-timestamp']),
+  };
+}
+
+/** Parsed platform stats */
+export interface ParsedPlatformStats {
+  totalCampaigns: number;
+  totalLocked: bigint;
+  totalSpent: bigint;
+  totalCompleted: number;
+  totalCancelled: number;
+  nextCampaignId: number;
+  isPaused: boolean;
+}
+
+/**
+ * Parse raw platform stats from promo-manager contract.
+ */
+export function parsePlatformStats(raw: {
+  'total-campaigns': bigint;
+  'total-locked': bigint;
+  'total-spent': bigint;
+  'total-completed': bigint;
+  'total-cancelled': bigint;
+  'next-campaign-id': bigint;
+  'is-paused': boolean;
+}): ParsedPlatformStats {
+  return {
+    totalCampaigns: Number(raw['total-campaigns']),
+    totalLocked: raw['total-locked'],
+    totalSpent: raw['total-spent'],
+    totalCompleted: Number(raw['total-completed']),
+    totalCancelled: Number(raw['total-cancelled']),
+    nextCampaignId: Number(raw['next-campaign-id']),
+    isPaused: raw['is-paused'],
+  };
+}
+
+/**
+ * Calculate campaign remaining budget from parsed campaign.
+ */
+export function getCampaignRemainingBudget(campaign: ParsedCampaign): bigint {
+  return campaign.budget - campaign.spent;
+}
+
+/**
+ * Check if a parsed campaign is in a terminal state.
+ */
+export function isCampaignTerminal(campaign: ParsedCampaign): boolean {
+  return campaign.status === 'completed' || campaign.status === 'cancelled' || campaign.status === 'expired';
+}
+
 // --- Stats-tracker parsers ---
 
 /**
