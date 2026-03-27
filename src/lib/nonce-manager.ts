@@ -32,14 +32,33 @@ export async function fetchAccountNonce(
   address: string,
   network?: SupportedNetwork,
 ): Promise<AccountNonces> {
-  const apiUrl = getApiUrl(network);
-  const response = await fetch(`${apiUrl}/extended/v1/address/${address}/nonces`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch nonce for ${address}: ${response.statusText}`);
+  if (!address || address.length === 0) {
+    throw new Error('fetchAccountNonce: address is required');
   }
 
-  return response.json();
+  const apiUrl = getApiUrl(network);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const response = await fetch(`${apiUrl}/extended/v1/address/${address}/nonces`, {
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch nonce for ${address}: ${response.statusText}`);
+    }
+
+    const data: AccountNonces = await response.json();
+
+    if (typeof data.possible_next_nonce !== 'number') {
+      throw new Error(`Invalid nonce response for ${address}: missing possible_next_nonce`);
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 /**
