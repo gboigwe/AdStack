@@ -177,6 +177,27 @@ export function getContractId(contractName: ContractName): string {
   return `${CONTRACT_ADDRESS}.${contractName}`;
 }
 
+/**
+ * Convert blocks to approximate human-readable duration.
+ */
+export function blocksToDuration(blocks: number): string {
+  if (blocks <= 0) return '0 blocks';
+  const days = Math.floor(blocks / BLOCK_TIME.BLOCKS_PER_DAY);
+  const hours = Math.floor((blocks % BLOCK_TIME.BLOCKS_PER_DAY) / BLOCK_TIME.BLOCKS_PER_HOUR);
+  if (days > 0 && hours > 0) return `${days}d ${hours}h`;
+  if (days > 0) return `${days}d`;
+  if (hours > 0) return `${hours}h`;
+  return `${blocks} blocks`;
+}
+
+/**
+ * Convert human duration (days) to approximate block count.
+ */
+export function daysToBlocks(days: number): number {
+  if (days < 0) throw new RangeError('daysToBlocks: days must be non-negative');
+  return Math.ceil(days * BLOCK_TIME.BLOCKS_PER_DAY);
+}
+
 export function isMainnet(): boolean {
   return CURRENT_NETWORK === 'mainnet';
 }

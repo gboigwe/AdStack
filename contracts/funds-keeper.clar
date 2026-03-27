@@ -91,7 +91,15 @@
 
 (define-read-only (get-escrow-balance (campaign-id uint))
   (match (map-get? escrows { campaign-id: campaign-id })
-    escrow (ok (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
+    escrow (let (
+      (outflows (+ (get released escrow) (get refunded escrow)))
+    )
+      ;; Guard against underflow if data is inconsistent
+      (if (>= (get deposited escrow) outflows)
+        (ok (- (get deposited escrow) outflows))
+        (ok u0)
+      )
+    )
     ERR_ESCROW_NOT_FOUND
   )
 )
