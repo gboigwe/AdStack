@@ -35,6 +35,10 @@
 (define-constant THRESHOLD_HIGH u75)
 (define-constant THRESHOLD_CRITICAL u90)
 
+;; Rate limiting for flag submissions
+(define-constant FLAG_COOLDOWN_BLOCKS u12) ;; ~2 hours between flags from same reporter
+(define-constant ERR_FLAG_COOLDOWN (err u707))
+
 ;; --- Data Variables ---
 
 (define-data-var total-flags uint u0)
@@ -83,6 +87,12 @@
 (define-map campaign-flag-counts
   { campaign-id: uint }
   { count: uint }
+)
+
+;; Track last flag submission per reporter per campaign
+(define-map reporter-last-flag
+  { campaign-id: uint, reporter: principal }
+  { last-flag-block: uint }
 )
 
 ;; --- Private Functions ---
@@ -177,6 +187,21 @@
   )
     ;; Validate flag type (1-5)
     (asserts! (and (>= flag-type u1) (<= flag-type u5)) ERR_INVALID_SCORE)
+
+    ;; Rate limit: check cooldown period for this reporter on this campaign
+    (let ((last-flag (default-to { last-flag-block: u0 }
+            (map-get? reporter-last-flag { campaign-id: campaign-id, reporter: tx-sender }))))
+      (asserts! (or
+        (is-eq (get last-flag-block last-flag) u0)
+        (>= (- stacks-block-height (get last-flag-block last-flag)) FLAG_COOLDOWN_BLOCKS)
+      ) ERR_FLAG_COOLDOWN)
+    )
+
+    ;; Update reporter last flag time
+    (map-set reporter-last-flag
+      { campaign-id: campaign-id, reporter: tx-sender }
+      { last-flag-block: stacks-block-height }
+    )
 
     ;; Record the flag
     (map-set fraud-flags
