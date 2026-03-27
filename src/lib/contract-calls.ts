@@ -485,12 +485,12 @@ export function buildRecordCampaignSpend(campaignId: number, amount: number) {
  * Build contract call to invalidate a fraudulent view.
  * Admin only - decrements valid view counts for anti-fraud.
  */
-export function buildInvalidateView(campaignId: number, viewerAddress: string) {
+export function buildInvalidateView(campaignId: number, viewerAddress: string, publisherAddress: string) {
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
     functionName: 'invalidate-view',
-    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress)],
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress), toPrincipalCV(publisherAddress)],
     postConditionMode: PC_MODE.DENY,
     postConditions: [],
   };
