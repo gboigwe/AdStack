@@ -186,6 +186,7 @@
     (asserts! (is-valid-role role) ERR_INVALID_ROLE)
     (asserts! (> (len display-name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len display-name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
+    (asserts! (has-non-space-char display-name) ERR_EMPTY_NAME)
 
     ;; Create profile
     (map-set profiles
