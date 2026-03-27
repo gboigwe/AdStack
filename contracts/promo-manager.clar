@@ -214,6 +214,7 @@
   )
     ;; Validations
     (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
+    (asserts! (<= advertiser-count MAX_CAMPAIGNS_PER_ADVERTISER) ERR_MAX_CAMPAIGNS_REACHED)
     (asserts! (>= budget MIN_BUDGET) ERR_INVALID_BUDGET)
     (asserts! (> (len name) u0) ERR_INVALID_NAME)
     (asserts! (<= (len name) MAX_NAME_LENGTH) ERR_INVALID_NAME)
