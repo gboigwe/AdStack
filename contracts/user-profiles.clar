@@ -86,7 +86,8 @@
   }
 )
 
-;; Track whether an address has ever registered (prevents re-registration)
+;; Legacy registered map - kept for backward compatibility but
+;; prefer checking (is-some (map-get? profiles ...)) directly.
 (define-map registered
   { user: principal }
   { is-registered: bool }
