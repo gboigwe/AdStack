@@ -486,6 +486,10 @@
   )
 )
 
+(define-read-only (get-current-fee-rate)
+  (var-get current-fee-rate)
+)
+
 (define-read-only (get-contract-version)
   CONTRACT_VERSION
 )
