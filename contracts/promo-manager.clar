@@ -342,6 +342,17 @@
     ) ERR_CAMPAIGN_NOT_ACTIVE)
     (asserts! (> remaining u0) ERR_INVALID_BUDGET)
 
+    ;; Mark campaign spent to prevent double-refund before transfer
+    (map-set campaigns
+      { campaign-id: campaign-id }
+      (merge campaign {
+        spent: (get budget campaign),
+        last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
+      })
+    )
+
+    ;; Transfer AFTER state update to prevent reentrancy
     (try! (stx-transfer? remaining tx-sender (get advertiser campaign)))
 
     (print {
