@@ -305,6 +305,7 @@
     (print {
       event: "escrow-completed",
       campaign-id: campaign-id,
+      advertiser: (get advertiser escrow),
       timestamp: stacks-block-time,
     })
 
