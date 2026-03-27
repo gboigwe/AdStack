@@ -502,3 +502,22 @@
     (ok true)
   )
 )
+
+;; Deactivate a registered publisher (admin only)
+(define-public (deactivate-publisher (publisher principal))
+  (let ((reg (unwrap! (map-get? registered-publishers { publisher: publisher }) ERR_PUBLISHER_NOT_REGISTERED)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map-set registered-publishers
+      { publisher: publisher }
+      (merge reg { is-active: false })
+    )
+    (print {
+      event: "publisher-deactivated",
+      publisher: publisher,
+      deactivated-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
