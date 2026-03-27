@@ -13,8 +13,13 @@ export const NETWORKS = {
 
 export type NetworkType = keyof typeof NETWORKS;
 
+const envNetwork = process.env.NEXT_PUBLIC_NETWORK as string | undefined;
+const validNetworks: NetworkType[] = ['mainnet', 'testnet', 'devnet'];
+
 export const CURRENT_NETWORK: NetworkType =
-  (process.env.NEXT_PUBLIC_NETWORK as NetworkType) || 'mainnet';
+  envNetwork && validNetworks.includes(envNetwork as NetworkType)
+    ? (envNetwork as NetworkType)
+    : 'mainnet';
 
 export const NETWORK: StacksNetwork = NETWORKS[CURRENT_NETWORK];
 
