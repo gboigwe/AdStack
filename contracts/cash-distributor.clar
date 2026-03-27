@@ -170,7 +170,7 @@
     (net (- amount fee))
     (totals (get-publisher-totals publisher))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
 
     ;; Update per-campaign earnings
