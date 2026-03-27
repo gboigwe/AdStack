@@ -453,6 +453,24 @@
   )
 )
 
+;; Update platform fee rate with bounds checking (admin only)
+(define-public (update-fee-rate (new-rate uint))
+  (let ((old-rate (var-get current-fee-rate)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    ;; Fee rate must be between 0 and 100 BPS (0-10%)
+    (asserts! (<= new-rate u100) ERR_FEE_RATE_OUT_OF_BOUNDS)
+    (var-set current-fee-rate new-rate)
+    (print {
+      event: "fee-rate-updated",
+      old-rate: old-rate,
+      new-rate: new-rate,
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
+
 (define-read-only (get-contract-version)
   CONTRACT_VERSION
 )
