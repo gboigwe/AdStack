@@ -87,6 +87,12 @@
   }
 )
 
+;; Claim rate limiting per block
+(define-map claim-counts-per-block
+  { block-height: uint }
+  { count: uint }
+)
+
 ;; Total earnings per publisher (across all campaigns)
 (define-map publisher-totals
   { publisher: principal }
