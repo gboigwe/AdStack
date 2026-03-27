@@ -101,17 +101,36 @@ export function releaseNonce(address: string): void {
   pendingNonces.delete(address);
 }
 
+/** Lock map to prevent concurrent acquireNonce calls for the same address */
+const nonceLocks = new Map<string, Promise<bigint>>();
+
 /**
  * Get and reserve the next nonce atomically.
  * Returns the nonce ready for use in a transaction.
+ * Uses a per-address lock to prevent race conditions where two
+ * concurrent calls could acquire the same nonce.
  */
 export async function acquireNonce(
   address: string,
   network?: SupportedNetwork,
 ): Promise<bigint> {
-  const nonce = await getNextNonce(address, network);
-  reserveNonce(address, nonce);
-  return nonce;
+  const existingLock = nonceLocks.get(address);
+
+  const acquirePromise = (existingLock ?? Promise.resolve(0n)).then(async () => {
+    const nonce = await getNextNonce(address, network);
+    reserveNonce(address, nonce);
+    return nonce;
+  });
+
+  nonceLocks.set(address, acquirePromise);
+
+  try {
+    return await acquirePromise;
+  } finally {
+    if (nonceLocks.get(address) === acquirePromise) {
+      nonceLocks.delete(address);
+    }
+  }
 }
 
 /**
