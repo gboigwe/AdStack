@@ -291,6 +291,13 @@
           { campaign-id: campaign-id }
           (merge escrow { status: STATUS_COMPLETED })
         )
+        (print {
+          event: "escrow-status-changed",
+          campaign-id: campaign-id,
+          old-status: STATUS_ACTIVE,
+          new-status: STATUS_COMPLETED,
+          timestamp: stacks-block-time,
+        })
         (ok u0)
       )
     )
