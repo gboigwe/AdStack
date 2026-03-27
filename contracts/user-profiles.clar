@@ -130,8 +130,11 @@
 )
 
 (define-read-only (is-registered (user principal))
-  (default-to false
-    (get is-registered (map-get? registered { user: user }))
+  (or
+    (is-some (map-get? profiles { user: user }))
+    (default-to false
+      (get is-registered (map-get? registered { user: user }))
+    )
   )
 )
 
