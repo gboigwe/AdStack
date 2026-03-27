@@ -420,6 +420,83 @@ export function buildReadIsCampaignActive(campaignId: number) {
 }
 
 /**
+ * Build read-only call to check if a campaign has expired.
+ */
+export function buildReadIsCampaignExpired(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'is-campaign-expired',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get remaining blocks until campaign expires.
+ */
+export function buildReadCampaignTimeRemaining(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-time-remaining',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get daily budget remaining for current period.
+ */
+export function buildReadDailyBudgetRemaining(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-daily-budget-remaining',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to get platform-wide stats summary.
+ */
+export function buildReadPlatformStats() {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-platform-stats',
+    functionArgs: [],
+  };
+}
+
+/**
+ * Build read-only call to get campaign budget utilization (0-100%).
+ */
+export function buildReadCampaignUtilization(campaignId: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-utilization',
+    functionArgs: [toUIntCV(campaignId)],
+  };
+}
+
+/**
+ * Build read-only call to check if spending is allowed for a campaign.
+ */
+export function buildReadCanRecordSpend(campaignId: number, amount: number) {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'can-record-spend',
+    functionArgs: [toUIntCV(campaignId), toUIntCV(amount)],
+  };
+}
+
+/**
+ * Build read-only call to get the next available campaign ID.
+ */
+export function buildReadCampaignNonce() {
+  return {
+    contractId: getContractId(CONTRACTS.PROMO_MANAGER),
+    functionName: 'get-campaign-nonce',
+    functionArgs: [],
+  };
+}
+
+/**
  * Build read-only call arguments for fetching analytics.
  */
 export function buildReadAnalytics(campaignId: number) {
