@@ -6,6 +6,9 @@
 ;; Clarity 4 changes:
 ;; - as-contract removed: STX releases issued by CONTRACT_OWNER admin wallet
 ;; - stacks-block-time added to print events for Unix timestamp indexing
+;; - contract pause mechanism for emergency situations
+;; - per-publisher cooldown tracking for fair release scheduling
+;; - underflow-safe arithmetic throughout
 
 ;; --- Constants ---
 
