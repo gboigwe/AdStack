@@ -685,6 +685,11 @@ export function buildCreateSegment(
   minReputation: number,
   requireVerified: boolean,
 ) {
+  if (campaignId < 0) throw new Error('buildCreateSegment: campaignId must be non-negative');
+  if (!name || name.length === 0) throw new Error('buildCreateSegment: name is required');
+  if (name.length > 64) throw new Error('buildCreateSegment: name exceeds max length (64)');
+  if (minReputation < 0 || minReputation > 100) throw new Error('buildCreateSegment: minReputation must be 0-100');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
