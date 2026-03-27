@@ -277,7 +277,7 @@
       })
     )
 
-    (if was-active
+    (if (and was-active (> (var-get total-active-partnerships) u0))
       (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
       true
     )
