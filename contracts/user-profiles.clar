@@ -24,6 +24,7 @@
 (define-constant ERR_CONTRACT_PAUSED (err u215))
 (define-constant ERR_EMPTY_NAME (err u216))
 (define-constant ERR_INVALID_ROLE_CHANGE (err u217))
+(define-constant ERR_DISPLAY_NAME_UNCHANGED (err u218))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
