@@ -211,6 +211,31 @@
   )
 )
 
+;; Get remaining blocks until campaign expires
+(define-read-only (get-campaign-time-remaining (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (if (> (get end-height campaign) stacks-block-height)
+      (- (get end-height campaign) stacks-block-height)
+      u0
+    ))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
+;; Get daily budget remaining for current period
+(define-read-only (get-daily-budget-remaining (campaign-id uint))
+  (match (map-get? campaigns { campaign-id: campaign-id })
+    campaign (ok (let ((effective-daily-spent
+                  (if (>= (- stacks-block-height (get last-spend-block campaign)) BLOCKS_PER_DAY)
+                    u0
+                    (get daily-spent campaign))))
+              (if (> (get daily-budget campaign) effective-daily-spent)
+                (- (get daily-budget campaign) effective-daily-spent)
+                u0)))
+    ERR_CAMPAIGN_NOT_FOUND
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Create a new advertising campaign
