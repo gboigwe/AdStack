@@ -769,6 +769,19 @@ export function buildReadDistributionStats() {
 }
 
 /**
+ * Build read-only call to get payout history for a publisher.
+ * @param publisherAddress - The publisher's Stacks address
+ */
+export function buildReadPayoutHistory(publisherAddress: string) {
+  if (!publisherAddress) throw new Error('buildReadPayoutHistory: publisherAddress is required');
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-payout-history',
+    functionArgs: [toPrincipalCV(publisherAddress)],
+  };
+}
+
+/**
  * Build read-only call to get platform revenue summary.
  * Returns total fees, distributions, payout count, publisher count, and fee config.
  */
