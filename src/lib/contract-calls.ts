@@ -1028,6 +1028,10 @@ export function buildReleaseToPublisher(
   publisherAddress: string,
   amount: number,
 ) {
+  if (campaignId < 0) throw new Error('buildReleaseToPublisher: campaignId must be non-negative');
+  if (!publisherAddress) throw new Error('buildReleaseToPublisher: publisherAddress is required');
+  if (amount <= 0) throw new Error('buildReleaseToPublisher: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.FUNDS_KEEPER,
