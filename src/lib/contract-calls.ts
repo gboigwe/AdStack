@@ -129,6 +129,8 @@ export function buildRegisterUser(params: RegisterUserParams) {
  * and refund remaining escrowed STX back to the advertiser.
  */
 export function buildCancelCampaign(campaignId: number) {
+  if (campaignId < 0) throw new Error('buildCancelCampaign: campaignId must be non-negative');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PROMO_MANAGER,
