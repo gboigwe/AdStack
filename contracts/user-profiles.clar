@@ -4,7 +4,7 @@
 
 ;; --- Constants ---
 
-(define-constant CONTRACT_VERSION "4.0.0")
+(define-constant CONTRACT_VERSION "4.1.0")
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_NOT_AUTHORIZED (err u200))
 (define-constant ERR_ALREADY_REGISTERED (err u201))
