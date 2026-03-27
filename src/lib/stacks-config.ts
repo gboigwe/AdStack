@@ -110,6 +110,17 @@ export const BLOCK_TIME = {
 export const CLARITY_CONTRACT_VERSION = '4.0.0';
 
 /**
+ * Campaign limits matching promo-manager contract constants
+ */
+export const CAMPAIGN_LIMITS = {
+  MIN_BUDGET_MICRO_STX: 1_000_000,
+  MAX_NAME_LENGTH: 64,
+  MAX_DURATION_BLOCKS: 12_960,
+  MIN_DURATION_BLOCKS: 144,
+  MAX_CAMPAIGNS_PER_ADVERTISER: 50,
+} as const;
+
+/**
  * Minimum escrow amount in micro-STX (matches funds-keeper MIN_ESCROW_AMOUNT)
  */
 export const MIN_ESCROW_AMOUNT = 100_000;
