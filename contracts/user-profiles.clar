@@ -17,6 +17,7 @@
 (define-constant ERR_INVALID_SCORE (err u208))
 (define-constant ERR_NOT_ACTIVE (err u209))
 (define-constant ERR_MAX_CAMPAIGNS_EXCEEDED (err u210))
+(define-constant ERR_REPUTATION_OUT_OF_RANGE (err u211))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
