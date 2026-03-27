@@ -107,7 +107,12 @@ export function toPrincipalCV(address: string): PrincipalCV {
 /**
  * Create a Clarity list value from an array of Clarity values.
  */
+const MAX_CLARITY_LIST_SIZE = 2000;
+
 export function toListCV(items: ClarityValue[]): ListCV {
+  if (items.length > MAX_CLARITY_LIST_SIZE) {
+    throw new RangeError(`List size ${items.length} exceeds Clarity maximum of ${MAX_CLARITY_LIST_SIZE}`);
+  }
   return { type: 'list', value: items };
 }
 
