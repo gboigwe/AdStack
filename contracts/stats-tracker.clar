@@ -354,6 +354,8 @@
       campaign-id: campaign-id,
       viewer: viewer,
       publisher: publisher,
+      invalidated-by: tx-sender,
+      block-height: stacks-block-height,
       timestamp: stacks-block-time,
     })
 
