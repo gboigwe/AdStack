@@ -231,6 +231,7 @@
     (print {
       event: "funds-released",
       campaign-id: campaign-id,
+      advertiser: (get advertiser escrow),
       publisher: publisher,
       amount: amount,
       timestamp: stacks-block-time,
