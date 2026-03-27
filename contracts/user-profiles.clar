@@ -35,6 +35,8 @@
 
 ;; Verification valid for ~30 days (4320 blocks)
 (define-constant VERIFICATION_VALIDITY_BLOCKS u4320)
+;; Maximum number of campaigns per user
+(define-constant MAX_CAMPAIGNS_PER_USER u100)
 
 ;; Maximum display name length
 (define-constant MAX_NAME_LENGTH u48)
