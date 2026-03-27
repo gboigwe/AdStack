@@ -21,6 +21,7 @@
 (define-constant ERR_COOLDOWN_ACTIVE (err u507))
 (define-constant ERR_ZERO_CAMPAIGN_ID (err u508))
 (define-constant ERR_ESCROW_COMPLETED (err u509))
+(define-constant ERR_ESCROW_REFUNDED (err u510))
 
 ;; Escrow status
 (define-constant STATUS_ACTIVE u1)
