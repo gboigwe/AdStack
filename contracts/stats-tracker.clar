@@ -253,9 +253,15 @@
       }
     )
 
-    ;; Update global counters
-    (var-set total-views (+ (var-get total-views) u1))
-    (var-set total-valid-views (+ (var-get total-valid-views) u1))
+    ;; Update global counters with overflow protection
+    (if (< (var-get total-views) u340282366920938463463374607431768211455)
+      (var-set total-views (+ (var-get total-views) u1))
+      true
+    )
+    (if (< (var-get total-valid-views) u340282366920938463463374607431768211455)
+      (var-set total-valid-views (+ (var-get total-valid-views) u1))
+      true
+    )
 
     (print {
       event: "view-submitted",
