@@ -190,6 +190,10 @@
   }
 )
 
+(define-read-only (get-total-payouts-count)
+  (var-get total-payouts-count)
+)
+
 ;; --- Public Functions ---
 
 ;; Record publisher earnings for a campaign (admin or authorized contract)
