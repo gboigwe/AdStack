@@ -587,7 +587,7 @@
     ;; Only contract owner or authorized contracts can record spending
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
-    (asserts! (> amount u0) ERR_INVALID_BUDGET)
+    (asserts! (> amount u0) ERR_ZERO_AMOUNT)
     ;; Check campaign has not expired
     (asserts! (<= stacks-block-height (get end-height campaign)) ERR_CAMPAIGN_EXPIRED)
     (asserts! (<= (+ (get spent campaign) amount) (get budget campaign)) ERR_BUDGET_EXCEEDED)
