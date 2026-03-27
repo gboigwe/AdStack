@@ -257,6 +257,29 @@
   )
 )
 
+;; Calculate reputation after applying inactivity decay.
+;; Loses 1 point per REPUTATION_DECAY_BLOCKS of inactivity.
+(define-read-only (get-reputation-with-decay (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (let (
+        (blocks-inactive (- stacks-block-height (get last-active profile)))
+        (decay-points (/ blocks-inactive REPUTATION_DECAY_BLOCKS))
+        (current-rep (get reputation-score profile))
+      )
+        (ok (if (>= decay-points current-rep)
+          MIN_REPUTATION
+          (- current-rep decay-points)
+        ))
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
+(define-read-only (is-contract-paused)
+  (var-get contract-paused)
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
