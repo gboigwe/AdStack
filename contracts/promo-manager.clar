@@ -339,9 +339,13 @@
       (var-set total-stx-locked u0)
     )
 
+    ;; Track aggregate cancellation count
+    (var-set total-campaigns-cancelled (+ (var-get total-campaigns-cancelled) u1))
+
     (print {
       event: "campaign-cancelled",
       campaign-id: campaign-id,
+      advertiser: (get advertiser campaign),
       refunded: remaining,
       timestamp: stacks-block-time,
     })
