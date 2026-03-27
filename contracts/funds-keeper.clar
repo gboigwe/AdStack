@@ -24,6 +24,7 @@
 (define-constant ERR_ESCROW_REFUNDED (err u510))
 (define-constant ERR_DUPLICATE_ESCROW (err u511))
 (define-constant ERR_PUBLISHER_NOT_FOUND (err u512))
+(define-constant ERR_RELEASE_EXCEEDS_BALANCE (err u513))
 
 ;; Escrow status
 (define-constant STATUS_ACTIVE u1)
