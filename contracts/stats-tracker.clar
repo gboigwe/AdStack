@@ -483,3 +483,22 @@
     (ok true)
   )
 )
+
+;; Register a publisher to allow view submissions (admin only)
+(define-public (register-publisher (publisher principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (map-set registered-publishers
+      { publisher: publisher }
+      { registered-at: stacks-block-height, is-active: true }
+    )
+    (print {
+      event: "publisher-registered",
+      publisher: publisher,
+      registered-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
