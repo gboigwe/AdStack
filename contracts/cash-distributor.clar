@@ -214,6 +214,31 @@
   )
 )
 
+(define-read-only (is-claim-allowed (campaign-id uint) (publisher principal))
+  (let (
+    (earnings (get-publisher-earnings campaign-id publisher))
+    (claimable (if (>= (get net-earnings earnings) (get claimed earnings))
+                 (- (get net-earnings earnings) (get claimed earnings))
+                 u0))
+    (block-claims (default-to { count: u0 } (map-get? claim-counts-per-block { block-height: stacks-block-height })))
+  )
+    {
+      allowed: (and
+        (not (var-get payouts-paused))
+        (> claimable u0)
+        (>= claimable MIN_PAYOUT_AMOUNT)
+        (<= claimable MAX_SINGLE_PAYOUT)
+        (< (get count block-claims) MAX_CLAIMS_PER_BLOCK)
+      ),
+      reason-paused: (var-get payouts-paused),
+      reason-below-minimum: (< claimable MIN_PAYOUT_AMOUNT),
+      reason-no-earnings: (is-eq claimable u0),
+      reason-rate-limited: (>= (get count block-claims) MAX_CLAIMS_PER_BLOCK),
+      claimable-amount: claimable,
+    }
+  )
+)
+
 (define-read-only (get-platform-revenue)
   {
     total-fees-collected: (var-get total-fees-collected),
