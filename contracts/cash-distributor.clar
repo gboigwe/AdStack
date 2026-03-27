@@ -300,6 +300,16 @@
 
     (var-set total-fees-collected (+ (var-get total-fees-collected) fee))
 
+    ;; Emit fee collection event for accounting
+    (print {
+      event: "fee-collected",
+      campaign-id: campaign-id,
+      publisher: publisher,
+      fee-amount: fee,
+      total-fees-collected: (+ (var-get total-fees-collected) fee),
+      timestamp: stacks-block-time,
+    })
+
     (print {
       event: "earnings-recorded",
       campaign-id: campaign-id,
