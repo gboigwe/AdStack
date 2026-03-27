@@ -305,8 +305,10 @@
       campaign-id: campaign-id,
       publisher: publisher,
       gross: amount,
-      fee: fee,
+      fee-amount: fee,
+      fee-rate: (var-get current-fee-rate),
       net: net,
+      cumulative-gross: (+ (get gross-earnings current) amount),
       timestamp: stacks-block-time,
     })
 
