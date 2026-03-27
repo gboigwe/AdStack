@@ -205,6 +205,15 @@
   )
 )
 
+(define-read-only (calculate-net-amount (gross-amount uint))
+  (let ((fee (calculate-fee gross-amount)))
+    (if (>= gross-amount fee)
+      { net: (- gross-amount fee), fee: fee }
+      { net: u0, fee: gross-amount }
+    )
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Record publisher earnings for a campaign (admin or authorized contract)
