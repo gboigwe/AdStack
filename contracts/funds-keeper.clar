@@ -218,9 +218,7 @@
 
     (if (> remaining u0)
       (begin
-        ;; Clarity 4: CONTRACT_OWNER admin wallet issues the refund transfer
-        (try! (stx-transfer? remaining tx-sender (get advertiser escrow)))
-
+        ;; Update escrow state BEFORE transfer to prevent reentrancy
         (map-set escrows
           { campaign-id: campaign-id }
           (merge escrow {
@@ -230,6 +228,10 @@
         )
 
         (var-set total-refunded (+ (var-get total-refunded) remaining))
+
+        ;; Clarity 4: CONTRACT_OWNER admin wallet issues the refund transfer
+        ;; Transfer AFTER state updates to prevent reentrancy attacks
+        (try! (stx-transfer? remaining tx-sender (get advertiser escrow)))
 
         (print {
           event: "funds-refunded",
