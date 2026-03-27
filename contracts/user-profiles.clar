@@ -238,6 +238,10 @@
   )
 )
 
+(define-read-only (get-total-verifications)
+  (var-get total-verifications)
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
