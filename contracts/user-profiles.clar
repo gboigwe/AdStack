@@ -214,7 +214,11 @@
 (define-public (request-verification)
   (let ((profile (unwrap! (map-get? profiles { user: tx-sender }) ERR_NOT_REGISTERED)))
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (asserts! (is-eq (get verification-status profile) VERIFICATION_UNVERIFIED) ERR_ALREADY_VERIFIED)
+    (asserts! (is-eq (get status profile) STATUS_ACTIVE) ERR_ACCOUNT_SUSPENDED)
+    (asserts! (or
+      (is-eq (get verification-status profile) VERIFICATION_UNVERIFIED)
+      (is-eq (get verification-status profile) VERIFICATION_REJECTED)
+    ) ERR_ALREADY_VERIFIED)
 
     (map-set profiles
       { user: tx-sender }
