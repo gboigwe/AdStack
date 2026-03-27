@@ -462,3 +462,24 @@
     (ok paused)
   )
 )
+
+;; Emergency reset of daily view count for a viewer/campaign (admin only)
+(define-public (reset-daily-views (campaign-id uint) (viewer principal))
+  (let ((day-block (get-day-block stacks-block-height)))
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
+    (map-set daily-view-counts
+      { campaign-id: campaign-id, viewer: viewer, day-block: day-block }
+      { count: u0 }
+    )
+    (print {
+      event: "daily-views-reset",
+      campaign-id: campaign-id,
+      viewer: viewer,
+      reset-by: tx-sender,
+      block-height: stacks-block-height,
+      timestamp: stacks-block-time,
+    })
+    (ok true)
+  )
+)
