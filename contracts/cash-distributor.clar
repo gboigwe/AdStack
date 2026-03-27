@@ -172,6 +172,8 @@
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    ;; Prevent recording earnings for the contract owner itself
+    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
 
     ;; Update per-campaign earnings
     (map-set publisher-earnings
