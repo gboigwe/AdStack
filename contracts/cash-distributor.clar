@@ -408,6 +408,11 @@
     (var-set total-distributed (+ (var-get total-distributed) claimable))
     (var-set total-payouts-processed (+ (var-get total-payouts-processed) u1))
     (var-set total-payouts-count (+ (var-get total-payouts-count) u1))
+    ;; Track unique publishers: increment on first payout
+    (if (is-eq (get payout-count totals) u0)
+      (var-set total-publishers-paid (+ (var-get total-publishers-paid) u1))
+      true
+    )
 
     ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
     ;; Transfer AFTER all state updates to prevent reentrancy attacks
