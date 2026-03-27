@@ -776,9 +776,11 @@ export function buildRecordEarnings(
   publisherAddress: string,
   amount: number,
 ) {
-  if (campaignId < 0) throw new Error('buildRecordEarnings: campaignId must be non-negative');
+  if (campaignId <= 0) throw new Error('buildRecordEarnings: campaignId must be positive');
+  if (!Number.isInteger(campaignId)) throw new Error('buildRecordEarnings: campaignId must be an integer');
   if (!publisherAddress) throw new Error('buildRecordEarnings: publisherAddress is required');
   if (amount <= 0) throw new Error('buildRecordEarnings: amount must be positive');
+  if (!Number.isFinite(amount)) throw new Error('buildRecordEarnings: amount must be finite');
 
   return {
     contractAddress: CONTRACT_ADDRESS,
