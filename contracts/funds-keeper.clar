@@ -40,9 +40,11 @@
 (define-constant MAX_RELEASE_PER_TX u500000000)
 (define-constant MAX_ESCROWS_PER_CAMPAIGN u1)
 
-;; Minimum escrow amount: 0.1 STX
+;; Minimum escrow amount: 0.1 STX (100,000 micro-STX)
+;; Validated in create-escrow to prevent dust escrows
 (define-constant MIN_ESCROW_AMOUNT u100000)
 ;; Withdrawal cooldown: ~12 blocks (~2 hours)
+;; Tracked per-publisher-per-campaign for fairness
 (define-constant WITHDRAWAL_COOLDOWN u12)
 
 ;; --- Data Variables ---
