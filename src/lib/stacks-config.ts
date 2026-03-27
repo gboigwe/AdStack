@@ -154,6 +154,9 @@ export function microStxToStx(microStx: number | bigint): number {
 }
 
 export function stxToMicroStx(stx: number): bigint {
+  if (stx < 0 || !Number.isFinite(stx)) {
+    throw new RangeError('stxToMicroStx: stx must be a non-negative finite number');
+  }
   return BigInt(Math.floor(stx * MICRO_STX));
 }
 
