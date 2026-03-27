@@ -156,6 +156,10 @@
   CONTRACT_VERSION
 )
 
+(define-read-only (get-contract-paused)
+  (var-get contract-paused)
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
