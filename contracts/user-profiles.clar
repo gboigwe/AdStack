@@ -393,13 +393,22 @@
 (define-public (suspend-user (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ALREADY_SUSPENDED)
 
     (map-set profiles
       { user: user }
       (merge profile { status: STATUS_SUSPENDED })
     )
 
-    (print { event: "user-suspended", user: user, timestamp: stacks-block-time })
+    (var-set total-suspensions (+ (var-get total-suspensions) u1))
+
+    (print {
+      event: "user-suspended",
+      user: user,
+      old-status: (get status profile),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )
