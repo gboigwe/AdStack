@@ -614,6 +614,10 @@ export function buildRecordEarnings(
   publisherAddress: string,
   amount: number,
 ) {
+  if (campaignId < 0) throw new Error('buildRecordEarnings: campaignId must be non-negative');
+  if (!publisherAddress) throw new Error('buildRecordEarnings: publisherAddress is required');
+  if (amount <= 0) throw new Error('buildRecordEarnings: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.CASH_DISTRIBUTOR,
