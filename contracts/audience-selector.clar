@@ -236,15 +236,26 @@
 
     (map-set publisher-profiles
       { publisher: tx-sender }
-      {
-        category: category,
-        region: region,
-        language: language,
-        audience-size: audience-size,
-        tag-count: (if is-new u0 (get tag-count (unwrap-panic existing))),
-        registered-at: (if is-new stacks-block-height (get registered-at (unwrap-panic existing))),
-        last-updated: stacks-block-height
-      }
+      (match existing
+        prev-profile {
+          category: category,
+          region: region,
+          language: language,
+          audience-size: audience-size,
+          tag-count: (get tag-count prev-profile),
+          registered-at: (get registered-at prev-profile),
+          last-updated: stacks-block-height
+        }
+        {
+          category: category,
+          region: region,
+          language: language,
+          audience-size: audience-size,
+          tag-count: u0,
+          registered-at: stacks-block-height,
+          last-updated: stacks-block-height
+        }
+      )
     )
 
     (if is-new
