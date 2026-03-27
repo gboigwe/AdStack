@@ -225,16 +225,13 @@
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
 
-    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
-    (try! (stx-transfer? claimable tx-sender publisher))
-
-    ;; Update earnings claimed amount
+    ;; Update earnings claimed amount BEFORE transfer to prevent reentrancy
     (map-set publisher-earnings
       { campaign-id: campaign-id, publisher: publisher }
       (merge earnings { claimed: (+ (get claimed earnings) claimable) })
     )
 
-    ;; Create payout record
+    ;; Create payout record BEFORE transfer
     (map-set payouts
       { payout-id: payout-id }
       {
@@ -248,7 +245,7 @@
       }
     )
 
-    ;; Update publisher totals
+    ;; Update publisher totals BEFORE transfer
     (map-set publisher-totals
       { publisher: publisher }
       (merge totals {
@@ -259,6 +256,10 @@
 
     (var-set total-distributed (+ (var-get total-distributed) claimable))
     (var-set total-payouts-processed (+ (var-get total-payouts-processed) u1))
+
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
+    ;; Transfer AFTER all state updates to prevent reentrancy attacks
+    (try! (stx-transfer? claimable tx-sender publisher))
 
     (print {
       event: "payout-claimed",
