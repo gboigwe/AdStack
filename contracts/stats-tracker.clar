@@ -224,6 +224,11 @@
             unique-viewers: (+ (get unique-viewers analytics) u1),
           })
         )
+        ;; Track new campaign on first-ever view
+        (if (is-eq (get unique-viewers analytics) u0)
+          (var-set total-campaigns-tracked (+ (var-get total-campaigns-tracked) u1))
+          true
+        )
       )
     )
 
