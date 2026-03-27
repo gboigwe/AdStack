@@ -51,6 +51,9 @@ export interface ConnectTransferOptions {
  * This triggers the installed wallet (Leather, Xverse, etc.) to sign.
  */
 export function connectContractCall(options: ConnectCallOptions): void {
+  if (!options.contractName) throw new Error('connectContractCall: contractName is required');
+  if (!options.functionName) throw new Error('connectContractCall: functionName is required');
+
   const network = getStacksNetwork(options.network);
 
   const callOptions: ContractCallOptions = {
