@@ -131,6 +131,7 @@
     (asserts! (is-none existing) ERR_ALREADY_EXISTS)
     (asserts! (>= commission-rate MIN_COMMISSION) ERR_INVALID_INPUT)
     (asserts! (<= commission-rate MAX_COMMISSION) ERR_INVALID_INPUT)
+    (asserts! (> (len message) u0) ERR_INVALID_INPUT)
 
     ;; Create partnership in pending state
     (map-set partnerships
