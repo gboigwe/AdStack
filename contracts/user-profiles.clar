@@ -206,6 +206,21 @@
   )
 )
 
+(define-read-only (is-verification-expiring-soon (user principal))
+  (match (map-get? profiles { user: user })
+    profile
+      (if (and
+        (is-eq (get verification-status profile) VERIFICATION_VERIFIED)
+        (> (get verification-expires profile) stacks-block-height)
+        (<= (- (get verification-expires profile) stacks-block-height) u720)
+      )
+        (ok true)
+        (ok false)
+      )
+    ERR_NOT_REGISTERED
+  )
+)
+
 ;; --- Public Functions ---
 
 ;; Register a new user with a role and display name
