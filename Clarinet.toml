@@ -20,6 +20,7 @@ depends_on = ["user-profiles"]
 path = "contracts/stats-tracker.clar"
 clarity_version = 4
 epoch = '3.0'
+depends_on = ["promo-manager"]
 
 [contracts.vote-handler]
 path = "contracts/vote-handler.clar"
@@ -30,21 +31,25 @@ epoch = '3.0'
 path = "contracts/funds-keeper.clar"
 clarity_version = 4
 epoch = '3.0'
+depends_on = ["promo-manager"]
 
 [contracts.cash-distributor]
 path = "contracts/cash-distributor.clar"
 clarity_version = 4
 epoch = '3.0'
+depends_on = ["funds-keeper"]
 
 [contracts.threat-detector]
 path = "contracts/threat-detector.clar"
 clarity_version = 4
 epoch = '3.0'
+depends_on = ["stats-tracker"]
 
 [contracts.audience-selector]
 path = "contracts/audience-selector.clar"
 clarity_version = 4
 epoch = '3.0'
+depends_on = ["user-profiles"]
 
 [contracts.partner-hub]
 path = "contracts/partner-hub.clar"
