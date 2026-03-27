@@ -310,10 +310,10 @@
       }
     )
 
-    ;; Mark as registered
+    ;; Mark as registered (legacy map, kept for backward compatibility)
     (map-set registered { user: tx-sender } { is-registered: true })
 
-    ;; Update counters
+    ;; Update counters (overflow protection: uint max is ~2^128, practically unreachable)
     (var-set total-users (+ (var-get total-users) u1))
     (increment-role-counter role)
 
