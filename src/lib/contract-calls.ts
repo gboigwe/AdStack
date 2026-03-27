@@ -192,6 +192,9 @@ export function buildSubmitView(
   campaignId: number,
   viewerAddress: string,
 ) {
+  if (campaignId < 0) throw new Error('buildSubmitView: campaignId must be non-negative');
+  if (!viewerAddress) throw new Error('buildSubmitView: viewerAddress is required');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
