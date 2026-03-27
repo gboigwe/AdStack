@@ -132,6 +132,7 @@
 ;; Create a new escrow for a campaign (called during campaign creation)
 (define-public (create-escrow (campaign-id uint) (advertiser principal) (amount uint))
   (begin
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-none (map-get? escrows { campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
