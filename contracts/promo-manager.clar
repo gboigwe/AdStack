@@ -407,31 +407,39 @@
               (get daily-spent campaign))))
       (asserts! (<= (+ effective-daily-spent amount) (get daily-budget campaign)) ERR_DAILY_BUDGET_EXCEEDED)
 
-      (map-set campaigns
-        { campaign-id: campaign-id }
-        (merge campaign {
-          spent: (+ (get spent campaign) amount),
-          daily-spent: (+ effective-daily-spent amount),
-          last-spend-block: stacks-block-height,
-          last-updated: stacks-block-height,
-          last-updated-timestamp: stacks-block-time,
-        })
-      )
-
-      ;; Auto-complete if budget is fully spent
-      (if (>= (+ (get spent campaign) amount) (get budget campaign))
+      ;; Single atomic update: set status to COMPLETED if budget fully spent
+      (let ((new-spent (+ (get spent campaign) amount))
+            (new-daily (+ effective-daily-spent amount))
+            (budget-exhausted (>= (+ (get spent campaign) amount) (get budget campaign))))
         (map-set campaigns
           { campaign-id: campaign-id }
           (merge campaign {
-            spent: (+ (get spent campaign) amount),
-            daily-spent: (+ effective-daily-spent amount),
+            spent: new-spent,
+            daily-spent: new-daily,
             last-spend-block: stacks-block-height,
             last-updated: stacks-block-height,
             last-updated-timestamp: stacks-block-time,
-            status: STATUS_COMPLETED,
+            status: (if budget-exhausted STATUS_COMPLETED (get status campaign)),
           })
         )
-        true
+
+        ;; Track aggregate spend
+        (var-set total-stx-spent (+ (var-get total-stx-spent) amount))
+
+        ;; Emit auto-complete event if budget exhausted
+        (if budget-exhausted
+          (begin
+            (var-set total-campaigns-completed (+ (var-get total-campaigns-completed) u1))
+            (print {
+              event: "campaign-auto-completed",
+              campaign-id: campaign-id,
+              total-spent: new-spent,
+              timestamp: stacks-block-time,
+            })
+            true
+          )
+          true
+        )
       )
     )
 
