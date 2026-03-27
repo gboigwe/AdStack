@@ -370,7 +370,7 @@
 (define-public (record-spend (campaign-id uint) (amount uint))
   (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
     ;; Only contract owner or authorized contracts can record spending
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
     (asserts! (<= (+ (get spent campaign) amount) (get budget campaign)) ERR_BUDGET_EXCEEDED)
 
