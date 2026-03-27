@@ -69,6 +69,12 @@
   { count: uint }
 )
 
+;; Per-block rate limiting per viewer per campaign
+(define-map block-view-counts
+  { campaign-id: uint, viewer: principal, block-height: uint }
+  { count: uint }
+)
+
 ;; Publisher view counts per campaign
 (define-map publisher-stats
   { campaign-id: uint, publisher: principal }
