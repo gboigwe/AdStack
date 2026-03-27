@@ -13,6 +13,7 @@
 (define-constant ERR_INVALID_VIEWER (err u303))
 (define-constant ERR_CAMPAIGN_INACTIVE (err u304))
 (define-constant ERR_RATE_LIMIT (err u305))
+(define-constant ERR_ZERO_AMOUNT (err u306))
 
 ;; Rate limit: max 10 views per viewer per campaign per day (~144 blocks)
 (define-constant MAX_DAILY_VIEWS_PER_VIEWER u10)
@@ -224,6 +225,7 @@
 (define-public (record-campaign-spend (campaign-id uint) (amount uint))
   (let ((analytics (get-analytics campaign-id)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> amount u0) ERR_ZERO_AMOUNT)
 
     (map-set campaign-analytics
       { campaign-id: campaign-id }
@@ -245,11 +247,11 @@
 
 ;; Invalidate a fraudulent view (admin only)
 ;; Decrements valid view count for anti-fraud enforcement
-(define-public (invalidate-view (campaign-id uint) (viewer principal))
+(define-public (invalidate-view (campaign-id uint) (viewer principal) (publisher principal))
   (let (
     (record (unwrap! (map-get? viewer-records { campaign-id: campaign-id, viewer: viewer }) ERR_CAMPAIGN_NOT_FOUND))
     (analytics (get-analytics campaign-id))
-    (publisher-key { campaign-id: campaign-id, publisher: tx-sender })
+    (pub-stats (get-publisher-stats campaign-id publisher))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
 
@@ -259,10 +261,33 @@
       true
     )
 
+    ;; Decrement publisher valid views count
+    (if (> (get valid-views pub-stats) u0)
+      (map-set publisher-stats
+        { campaign-id: campaign-id, publisher: publisher }
+        (merge pub-stats {
+          valid-views: (- (get valid-views pub-stats) u1),
+        })
+      )
+      true
+    )
+
+    ;; Decrement campaign-level total views
+    (if (> (get total-views analytics) u0)
+      (map-set campaign-analytics
+        { campaign-id: campaign-id }
+        (merge analytics {
+          total-views: (- (get total-views analytics) u1),
+        })
+      )
+      true
+    )
+
     (print {
       event: "view-invalidated",
       campaign-id: campaign-id,
       viewer: viewer,
+      publisher: publisher,
       timestamp: stacks-block-time,
     })
 

@@ -17,6 +17,11 @@
 (define-constant ERR_PROPOSAL_ALREADY_EXECUTED (err u407))
 (define-constant ERR_QUORUM_NOT_MET (err u408))
 (define-constant ERR_NOT_REGISTERED (err u409))
+(define-constant ERR_PROPOSAL_LIMIT_REACHED (err u410))
+
+;; Maximum active proposals per proposer to prevent spam
+(define-constant MAX_ACTIVE_PROPOSALS_PER_USER u5)
+(define-constant ERR_VOTING_NOT_STARTED (err u411))
 
 ;; Proposal status
 (define-constant STATUS_ACTIVE u1)
@@ -30,7 +35,8 @@
 (define-constant MAX_DESCRIPTION_LENGTH u256)
 (define-constant MIN_VOTING_PERIOD u144) ;; ~1 day
 (define-constant MAX_VOTING_PERIOD u4320) ;; ~30 days
-(define-constant QUORUM_THRESHOLD u3) ;; Minimum 3 votes for quorum
+(define-constant QUORUM_THRESHOLD u10) ;; Minimum 10 votes for quorum
+(define-constant MIN_PASSING_MARGIN u2) ;; Must win by at least 2 votes
 
 ;; --- Data Variables ---
 
@@ -204,6 +210,8 @@
   (let (
     (proposal (unwrap! (map-get? proposals { proposal-id: proposal-id }) ERR_PROPOSAL_NOT_FOUND))
   )
+    ;; Governance must not be paused
+    (asserts! (not (var-get governance-paused)) ERR_NOT_AUTHORIZED)
     ;; Voting must be open
     (asserts! (is-eq (get status proposal) STATUS_ACTIVE) ERR_VOTING_CLOSED)
     (asserts! (<= stacks-block-height (get end-height proposal)) ERR_VOTING_CLOSED)
@@ -257,6 +265,7 @@
       (new-status (if (and
         (>= (get total-voters proposal) QUORUM_THRESHOLD)
         (> (get votes-for proposal) (get votes-against proposal))
+        (>= (- (get votes-for proposal) (get votes-against proposal)) MIN_PASSING_MARGIN)
       )
         STATUS_PASSED
         STATUS_REJECTED
@@ -273,6 +282,8 @@
         status: new-status,
         votes-for: (get votes-for proposal),
         votes-against: (get votes-against proposal),
+        total-voters: (get total-voters proposal),
+        quorum-met: (>= (get total-voters proposal) QUORUM_THRESHOLD),
         timestamp: stacks-block-time,
       })
 

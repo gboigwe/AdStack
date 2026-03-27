@@ -19,6 +19,7 @@
 (define-constant ERR_INVALID_AMOUNT (err u605))
 (define-constant ERR_PAYOUT_PAUSED (err u606))
 (define-constant ERR_MIN_PAYOUT_NOT_MET (err u607))
+(define-constant ERR_SELF_PAYOUT (err u608))
 
 ;; Minimum payout threshold: 0.01 STX
 (define-constant MIN_PAYOUT_AMOUNT u10000)
@@ -170,8 +171,10 @@
     (net (- amount fee))
     (totals (get-publisher-totals publisher))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    ;; Prevent recording earnings for the contract owner itself
+    (asserts! (not (is-eq publisher CONTRACT_OWNER)) ERR_INVALID_AMOUNT)
 
     ;; Update per-campaign earnings
     (map-set publisher-earnings
@@ -225,16 +228,13 @@
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
 
-    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
-    (try! (stx-transfer? claimable tx-sender publisher))
-
-    ;; Update earnings claimed amount
+    ;; Update earnings claimed amount BEFORE transfer to prevent reentrancy
     (map-set publisher-earnings
       { campaign-id: campaign-id, publisher: publisher }
       (merge earnings { claimed: (+ (get claimed earnings) claimable) })
     )
 
-    ;; Create payout record
+    ;; Create payout record BEFORE transfer
     (map-set payouts
       { payout-id: payout-id }
       {
@@ -248,7 +248,7 @@
       }
     )
 
-    ;; Update publisher totals
+    ;; Update publisher totals BEFORE transfer
     (map-set publisher-totals
       { publisher: publisher }
       (merge totals {
@@ -259,6 +259,12 @@
 
     (var-set total-distributed (+ (var-get total-distributed) claimable))
     (var-set total-payouts-processed (+ (var-get total-payouts-processed) u1))
+
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the payout transfer
+    ;; Transfer AFTER all state updates to prevent reentrancy attacks
+    ;; Note: tx-sender here should be CONTRACT_OWNER calling on behalf of the system
+    ;; The publisher claims, but the actual STX comes from the admin escrow wallet
+    (try! (stx-transfer? claimable CONTRACT_OWNER publisher))
 
     (print {
       event: "payout-claimed",

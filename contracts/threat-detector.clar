@@ -11,6 +11,7 @@
 (define-constant ERR_CAMPAIGN_NOT_FOUND (err u701))
 (define-constant ERR_ALREADY_FLAGGED (err u702))
 (define-constant ERR_NOT_FLAGGED (err u703))
+(define-constant ERR_NOT_BLOCKED (err u706))
 (define-constant ERR_INVALID_SCORE (err u704))
 (define-constant ERR_ACCOUNT_NOT_FOUND (err u705))
 
@@ -33,6 +34,12 @@
 (define-constant THRESHOLD_MEDIUM u50)
 (define-constant THRESHOLD_HIGH u75)
 (define-constant THRESHOLD_CRITICAL u90)
+
+;; Rate limiting for flag submissions
+(define-constant FLAG_COOLDOWN_BLOCKS u12) ;; ~2 hours between flags from same reporter
+(define-constant ERR_FLAG_COOLDOWN (err u707))
+(define-constant ERR_SELF_FLAG (err u708))
+(define-constant ERR_EMPTY_EVIDENCE (err u709))
 
 ;; --- Data Variables ---
 
@@ -82,6 +89,12 @@
 (define-map campaign-flag-counts
   { campaign-id: uint }
   { count: uint }
+)
+
+;; Track last flag submission per reporter per campaign
+(define-map reporter-last-flag
+  { campaign-id: uint, reporter: principal }
+  { last-flag-block: uint }
 )
 
 ;; --- Private Functions ---
@@ -176,6 +189,23 @@
   )
     ;; Validate flag type (1-5)
     (asserts! (and (>= flag-type u1) (<= flag-type u5)) ERR_INVALID_SCORE)
+    ;; Validate evidence hash is not empty (all zeros)
+    (asserts! (not (is-eq evidence-hash 0x0000000000000000000000000000000000000000000000000000000000000000)) ERR_INVALID_SCORE)
+
+    ;; Rate limit: check cooldown period for this reporter on this campaign
+    (let ((last-flag (default-to { last-flag-block: u0 }
+            (map-get? reporter-last-flag { campaign-id: campaign-id, reporter: tx-sender }))))
+      (asserts! (or
+        (is-eq (get last-flag-block last-flag) u0)
+        (>= (- stacks-block-height (get last-flag-block last-flag)) FLAG_COOLDOWN_BLOCKS)
+      ) ERR_FLAG_COOLDOWN)
+    )
+
+    ;; Update reporter last flag time
+    (map-set reporter-last-flag
+      { campaign-id: campaign-id, reporter: tx-sender }
+      { last-flag-block: stacks-block-height }
+    )
 
     ;; Record the flag
     (map-set fraud-flags
@@ -211,6 +241,17 @@
     )
 
     (var-set total-flags (+ (var-get total-flags) u1))
+
+    ;; Track flag in reporter's account-threats record
+    (let ((reporter-threats (get-account-threats tx-sender)))
+      (map-set account-threats
+        { account: tx-sender }
+        (merge reporter-threats {
+          total-flags-received: (+ (get total-flags-received reporter-threats) u1),
+          last-flagged: stacks-block-height,
+        })
+      )
+    )
 
     (print {
       event: "fraud-flag-submitted",
@@ -278,7 +319,7 @@
 (define-public (unblock-account (account principal))
   (let ((threats (get-account-threats account)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    (asserts! (get is-blocked threats) ERR_NOT_FLAGGED)
+    (asserts! (get is-blocked threats) ERR_NOT_BLOCKED)
 
     (map-set account-threats
       { account: account }
@@ -299,10 +340,20 @@
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (not (get resolved flag)) ERR_ALREADY_FLAGGED)
 
-    ;; Mark flag as resolved
+    ;; Mark flag as resolved with resolver info
     (map-set fraud-flags
       { campaign-id: campaign-id, flag-index: flag-index }
       (merge flag { resolved: true })
+    )
+
+    ;; Update account threats for the reporter
+    (let ((reporter-threats (get-account-threats (get reporter flag))))
+      (map-set account-threats
+        { account: (get reporter flag) }
+        (merge reporter-threats {
+          total-flags-resolved: (+ (get total-flags-resolved reporter-threats) u1),
+        })
+      )
     )
 
     ;; Reduce fraud score by 10 (min 0)

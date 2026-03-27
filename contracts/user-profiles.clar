@@ -14,6 +14,8 @@
 (define-constant ERR_ACCOUNT_SUSPENDED (err u205))
 (define-constant ERR_ALREADY_VERIFIED (err u206))
 (define-constant ERR_VERIFICATION_PENDING (err u207))
+(define-constant ERR_INVALID_SCORE (err u208))
+(define-constant ERR_NOT_ACTIVE (err u209))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
@@ -33,6 +35,8 @@
 
 ;; Verification valid for ~30 days (4320 blocks)
 (define-constant VERIFICATION_VALIDITY_BLOCKS u4320)
+;; Maximum number of campaigns per user
+(define-constant MAX_CAMPAIGNS_PER_USER u100)
 
 ;; Maximum display name length
 (define-constant MAX_NAME_LENGTH u48)
@@ -214,7 +218,11 @@
 (define-public (request-verification)
   (let ((profile (unwrap! (map-get? profiles { user: tx-sender }) ERR_NOT_REGISTERED)))
     (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
-    (asserts! (is-eq (get verification-status profile) VERIFICATION_UNVERIFIED) ERR_ALREADY_VERIFIED)
+    (asserts! (is-eq (get status profile) STATUS_ACTIVE) ERR_ACCOUNT_SUSPENDED)
+    (asserts! (or
+      (is-eq (get verification-status profile) VERIFICATION_UNVERIFIED)
+      (is-eq (get verification-status profile) VERIFICATION_REJECTED)
+    ) ERR_ALREADY_VERIFIED)
 
     (map-set profiles
       { user: tx-sender }
@@ -229,9 +237,12 @@
   )
 )
 
-;; Update activity timestamp (called by other contracts)
+;; Update activity timestamp (called by other contracts or the user themselves)
 (define-public (update-activity (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
+    ;; Only the user or contract owner can update activity
+    (asserts! (or (is-eq tx-sender user) (is-contract-owner)) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (map-set profiles
       { user: user }
       (merge profile { last-active: stacks-block-height })
@@ -243,6 +254,9 @@
 ;; Increment campaign count for a user (called by promo-manager)
 (define-public (increment-campaigns (user principal))
   (let ((profile (unwrap! (map-get? profiles { user: user }) ERR_NOT_REGISTERED)))
+    ;; Only contract owner (or authorized caller contracts) can increment
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (not (is-eq (get status profile) STATUS_SUSPENDED)) ERR_ACCOUNT_SUSPENDED)
     (map-set profiles
       { user: user }
       (merge profile {
@@ -250,6 +264,8 @@
         last-active: stacks-block-height,
       })
     )
+
+    (print { event: "campaigns-incremented", user: user, timestamp: stacks-block-time })
     (ok true)
   )
 )
@@ -273,7 +289,17 @@
       })
     )
 
-    (print { event: "verification-updated", user: user, status: status, timestamp: stacks-block-time })
+    (print {
+      event: "verification-updated",
+      user: user,
+      status: status,
+      expires: (if (is-eq status VERIFICATION_VERIFIED)
+        (+ stacks-block-height VERIFICATION_VALIDITY_BLOCKS)
+        u0
+      ),
+      admin: tx-sender,
+      timestamp: stacks-block-time,
+    })
     (ok true)
   )
 )

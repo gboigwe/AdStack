@@ -101,10 +101,13 @@ export function getExplorerTxUrl(
   txId: string,
   network?: SupportedNetwork,
 ): string {
+  if (!txId || txId.length === 0) {
+    throw new Error('getExplorerTxUrl: txId is required');
+  }
   const { explorerBaseUrl, name } = getNetworkConfig(network);
   const chain = name !== 'mainnet' ? `?chain=${name}` : '';
   const normalizedTxId = txId.startsWith('0x') ? txId : `0x${txId}`;
-  return `${explorerBaseUrl}/txid/${normalizedTxId}${chain}`;
+  return `${explorerBaseUrl}/txid/${encodeURIComponent(normalizedTxId)}${chain}`;
 }
 
 /**
@@ -114,9 +117,12 @@ export function getExplorerAddressUrl(
   address: string,
   network?: SupportedNetwork,
 ): string {
+  if (!address || address.length === 0) {
+    throw new Error('getExplorerAddressUrl: address is required');
+  }
   const { explorerBaseUrl, name } = getNetworkConfig(network);
   const chain = name !== 'mainnet' ? `?chain=${name}` : '';
-  return `${explorerBaseUrl}/address/${address}${chain}`;
+  return `${explorerBaseUrl}/address/${encodeURIComponent(address)}${chain}`;
 }
 
 /**

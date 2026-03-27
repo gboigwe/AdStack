@@ -23,6 +23,7 @@
 (define-constant ERR_INVALID_NAME (err u107))
 (define-constant ERR_CAMPAIGN_EXPIRED (err u108))
 (define-constant ERR_DAILY_BUDGET_EXCEEDED (err u109))
+(define-constant ERR_CONTRACT_PAUSED (err u110))
 
 ;; Minimum budget: 1 STX (1,000,000 micro-STX)
 (define-constant MIN_BUDGET u1000000)
@@ -315,8 +316,11 @@
       })
     )
 
-    ;; Update total locked
-    (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+    ;; Update total locked with underflow protection
+    (if (>= (var-get total-stx-locked) remaining)
+      (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+      (var-set total-stx-locked u0)
+    )
 
     (print {
       event: "campaign-cancelled",
@@ -342,6 +346,17 @@
     ) ERR_CAMPAIGN_NOT_ACTIVE)
     (asserts! (> remaining u0) ERR_INVALID_BUDGET)
 
+    ;; Mark campaign spent to prevent double-refund before transfer
+    (map-set campaigns
+      { campaign-id: campaign-id }
+      (merge campaign {
+        spent: (get budget campaign),
+        last-updated: stacks-block-height,
+        last-updated-timestamp: stacks-block-time,
+      })
+    )
+
+    ;; Transfer AFTER state update to prevent reentrancy
     (try! (stx-transfer? remaining tx-sender (get advertiser campaign)))
 
     (print {
@@ -358,9 +373,14 @@
 ;; Record spending against a campaign (called by stats-tracker)
 (define-public (record-spend (campaign-id uint) (amount uint))
   (let ((campaign (unwrap! (map-get? campaigns { campaign-id: campaign-id }) ERR_CAMPAIGN_NOT_FOUND)))
+    ;; Reject spend recording when contract is paused
+    (asserts! (not (var-get contract-paused)) ERR_NOT_AUTHORIZED)
     ;; Only contract owner or authorized contracts can record spending
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status campaign) STATUS_ACTIVE) ERR_CAMPAIGN_NOT_ACTIVE)
+    (asserts! (> amount u0) ERR_INVALID_BUDGET)
+    ;; Check campaign has not expired
+    (asserts! (<= stacks-block-height (get end-height campaign)) ERR_CAMPAIGN_EXPIRED)
     (asserts! (<= (+ (get spent campaign) amount) (get budget campaign)) ERR_BUDGET_EXCEEDED)
 
     ;; Check daily budget
@@ -446,7 +466,11 @@
         })
       )
 
-      (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+      ;; Underflow protection
+      (if (>= (var-get total-stx-locked) remaining)
+        (var-set total-stx-locked (- (var-get total-stx-locked) remaining))
+        (var-set total-stx-locked u0)
+      )
 
       (print {
         event: "campaign-completed",

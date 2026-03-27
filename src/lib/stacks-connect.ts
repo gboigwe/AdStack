@@ -13,6 +13,7 @@ import {
   STXTransferOptions,
   SignTransactionOptions,
 } from '@stacks/connect';
+import { PostConditionMode } from '@stacks/transactions';
 import { getStacksNetwork, SupportedNetwork } from './stacks-network';
 import { CONTRACT_ADDRESS, APP_DETAILS, CONTRACTS } from './stacks-config';
 import type { ContractName } from './stacks-config';
@@ -50,6 +51,9 @@ export interface ConnectTransferOptions {
  * This triggers the installed wallet (Leather, Xverse, etc.) to sign.
  */
 export function connectContractCall(options: ConnectCallOptions): void {
+  if (!options.contractName) throw new Error('connectContractCall: contractName is required');
+  if (!options.functionName) throw new Error('connectContractCall: functionName is required');
+
   const network = getStacksNetwork(options.network);
 
   const callOptions: ContractCallOptions = {
@@ -60,7 +64,7 @@ export function connectContractCall(options: ConnectCallOptions): void {
     network,
     appDetails: APP_DETAILS,
     postConditions: options.postConditions ?? [],
-    postConditionMode: options.postConditionMode === 'allow' ? 0x01 : 0x02,
+    postConditionMode: options.postConditionMode === 'allow' ? PostConditionMode.Allow : PostConditionMode.Deny,
     onFinish: options.onFinish
       ? (data) => options.onFinish!({ txId: data.txId, txRaw: data.txRaw })
       : undefined,
@@ -74,6 +78,9 @@ export function connectContractCall(options: ConnectCallOptions): void {
  * Open a Stacks Connect STX transfer dialog.
  */
 export function connectSTXTransfer(options: ConnectTransferOptions): void {
+  if (!options.recipient) throw new Error('connectSTXTransfer: recipient is required');
+  if (options.amount <= 0n) throw new Error('connectSTXTransfer: amount must be positive');
+
   const network = getStacksNetwork(options.network);
 
   const transferOptions: STXTransferOptions = {
@@ -106,6 +113,9 @@ export function connectSignTransaction(
     onCancel?: () => void;
   } = {},
 ): void {
+  if (!txHex || txHex.length === 0) throw new Error('connectSignTransaction: txHex is required');
+  if (!/^[0-9a-fA-F]+$/.test(txHex)) throw new Error('connectSignTransaction: txHex must be valid hex');
+
   const network = getStacksNetwork(options.network);
 
   const signOptions: SignTransactionOptions = {
@@ -126,6 +136,6 @@ export function connectSignTransaction(
 // ---------------------------------------------------------------------------
 
 export const PC_MODE = {
-  DENY: 0x02 as const,
-  ALLOW: 0x01 as const,
+  DENY: PostConditionMode.Deny,
+  ALLOW: PostConditionMode.Allow,
 };

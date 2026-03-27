@@ -19,6 +19,7 @@
 (define-constant ERR_INVALID_AMOUNT (err u505))
 (define-constant ERR_INVALID_RECIPIENT (err u506))
 (define-constant ERR_COOLDOWN_ACTIVE (err u507))
+(define-constant ERR_ZERO_CAMPAIGN_ID (err u508))
 
 ;; Escrow status
 (define-constant STATUS_ACTIVE u1)
@@ -117,7 +118,7 @@
 ;; Create a new escrow for a campaign (called during campaign creation)
 (define-public (create-escrow (campaign-id uint) (advertiser principal) (amount uint))
   (begin
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-none (map-get? escrows { campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
     (asserts! (>= amount MIN_ESCROW_AMOUNT) ERR_INVALID_AMOUNT)
 
@@ -158,7 +159,7 @@
     (available (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
     (pub-release (get-publisher-release campaign-id publisher))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
     (asserts! (> amount u0) ERR_INVALID_AMOUNT)
     (asserts! (<= amount available) ERR_INSUFFICIENT_BALANCE)
@@ -170,10 +171,7 @@
       (>= (- stacks-block-height (get last-release-block escrow)) WITHDRAWAL_COOLDOWN)
     ) ERR_COOLDOWN_ACTIVE)
 
-    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
-    (try! (stx-transfer? amount tx-sender publisher))
-
-    ;; Update escrow
+    ;; Update escrow state BEFORE transfer to prevent reentrancy
     (map-set escrows
       { campaign-id: campaign-id }
       (merge escrow {
@@ -182,7 +180,7 @@
       })
     )
 
-    ;; Update publisher release record
+    ;; Update publisher release record BEFORE transfer
     (map-set publisher-releases
       { campaign-id: campaign-id, publisher: publisher }
       {
@@ -193,6 +191,10 @@
     )
 
     (var-set total-released (+ (var-get total-released) amount))
+
+    ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
+    ;; Transfer AFTER state updates to prevent reentrancy attacks
+    (try! (stx-transfer? amount tx-sender publisher))
 
     (print {
       event: "funds-released",
@@ -212,14 +214,12 @@
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
     (remaining (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
 
     (if (> remaining u0)
       (begin
-        ;; Clarity 4: CONTRACT_OWNER admin wallet issues the refund transfer
-        (try! (stx-transfer? remaining tx-sender (get advertiser escrow)))
-
+        ;; Update escrow state BEFORE transfer to prevent reentrancy
         (map-set escrows
           { campaign-id: campaign-id }
           (merge escrow {
@@ -229,6 +229,10 @@
         )
 
         (var-set total-refunded (+ (var-get total-refunded) remaining))
+
+        ;; Clarity 4: CONTRACT_OWNER admin wallet issues the refund transfer
+        ;; Transfer AFTER state updates to prevent reentrancy attacks
+        (try! (stx-transfer? remaining tx-sender (get advertiser escrow)))
 
         (print {
           event: "funds-refunded",
@@ -257,7 +261,7 @@
   (let (
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
   )
-    (asserts! (or (is-contract-owner) (is-eq contract-caller CONTRACT_OWNER)) ERR_NOT_AUTHORIZED)
+    (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
 
     (map-set escrows

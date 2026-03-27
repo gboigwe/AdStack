@@ -18,6 +18,8 @@
 (define-constant ERR_SELF_PARTNER (err u904))
 (define-constant ERR_INACTIVE (err u905))
 (define-constant ERR_WRONG_STATUS (err u906))
+(define-constant ERR_EXPIRED (err u907))
+(define-constant ERR_DUPLICATE_ENROLLMENT (err u908))
 
 ;; Partnership statuses
 (define-constant STATUS_PENDING u1)
@@ -131,6 +133,7 @@
     (asserts! (is-none existing) ERR_ALREADY_EXISTS)
     (asserts! (>= commission-rate MIN_COMMISSION) ERR_INVALID_INPUT)
     (asserts! (<= commission-rate MAX_COMMISSION) ERR_INVALID_INPUT)
+    (asserts! (> (len message) u0) ERR_INVALID_INPUT)
 
     ;; Create partnership in pending state
     (map-set partnerships
@@ -226,7 +229,11 @@
       })
     )
 
-    (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
+    ;; Guard against underflow when decrementing active count
+    (if (> (var-get total-active-partnerships) u0)
+      (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
+      true
+    )
 
     (print { event: "partnership-paused", partnership-id: partnership-id, paused-by: tx-sender, timestamp: stacks-block-time })
     (ok true)
@@ -273,7 +280,7 @@
       })
     )
 
-    (if was-active
+    (if (and was-active (> (var-get total-active-partnerships) u0))
       (var-set total-active-partnerships (- (var-get total-active-partnerships) u1))
       true
     )
@@ -294,6 +301,8 @@
   )
     (asserts! (is-eq tx-sender (get advertiser partnership)) ERR_UNAUTHORIZED)
     (asserts! (is-eq (get status partnership) STATUS_ACTIVE) ERR_INACTIVE)
+    ;; Prevent duplicate enrollment
+    (asserts! (is-none (map-get? partnership-campaigns { partnership-id: partnership-id, campaign-id: campaign-id })) ERR_ALREADY_EXISTS)
 
     (map-set partnership-campaigns
       { partnership-id: partnership-id, campaign-id: campaign-id }
@@ -356,6 +365,15 @@
       })
     )
 
+    (print {
+      event: "partnership-activity-recorded",
+      partnership-id: partnership-id,
+      campaign-id: campaign-id,
+      views: views,
+      revenue: revenue,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
@@ -376,6 +394,31 @@
 ;; ============================================================
 ;; Read-Only Functions
 ;; ============================================================
+
+;; Deactivate a campaign enrollment within a partnership
+(define-public (deactivate-campaign-enrollment (partnership-id uint) (campaign-id uint))
+  (let (
+    (enrollment (unwrap! (map-get? partnership-campaigns { partnership-id: partnership-id, campaign-id: campaign-id }) ERR_NOT_FOUND))
+    (partnership (unwrap! (map-get? partnerships { partnership-id: partnership-id }) ERR_NOT_FOUND))
+  )
+    (asserts! (or (is-eq tx-sender (get advertiser partnership)) (is-admin)) ERR_UNAUTHORIZED)
+    (asserts! (get is-active enrollment) ERR_INACTIVE)
+
+    (map-set partnership-campaigns
+      { partnership-id: partnership-id, campaign-id: campaign-id }
+      (merge enrollment { is-active: false })
+    )
+
+    (print {
+      event: "campaign-enrollment-deactivated",
+      partnership-id: partnership-id,
+      campaign-id: campaign-id,
+      timestamp: stacks-block-time
+    })
+
+    (ok true)
+  )
+)
 
 (define-read-only (get-partnership (partnership-id uint))
   (map-get? partnerships { partnership-id: partnership-id })

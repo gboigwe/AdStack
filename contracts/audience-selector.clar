@@ -18,12 +18,15 @@
 (define-constant ERR_INVALID_INPUT (err u803))
 (define-constant ERR_SEGMENT_FULL (err u804))
 (define-constant ERR_CAMPAIGN_MISMATCH (err u805))
+(define-constant ERR_EMPTY_TAG (err u806))
+(define-constant ERR_PUBLISHER_NOT_FOUND (err u807))
 
 ;; Limits
 (define-constant MAX_TAGS_PER_SEGMENT u10)
 (define-constant MAX_SEGMENTS_PER_CAMPAIGN u5)
 (define-constant MAX_TAG_LENGTH u32)
 (define-constant MAX_SEGMENT_NAME_LENGTH u64)
+(define-constant MAX_PUBLISHER_TAGS u10)
 
 ;; ============================================================
 ;; Data Variables
@@ -195,6 +198,14 @@
       (merge segment { tag-count: (+ current-tags u1) })
     )
 
+    (print {
+      event: "segment-tag-added",
+      segment-id: segment-id,
+      tag: tag,
+      tag-index: current-tags,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
@@ -233,18 +244,31 @@
   )
     (asserts! (> (len category) u0) ERR_INVALID_INPUT)
     (asserts! (> (len region) u0) ERR_INVALID_INPUT)
+    (asserts! (> (len language) u0) ERR_INVALID_INPUT)
+    (asserts! (> audience-size u0) ERR_INVALID_INPUT)
 
     (map-set publisher-profiles
       { publisher: tx-sender }
-      {
-        category: category,
-        region: region,
-        language: language,
-        audience-size: audience-size,
-        tag-count: (if is-new u0 (get tag-count (unwrap-panic existing))),
-        registered-at: (if is-new stacks-block-height (get registered-at (unwrap-panic existing))),
-        last-updated: stacks-block-height
-      }
+      (match existing
+        prev-profile {
+          category: category,
+          region: region,
+          language: language,
+          audience-size: audience-size,
+          tag-count: (get tag-count prev-profile),
+          registered-at: (get registered-at prev-profile),
+          last-updated: stacks-block-height
+        }
+        {
+          category: category,
+          region: region,
+          language: language,
+          audience-size: audience-size,
+          tag-count: u0,
+          registered-at: stacks-block-height,
+          last-updated: stacks-block-height
+        }
+      )
     )
 
     (if is-new
@@ -271,7 +295,7 @@
     (current-tags (get tag-count profile))
   )
     (asserts! (> (len tag) u0) ERR_INVALID_INPUT)
-    (asserts! (< current-tags MAX_TAGS_PER_SEGMENT) ERR_SEGMENT_FULL)
+    (asserts! (< current-tags MAX_PUBLISHER_TAGS) ERR_SEGMENT_FULL)
 
     (map-set publisher-tags
       { publisher: tx-sender, tag-index: current-tags }
@@ -282,6 +306,14 @@
       { publisher: tx-sender }
       (merge profile { tag-count: (+ current-tags u1), last-updated: stacks-block-height })
     )
+
+    (print {
+      event: "publisher-tag-added",
+      publisher: tx-sender,
+      tag: tag,
+      tag-index: current-tags,
+      timestamp: stacks-block-time
+    })
 
     (ok true)
   )
@@ -300,11 +332,23 @@
     (asserts! (is-admin) ERR_UNAUTHORIZED)
     (asserts! (<= score u100) ERR_INVALID_INPUT)
     (asserts! (is-some (map-get? segments { segment-id: segment-id })) ERR_NOT_FOUND)
+    ;; Verify segment is still active
+    (asserts! (default-to false (get is-active (map-get? segments { segment-id: segment-id }))) ERR_NOT_FOUND)
+    ;; Verify publisher has a registered profile
+    (asserts! (is-some (map-get? publisher-profiles { publisher: publisher })) ERR_NOT_FOUND)
 
     (map-set match-scores
       { segment-id: segment-id, publisher: publisher }
       { score: score, computed-at: stacks-block-height }
     )
+
+    (print {
+      event: "match-score-recorded",
+      segment-id: segment-id,
+      publisher: publisher,
+      score: score,
+      timestamp: stacks-block-time
+    })
 
     (ok true)
   )

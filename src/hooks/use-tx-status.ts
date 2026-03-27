@@ -5,7 +5,7 @@ import { fetchTransaction, type ApiTransaction } from '@/lib/stacks-api';
 import { CURRENT_NETWORK } from '@/lib/stacks-config';
 
 /** Transaction status as observed from the API. */
-export type TxStatus = 'pending' | 'success' | 'abort_by_response' | 'abort_by_post_condition' | 'unknown';
+export type TxStatus = 'pending' | 'success' | 'abort_by_response' | 'abort_by_post_condition' | 'dropped' | 'unknown';
 
 /** Parsed transaction status info. */
 export interface TxStatusInfo {
@@ -24,6 +24,7 @@ function normalizeStatus(apiStatus: string): TxStatus {
   if (apiStatus === 'pending') return 'pending';
   if (apiStatus === 'abort_by_response') return 'abort_by_response';
   if (apiStatus === 'abort_by_post_condition') return 'abort_by_post_condition';
+  if (apiStatus === 'dropped' || apiStatus === 'dropped_replace_by_fee' || apiStatus === 'dropped_replace_across_fork' || apiStatus === 'dropped_too_expensive' || apiStatus === 'dropped_stale_garbage_collect') return 'dropped';
   return 'unknown';
 }
 
@@ -66,7 +67,7 @@ export function useTxStatus(txId: string | undefined, pollInterval = 5000) {
 
       const tx = result.data;
       const status = normalizeStatus(tx.tx_status);
-      const isFinalized = status !== 'pending' && status !== 'unknown';
+      const isFinalized = status !== 'pending' && status !== 'unknown' && status !== 'dropped';
 
       return {
         txId,
@@ -105,7 +106,7 @@ export function useBatchTxStatus(txIds: string[]) {
       }
       const tx = result.data;
       const status = normalizeStatus(tx.tx_status);
-      const isFinalized = status !== 'pending' && status !== 'unknown';
+      const isFinalized = status !== 'pending' && status !== 'unknown' && status !== 'dropped';
       return { txId, status, blockHeight: isFinalized ? tx.block_height : null, raw: tx, isFinalized };
     },
   }));
@@ -124,7 +125,7 @@ export function useBatchTxStatus(txIds: string[]) {
           }
           const tx = result.data;
           const status = normalizeStatus(tx.tx_status);
-          const isFinalized = status !== 'pending' && status !== 'unknown';
+          const isFinalized = status !== 'pending' && status !== 'unknown' && status !== 'dropped';
           statuses[txId] = { txId, status, blockHeight: isFinalized ? tx.block_height : null, raw: tx, isFinalized };
         }),
       );

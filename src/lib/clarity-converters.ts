@@ -20,17 +20,26 @@ import type {
  * Create a Clarity uint value.
  * @param value - Non-negative integer or bigint
  */
+const UINT128_MAX = (1n << 128n) - 1n;
+
 export function toUIntCV(value: number | bigint): UIntCV {
   const n = typeof value === 'number' ? BigInt(Math.floor(value)) : value;
   if (n < 0n) throw new RangeError('UInt cannot be negative');
+  if (n > UINT128_MAX) throw new RangeError(`UInt value ${n} exceeds uint128 max (${UINT128_MAX})`);
   return { type: 'uint', value: n };
 }
 
 /**
  * Create a Clarity int value.
  */
+const INT128_MIN = -(1n << 127n);
+const INT128_MAX = (1n << 127n) - 1n;
+
 export function toIntCV(value: number | bigint): IntCV {
   const n = typeof value === 'number' ? BigInt(Math.floor(value)) : value;
+  if (n < INT128_MIN || n > INT128_MAX) {
+    throw new RangeError(`Int value ${n} is outside int128 range [${INT128_MIN}, ${INT128_MAX}]`);
+  }
   return { type: 'int', value: n };
 }
 
@@ -45,10 +54,15 @@ export function toBoolCV(value: boolean): BoolCV {
  * Create a Clarity string-ascii value.
  * Validates that the string only contains ASCII characters.
  */
-export function toStringAsciiCV(value: string): StringAsciiCV {
+const MAX_ASCII_STRING_LENGTH = 128;
+
+export function toStringAsciiCV(value: string, maxLength = MAX_ASCII_STRING_LENGTH): StringAsciiCV {
+  if (value.length > maxLength) {
+    throw new RangeError(`ASCII string length ${value.length} exceeds max ${maxLength}`);
+  }
   for (let i = 0; i < value.length; i++) {
     if (value.charCodeAt(i) > 127) {
-      throw new RangeError(`Non-ASCII character at position ${i}: "${value[i]}"`);
+      throw new RangeError(`Non-ASCII character at position ${i}: "${value[i]}" (code ${value.charCodeAt(i)})`);
     }
   }
   return { type: 'string-ascii', value };
@@ -57,7 +71,12 @@ export function toStringAsciiCV(value: string): StringAsciiCV {
 /**
  * Create a Clarity string-utf8 value.
  */
-export function toStringUtf8CV(value: string): StringUtf8CV {
+const MAX_UTF8_STRING_LENGTH = 256;
+
+export function toStringUtf8CV(value: string, maxLength = MAX_UTF8_STRING_LENGTH): StringUtf8CV {
+  if (value.length > maxLength) {
+    throw new RangeError(`UTF-8 string length ${value.length} exceeds max ${maxLength}`);
+  }
   return { type: 'string-utf8', value };
 }
 
@@ -65,20 +84,45 @@ export function toStringUtf8CV(value: string): StringUtf8CV {
  * Create a Clarity principal value from an address string.
  * Supports both standard principals (SP...) and contract principals (SP...contract-name).
  */
+const PRINCIPAL_PATTERN = /^S[PM][A-Z0-9]{1,38}$/;
+const CONTRACT_NAME_PATTERN = /^[a-zA-Z][a-zA-Z0-9_-]{0,127}$/;
+
 export function toPrincipalCV(address: string): PrincipalCV {
+  if (!address || address.length === 0) {
+    throw new Error('toPrincipalCV: address is required');
+  }
+
   if (address.includes('.')) {
     const parts = address.split('.', 2);
     const addr = parts[0] ?? '';
     const contractName = parts[1] ?? '';
+
+    if (!PRINCIPAL_PATTERN.test(addr)) {
+      throw new Error(`toPrincipalCV: invalid standard principal format: ${addr}`);
+    }
+    if (!CONTRACT_NAME_PATTERN.test(contractName)) {
+      throw new Error(`toPrincipalCV: invalid contract name format: ${contractName}`);
+    }
+
     return { type: 'principal', value: { address: addr, contractName } };
   }
+
+  if (!PRINCIPAL_PATTERN.test(address)) {
+    throw new Error(`toPrincipalCV: invalid principal format: ${address}`);
+  }
+
   return { type: 'principal', value: { address } };
 }
 
 /**
  * Create a Clarity list value from an array of Clarity values.
  */
+const MAX_CLARITY_LIST_SIZE = 2000;
+
 export function toListCV(items: ClarityValue[]): ListCV {
+  if (items.length > MAX_CLARITY_LIST_SIZE) {
+    throw new RangeError(`List size ${items.length} exceeds Clarity maximum of ${MAX_CLARITY_LIST_SIZE}`);
+  }
   return { type: 'list', value: items };
 }
 

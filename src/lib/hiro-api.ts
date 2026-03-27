@@ -106,25 +106,36 @@ export interface MempoolTransaction {
 // Base Fetcher
 // ---------------------------------------------------------------------------
 
+const DEFAULT_API_TIMEOUT_MS = 30_000;
+
 async function apiFetch<T>(
   path: string,
   network?: SupportedNetwork,
   init?: RequestInit,
 ): Promise<T> {
   const url = `${getApiUrl(network)}${path}`;
-  const response = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), DEFAULT_API_TIMEOUT_MS);
 
-  if (!response.ok) {
-    throw new Error(`Hiro API error ${response.status}: ${url}`);
+  try {
+    const response = await fetch(url, {
+      ...init,
+      signal: init?.signal ?? controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(`Hiro API error ${response.status}: ${url}${errorBody ? ` - ${errorBody}` : ''}`);
+    }
+
+    return response.json() as Promise<T>;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  return response.json();
 }
 
 // ---------------------------------------------------------------------------

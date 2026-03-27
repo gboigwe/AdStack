@@ -29,6 +29,12 @@ export function createSTXTransferExact(
   senderAddress: string,
   amountSTX: number,
 ) {
+  if (!senderAddress || senderAddress.length === 0) {
+    throw new Error('createSTXTransferExact: senderAddress is required');
+  }
+  if (amountSTX <= 0 || !Number.isFinite(amountSTX)) {
+    throw new Error('createSTXTransferExact: amountSTX must be a positive finite number');
+  }
   const microAmount = BigInt(Math.floor(amountSTX * MICRO_STX));
   return Pc.principal(senderAddress).willSendEq(microAmount).ustx();
 }
@@ -41,6 +47,12 @@ export function createSTXTransferMax(
   senderAddress: string,
   maxSTX: number,
 ) {
+  if (!senderAddress || senderAddress.length === 0) {
+    throw new Error('createSTXTransferMax: senderAddress is required');
+  }
+  if (maxSTX <= 0 || !Number.isFinite(maxSTX)) {
+    throw new Error('createSTXTransferMax: maxSTX must be a positive finite number');
+  }
   const microAmount = BigInt(Math.floor(maxSTX * MICRO_STX));
   return Pc.principal(senderAddress).willSendLte(microAmount).ustx();
 }
@@ -53,6 +65,12 @@ export function createContractSTXTransfer(
   contractName: ContractName,
   maxSTX: number,
 ) {
+  if (!contractName || contractName.length === 0) {
+    throw new Error('createContractSTXTransfer: contractName is required');
+  }
+  if (maxSTX <= 0 || !Number.isFinite(maxSTX)) {
+    throw new Error('createContractSTXTransfer: maxSTX must be a positive finite number');
+  }
   const microAmount = BigInt(Math.floor(maxSTX * MICRO_STX));
   const contractPrincipal = `${CONTRACT_ADDRESS}.${contractName}`;
   return Pc.principal(contractPrincipal).willSendLte(microAmount).ustx();

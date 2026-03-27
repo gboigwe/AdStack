@@ -62,9 +62,9 @@ export function isValidContractId(contractId: string): boolean {
 
   if (!isValidStacksAddress(address)) return false;
 
-  // Contract names: 1-128 chars, alphanumeric plus hyphens
-  if (!contractName || contractName.length > 128) return false;
-  if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(contractName)) return false;
+  // Contract names: 1-128 chars, start with alpha, alphanumeric/hyphens/underscores
+  if (!contractName || contractName.length === 0 || contractName.length > 128) return false;
+  if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(contractName)) return false;
 
   return true;
 }

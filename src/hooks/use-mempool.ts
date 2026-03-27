@@ -11,11 +11,14 @@ export function useMempoolTransactions(
   address: string | undefined | null,
   limit = 10,
 ) {
+  const validAddress = address && address.length > 0 ? address : undefined;
+  const clampedLimit = Math.min(Math.max(1, limit), 50);
+
   return useApiQuery(
-    ['mempool', address, limit],
-    () => fetchMempoolTransactions(address!, limit),
+    ['mempool', validAddress, clampedLimit],
+    () => fetchMempoolTransactions(validAddress!, clampedLimit),
     {
-      enabled: !!address,
+      enabled: !!validAddress,
       staleTime: 10_000,
       refetchInterval: 15_000,
       refetchIntervalInBackground: false,

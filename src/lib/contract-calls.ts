@@ -38,6 +38,12 @@ export function buildCreateCampaign(
   senderAddress: string,
   params: CreateCampaignParams,
 ) {
+  if (!senderAddress) throw new Error('buildCreateCampaign: senderAddress is required');
+  if (!params.name || params.name.length === 0) throw new Error('buildCreateCampaign: name is required');
+  if (Number(params.budget) <= 0) throw new Error('buildCreateCampaign: budget must be positive');
+  if (Number(params.dailyBudget) <= 0) throw new Error('buildCreateCampaign: dailyBudget must be positive');
+  if (Number(params.dailyBudget) > Number(params.budget)) throw new Error('buildCreateCampaign: dailyBudget cannot exceed total budget');
+
   const budgetMicro = stxToMicroStx(Number(params.budget));
   const dailyMicro = stxToMicroStx(Number(params.dailyBudget));
 
@@ -92,9 +98,12 @@ export function buildResumeCampaign(campaignId: number) {
  * Calls user-profiles.register with role and display name.
  */
 export function buildRegisterUser(params: RegisterUserParams) {
+  if (!params.displayName || params.displayName.length === 0) throw new Error('buildRegisterUser: displayName is required');
+  if (params.displayName.length > 48) throw new Error('buildRegisterUser: displayName exceeds max length (48)');
+
   const roleUint = ROLE_TO_UINT[params.role];
   if (roleUint === undefined) {
-    throw new Error(`Invalid role: ${params.role}`);
+    throw new Error(`Invalid role: ${params.role}. Valid roles: ${Object.keys(ROLE_TO_UINT).join(', ')}`);
   }
 
   return {
@@ -162,6 +171,9 @@ export function buildClaimPayout(
   campaignId: number,
   maxPayoutSTX: number,
 ) {
+  if (campaignId < 0) throw new Error('buildClaimPayout: campaignId must be non-negative');
+  if (maxPayoutSTX <= 0) throw new Error('buildClaimPayout: maxPayoutSTX must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.CASH_DISTRIBUTOR,
@@ -183,6 +195,9 @@ export function buildSubmitView(
   campaignId: number,
   viewerAddress: string,
 ) {
+  if (campaignId < 0) throw new Error('buildSubmitView: campaignId must be non-negative');
+  if (!viewerAddress) throw new Error('buildSubmitView: viewerAddress is required');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
@@ -201,6 +216,12 @@ export function buildSubmitView(
  * Calls vote-handler.create-proposal with title, description, duration.
  */
 export function buildCreateProposal(params: CreateProposalParams) {
+  if (!params.title || params.title.length === 0) throw new Error('buildCreateProposal: title is required');
+  if (params.title.length > 64) throw new Error('buildCreateProposal: title exceeds max length (64)');
+  if (!params.description || params.description.length === 0) throw new Error('buildCreateProposal: description is required');
+  if (params.description.length > 256) throw new Error('buildCreateProposal: description exceeds max length (256)');
+  if (params.duration <= 0) throw new Error('buildCreateProposal: duration must be positive');
+
   const durationBlocks = Math.ceil(
     params.duration / BLOCK_TIME.SECONDS_PER_BLOCK,
   );
@@ -397,6 +418,9 @@ export function buildReadUserCounts() {
  * Build contract call for updating display name.
  */
 export function buildUpdateDisplayName(newName: string) {
+  if (!newName || newName.length === 0) throw new Error('buildUpdateDisplayName: newName is required');
+  if (newName.length > 48) throw new Error('buildUpdateDisplayName: newName exceeds max length (48)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.USER_PROFILES,
@@ -471,6 +495,9 @@ export function buildReadTotalViews() {
  * Admin only - called to sync spend data from promo-manager.
  */
 export function buildRecordCampaignSpend(campaignId: number, amount: number) {
+  if (campaignId < 0) throw new Error('buildRecordCampaignSpend: campaignId must be non-negative');
+  if (amount <= 0) throw new Error('buildRecordCampaignSpend: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
@@ -485,12 +512,12 @@ export function buildRecordCampaignSpend(campaignId: number, amount: number) {
  * Build contract call to invalidate a fraudulent view.
  * Admin only - decrements valid view counts for anti-fraud.
  */
-export function buildInvalidateView(campaignId: number, viewerAddress: string) {
+export function buildInvalidateView(campaignId: number, viewerAddress: string, publisherAddress: string) {
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.STATS_TRACKER,
     functionName: 'invalidate-view',
-    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress)],
+    functionArgs: [toUIntCV(campaignId), toPrincipalCV(viewerAddress), toPrincipalCV(publisherAddress)],
     postConditionMode: PC_MODE.DENY,
     postConditions: [],
   };
@@ -596,6 +623,10 @@ export function buildRecordEarnings(
   publisherAddress: string,
   amount: number,
 ) {
+  if (campaignId < 0) throw new Error('buildRecordEarnings: campaignId must be non-negative');
+  if (!publisherAddress) throw new Error('buildRecordEarnings: publisherAddress is required');
+  if (amount <= 0) throw new Error('buildRecordEarnings: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.CASH_DISTRIBUTOR,
@@ -667,6 +698,11 @@ export function buildCreateSegment(
   minReputation: number,
   requireVerified: boolean,
 ) {
+  if (campaignId < 0) throw new Error('buildCreateSegment: campaignId must be non-negative');
+  if (!name || name.length === 0) throw new Error('buildCreateSegment: name is required');
+  if (name.length > 64) throw new Error('buildCreateSegment: name exceeds max length (64)');
+  if (minReputation < 0 || minReputation > 100) throw new Error('buildCreateSegment: minReputation must be 0-100');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
@@ -686,6 +722,10 @@ export function buildCreateSegment(
  * Build contract call to add a tag to an audience segment.
  */
 export function buildAddSegmentTag(segmentId: number, tag: string) {
+  if (segmentId < 0) throw new Error('buildAddSegmentTag: segmentId must be non-negative');
+  if (!tag || tag.length === 0) throw new Error('buildAddSegmentTag: tag is required');
+  if (tag.length > 32) throw new Error('buildAddSegmentTag: tag exceeds max length (32)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
@@ -719,6 +759,11 @@ export function buildSetPublisherProfile(
   language: string,
   audienceSize: number,
 ) {
+  if (!category || category.length === 0) throw new Error('buildSetPublisherProfile: category is required');
+  if (!region || region.length === 0) throw new Error('buildSetPublisherProfile: region is required');
+  if (!language || language.length === 0) throw new Error('buildSetPublisherProfile: language is required');
+  if (audienceSize <= 0) throw new Error('buildSetPublisherProfile: audienceSize must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
@@ -738,6 +783,9 @@ export function buildSetPublisherProfile(
  * Build contract call to add a tag to the publisher's profile.
  */
 export function buildAddPublisherTag(tag: string) {
+  if (!tag || tag.length === 0) throw new Error('buildAddPublisherTag: tag is required');
+  if (tag.length > 32) throw new Error('buildAddPublisherTag: tag exceeds max length (32)');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.AUDIENCE_SELECTOR,
@@ -802,6 +850,10 @@ export function buildProposePartnership(
   commissionRate: number,
   message: string,
 ) {
+  if (!publisherAddress) throw new Error('buildProposePartnership: publisherAddress is required');
+  if (commissionRate < 100 || commissionRate > 5000) throw new Error('buildProposePartnership: commissionRate must be between 100-5000 bps');
+  if (!message || message.length === 0) throw new Error('buildProposePartnership: message is required');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.PARTNER_HUB,
@@ -992,6 +1044,10 @@ export function buildReleaseToPublisher(
   publisherAddress: string,
   amount: number,
 ) {
+  if (campaignId < 0) throw new Error('buildReleaseToPublisher: campaignId must be non-negative');
+  if (!publisherAddress) throw new Error('buildReleaseToPublisher: publisherAddress is required');
+  if (amount <= 0) throw new Error('buildReleaseToPublisher: amount must be positive');
+
   return {
     contractAddress: CONTRACT_ADDRESS,
     contractName: CONTRACTS.FUNDS_KEEPER,

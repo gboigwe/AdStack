@@ -13,8 +13,13 @@ export const NETWORKS = {
 
 export type NetworkType = keyof typeof NETWORKS;
 
+const envNetwork = process.env.NEXT_PUBLIC_NETWORK as string | undefined;
+const validNetworks: NetworkType[] = ['mainnet', 'testnet', 'devnet'];
+
 export const CURRENT_NETWORK: NetworkType =
-  (process.env.NEXT_PUBLIC_NETWORK as NetworkType) || 'mainnet';
+  envNetwork && validNetworks.includes(envNetwork as NetworkType)
+    ? (envNetwork as NetworkType)
+    : 'mainnet';
 
 export const NETWORK: StacksNetwork = NETWORKS[CURRENT_NETWORK];
 
@@ -24,8 +29,17 @@ export const NETWORK: StacksNetwork = NETWORKS[CURRENT_NETWORK];
  */
 const DEVNET_DEPLOYER = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
 
+const envContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+
+if (!envContractAddress && CURRENT_NETWORK === 'mainnet' && typeof console !== 'undefined') {
+  console.warn(
+    '[AdStack] NEXT_PUBLIC_CONTRACT_ADDRESS not set for mainnet. Using fallback address. ' +
+    'Set this environment variable before deploying to production.'
+  );
+}
+
 export const CONTRACT_ADDRESS =
-  process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+  envContractAddress ||
   (CURRENT_NETWORK === 'devnet' ? DEVNET_DEPLOYER : 'SP3BXJENEWVNCFYGJF75DFS478H1BZJXNZPT84EAD');
 
 /**
@@ -107,7 +121,11 @@ export const WITHDRAWAL_COOLDOWN_BLOCKS = 12;
  * Convert a Clarity v4 stacks-block-time Unix timestamp to a JS Date.
  */
 export function blockTimeToDate(blockTime: number | bigint): Date {
-  return new Date(Number(blockTime) * 1000);
+  const timestamp = Number(blockTime);
+  if (timestamp < 0 || !Number.isFinite(timestamp)) {
+    throw new RangeError('blockTimeToDate: blockTime must be a non-negative finite number');
+  }
+  return new Date(timestamp * 1000);
 }
 
 /**
@@ -118,6 +136,9 @@ export function estimateBlockTime(
   currentBlock: number,
   currentTimestamp: number,
 ): Date {
+  if (targetBlock < 0 || currentBlock < 0 || currentTimestamp < 0) {
+    throw new RangeError('estimateBlockTime: all parameters must be non-negative');
+  }
   const blockDelta = targetBlock - currentBlock;
   const secondsDelta = blockDelta * BLOCK_TIME.SECONDS_PER_BLOCK;
   return new Date((currentTimestamp + secondsDelta) * 1000);
@@ -133,6 +154,9 @@ export function microStxToStx(microStx: number | bigint): number {
 }
 
 export function stxToMicroStx(stx: number): bigint {
+  if (stx < 0 || !Number.isFinite(stx)) {
+    throw new RangeError('stxToMicroStx: stx must be a non-negative finite number');
+  }
   return BigInt(Math.floor(stx * MICRO_STX));
 }
 

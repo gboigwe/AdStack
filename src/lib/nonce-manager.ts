@@ -32,14 +32,33 @@ export async function fetchAccountNonce(
   address: string,
   network?: SupportedNetwork,
 ): Promise<AccountNonces> {
-  const apiUrl = getApiUrl(network);
-  const response = await fetch(`${apiUrl}/extended/v1/address/${address}/nonces`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch nonce for ${address}: ${response.statusText}`);
+  if (!address || address.length === 0) {
+    throw new Error('fetchAccountNonce: address is required');
   }
 
-  return response.json();
+  const apiUrl = getApiUrl(network);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15_000);
+
+  try {
+    const response = await fetch(`${apiUrl}/extended/v1/address/${address}/nonces`, {
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch nonce for ${address}: ${response.statusText}`);
+    }
+
+    const data: AccountNonces = await response.json();
+
+    if (typeof data.possible_next_nonce !== 'number') {
+      throw new Error(`Invalid nonce response for ${address}: missing possible_next_nonce`);
+    }
+
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 /**
@@ -82,17 +101,36 @@ export function releaseNonce(address: string): void {
   pendingNonces.delete(address);
 }
 
+/** Lock map to prevent concurrent acquireNonce calls for the same address */
+const nonceLocks = new Map<string, Promise<bigint>>();
+
 /**
  * Get and reserve the next nonce atomically.
  * Returns the nonce ready for use in a transaction.
+ * Uses a per-address lock to prevent race conditions where two
+ * concurrent calls could acquire the same nonce.
  */
 export async function acquireNonce(
   address: string,
   network?: SupportedNetwork,
 ): Promise<bigint> {
-  const nonce = await getNextNonce(address, network);
-  reserveNonce(address, nonce);
-  return nonce;
+  const existingLock = nonceLocks.get(address);
+
+  const acquirePromise = (existingLock ?? Promise.resolve(0n)).then(async () => {
+    const nonce = await getNextNonce(address, network);
+    reserveNonce(address, nonce);
+    return nonce;
+  });
+
+  nonceLocks.set(address, acquirePromise);
+
+  try {
+    return await acquirePromise;
+  } finally {
+    if (nonceLocks.get(address) === acquirePromise) {
+      nonceLocks.delete(address);
+    }
+  }
 }
 
 /**
