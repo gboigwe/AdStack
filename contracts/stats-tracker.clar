@@ -29,6 +29,8 @@
 (define-constant BLOCKS_PER_DAY u144)
 ;; Maximum views allowed per single block per viewer per campaign
 (define-constant MAX_VIEWS_PER_BLOCK u3)
+;; Minimum blocks between view submissions for the same viewer/campaign
+(define-constant MIN_VIEW_INTERVAL_BLOCKS u2)
 
 ;; --- Data Variables ---
 
