@@ -396,6 +396,7 @@
     (escrow (unwrap! (map-get? escrows { campaign-id: campaign-id }) ERR_ESCROW_NOT_FOUND))
   )
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
 
     (map-set escrows
