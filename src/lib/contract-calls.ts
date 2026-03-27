@@ -769,6 +769,18 @@ export function buildReadDistributionStats() {
 }
 
 /**
+ * Build read-only call to get platform revenue summary.
+ * Returns total fees, distributions, payout count, publisher count, and fee config.
+ */
+export function buildReadPlatformRevenue() {
+  return {
+    contractId: getContractId(CONTRACTS.CASH_DISTRIBUTOR),
+    functionName: 'get-platform-revenue',
+    functionArgs: [],
+  };
+}
+
+/**
  * Build contract call to record publisher earnings (admin only).
  */
 export function buildRecordEarnings(
