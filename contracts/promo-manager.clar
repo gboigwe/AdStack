@@ -52,6 +52,7 @@
 (define-constant STATUS_PAUSED u2)
 (define-constant STATUS_COMPLETED u3)
 (define-constant STATUS_CANCELLED u4)
+(define-constant STATUS_EXPIRED u5)
 
 ;; --- Data Variables ---
 
