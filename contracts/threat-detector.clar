@@ -38,6 +38,8 @@
 ;; Rate limiting for flag submissions
 (define-constant FLAG_COOLDOWN_BLOCKS u12) ;; ~2 hours between flags from same reporter
 (define-constant ERR_FLAG_COOLDOWN (err u707))
+(define-constant ERR_SELF_FLAG (err u708))
+(define-constant ERR_EMPTY_EVIDENCE (err u709))
 
 ;; --- Data Variables ---
 
