@@ -11,6 +11,7 @@
 (define-constant ERR_CAMPAIGN_NOT_FOUND (err u701))
 (define-constant ERR_ALREADY_FLAGGED (err u702))
 (define-constant ERR_NOT_FLAGGED (err u703))
+(define-constant ERR_NOT_BLOCKED (err u706))
 (define-constant ERR_INVALID_SCORE (err u704))
 (define-constant ERR_ACCOUNT_NOT_FOUND (err u705))
 
@@ -278,7 +279,7 @@
 (define-public (unblock-account (account principal))
   (let ((threats (get-account-threats account)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
-    (asserts! (get is-blocked threats) ERR_NOT_FLAGGED)
+    (asserts! (get is-blocked threats) ERR_NOT_BLOCKED)
 
     (map-set account-threats
       { account: account }
