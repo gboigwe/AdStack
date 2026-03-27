@@ -224,6 +224,7 @@
 (define-public (record-campaign-spend (campaign-id uint) (amount uint))
   (let ((analytics (get-analytics campaign-id)))
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
+    (asserts! (> amount u0) ERR_INVALID_VIEWER)
 
     (map-set campaign-analytics
       { campaign-id: campaign-id }
