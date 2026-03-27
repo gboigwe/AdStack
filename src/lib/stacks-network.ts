@@ -117,9 +117,12 @@ export function getExplorerAddressUrl(
   address: string,
   network?: SupportedNetwork,
 ): string {
+  if (!address || address.length === 0) {
+    throw new Error('getExplorerAddressUrl: address is required');
+  }
   const { explorerBaseUrl, name } = getNetworkConfig(network);
   const chain = name !== 'mainnet' ? `?chain=${name}` : '';
-  return `${explorerBaseUrl}/address/${address}${chain}`;
+  return `${explorerBaseUrl}/address/${encodeURIComponent(address)}${chain}`;
 }
 
 /**
