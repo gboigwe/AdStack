@@ -24,6 +24,7 @@
 (define-constant MAX_SEGMENTS_PER_CAMPAIGN u5)
 (define-constant MAX_TAG_LENGTH u32)
 (define-constant MAX_SEGMENT_NAME_LENGTH u64)
+(define-constant MAX_PUBLISHER_TAGS u10)
 
 ;; ============================================================
 ;; Data Variables
@@ -292,7 +293,7 @@
     (current-tags (get tag-count profile))
   )
     (asserts! (> (len tag) u0) ERR_INVALID_INPUT)
-    (asserts! (< current-tags MAX_TAGS_PER_SEGMENT) ERR_SEGMENT_FULL)
+    (asserts! (< current-tags MAX_PUBLISHER_TAGS) ERR_SEGMENT_FULL)
 
     (map-set publisher-tags
       { publisher: tx-sender, tag-index: current-tags }
