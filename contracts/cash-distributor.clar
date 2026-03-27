@@ -118,7 +118,11 @@
 )
 
 (define-private (calculate-fee (amount uint))
-  (/ (* amount PLATFORM_FEE_BPS) FEE_DENOMINATOR)
+  (let ((fee-rate (var-get current-fee-rate)))
+    ;; Multiply before divide to minimize precision loss
+    ;; Add (FEE_DENOMINATOR - 1) for ceiling rounding to prevent fee undercount
+    (/ (+ (* amount fee-rate) (- FEE_DENOMINATOR u1)) FEE_DENOMINATOR)
+  )
 )
 
 ;; --- Read-Only Functions ---
