@@ -351,6 +351,19 @@
     )
     (asserts! (not (var-get payouts-paused)) ERR_PAYOUT_PAUSED)
     (asserts! (> claimable u0) ERR_NO_EARNINGS)
+    ;; Emit denial event for below-minimum claims
+    (if (and (> claimable u0) (< claimable MIN_PAYOUT_AMOUNT))
+      (print {
+        event: "claim-denied",
+        publisher: publisher,
+        campaign-id: campaign-id,
+        reason: "below-minimum",
+        claimable: claimable,
+        minimum: MIN_PAYOUT_AMOUNT,
+        timestamp: stacks-block-time,
+      })
+      true
+    )
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
     ;; Prevent single payout from draining contract
     (asserts! (<= claimable MAX_SINGLE_PAYOUT) ERR_INVALID_AMOUNT)
