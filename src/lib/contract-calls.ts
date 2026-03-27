@@ -797,6 +797,26 @@ export function buildRecordEarnings(
 }
 
 /**
+ * Build contract call for updating the platform fee rate (admin only).
+ * @param newRateBps - New fee rate in basis points (0-100, representing 0-10%)
+ * @throws {Error} If newRateBps is outside valid bounds
+ */
+export function buildUpdateFeeRate(newRateBps: number) {
+  if (!Number.isInteger(newRateBps)) throw new Error('buildUpdateFeeRate: newRateBps must be an integer');
+  if (newRateBps < 0) throw new Error('buildUpdateFeeRate: newRateBps must be non-negative');
+  if (newRateBps > 100) throw new Error('buildUpdateFeeRate: newRateBps must be <= 100 (10%)');
+
+  return {
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CONTRACTS.CASH_DISTRIBUTOR,
+    functionName: 'update-fee-rate',
+    functionArgs: [toUIntCV(newRateBps)],
+    postConditionMode: PC_MODE.DENY,
+    postConditions: [],
+  };
+}
+
+/**
  * Build contract call for batch recording publisher earnings (admin only).
  * Records earnings for two publishers in a single transaction.
  * @param campaignId - The campaign ID (must be > 0)
