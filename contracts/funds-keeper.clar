@@ -222,6 +222,7 @@
     )
 
     (var-set total-released (+ (var-get total-released) amount))
+    (var-set total-releases-count (+ (var-get total-releases-count) u1))
 
     ;; Clarity 4: CONTRACT_OWNER admin wallet issues the transfer
     ;; Transfer AFTER state updates to prevent reentrancy attacks
