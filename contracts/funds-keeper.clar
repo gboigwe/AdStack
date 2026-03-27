@@ -175,6 +175,7 @@
     (available (- (get deposited escrow) (+ (get released escrow) (get refunded escrow))))
     (pub-release (get-publisher-release campaign-id publisher))
   )
+    (asserts! (not (var-get contract-paused)) ERR_CONTRACT_PAUSED)
     (asserts! (is-contract-owner) ERR_NOT_AUTHORIZED)
     (asserts! (> campaign-id u0) ERR_ZERO_CAMPAIGN_ID)
     (asserts! (is-eq (get status escrow) STATUS_ACTIVE) ERR_ESCROW_CLOSED)
