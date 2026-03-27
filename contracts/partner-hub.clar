@@ -360,6 +360,15 @@
       })
     )
 
+    (print {
+      event: "partnership-activity-recorded",
+      partnership-id: partnership-id,
+      campaign-id: campaign-id,
+      views: views,
+      revenue: revenue,
+      timestamp: stacks-block-time
+    })
+
     (ok true)
   )
 )
