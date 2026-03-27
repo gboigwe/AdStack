@@ -32,6 +32,9 @@
 (define-constant STATUS_COMPLETED u2)
 (define-constant STATUS_REFUNDED u3)
 
+;; Configurable constants
+(define-constant BLOCKS_PER_DAY u144)
+
 ;; Minimum escrow amount: 0.1 STX
 (define-constant MIN_ESCROW_AMOUNT u100000)
 ;; Withdrawal cooldown: ~12 blocks (~2 hours)
