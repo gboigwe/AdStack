@@ -181,10 +181,10 @@
     (asserts! (<= amount available) ERR_INSUFFICIENT_BALANCE)
     ;; Prevent release to self (advertiser cannot be publisher)
     (asserts! (not (is-eq publisher (get advertiser escrow))) ERR_INVALID_RECIPIENT)
-    ;; Cooldown check: prevent rapid successive withdrawals
+    ;; Cooldown check: per-publisher-per-campaign to prevent rapid successive withdrawals
     (asserts! (or
-      (is-eq (get last-release-block escrow) u0)
-      (>= (- stacks-block-height (get last-release-block escrow)) WITHDRAWAL_COOLDOWN)
+      (is-eq (get last-release-block pub-release) u0)
+      (>= (- stacks-block-height (get last-release-block pub-release)) WITHDRAWAL_COOLDOWN)
     ) ERR_COOLDOWN_ACTIVE)
 
     ;; Update escrow state BEFORE transfer to prevent reentrancy
