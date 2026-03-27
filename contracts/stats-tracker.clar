@@ -202,6 +202,21 @@
   )
 )
 
+;; Publisher performance metrics: valid/submitted ratio
+(define-read-only (get-publisher-performance (campaign-id uint) (publisher principal))
+  (let ((stats (get-publisher-stats campaign-id publisher)))
+    {
+      views-submitted: (get views-submitted stats),
+      valid-views: (get valid-views stats),
+      last-submit-block: (get last-submit-block stats),
+      validity-ratio: (if (> (get views-submitted stats) u0)
+        (/ (* (get valid-views stats) u10000) (get views-submitted stats))
+        u0
+      ),
+    }
+  )
+)
+
 ;; Combined campaign analytics view for convenient frontend queries
 (define-read-only (get-campaign-view-summary (campaign-id uint))
   (let ((analytics (get-analytics campaign-id)))
