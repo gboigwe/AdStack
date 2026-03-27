@@ -20,6 +20,7 @@
 (define-constant ERR_REPUTATION_OUT_OF_RANGE (err u211))
 (define-constant ERR_VERIFICATION_EXPIRED (err u212))
 (define-constant ERR_ALREADY_SUSPENDED (err u213))
+(define-constant ERR_NOT_SUSPENDED (err u214))
 
 ;; Role constants
 (define-constant ROLE_ADVERTISER u1)
