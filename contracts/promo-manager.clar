@@ -501,10 +501,15 @@
         (var-set total-stx-locked u0)
       )
 
+      ;; Track aggregate completion count
+      (var-set total-campaigns-completed (+ (var-get total-campaigns-completed) u1))
+
       (print {
         event: "campaign-completed",
         campaign-id: campaign-id,
+        advertiser: (get advertiser campaign),
         refundable: remaining,
+        total-spent: (get spent campaign),
         timestamp: stacks-block-time,
       })
       (ok remaining)
