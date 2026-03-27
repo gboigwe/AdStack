@@ -38,6 +38,7 @@
 (define-data-var total-valid-views uint u0)
 (define-data-var contract-paused bool false)
 (define-data-var total-campaigns-tracked uint u0)
+(define-data-var total-spend-recorded uint u0)
 
 ;; --- Data Maps ---
 
