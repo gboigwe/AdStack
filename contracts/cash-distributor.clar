@@ -266,6 +266,14 @@
     (asserts! (>= claimable MIN_PAYOUT_AMOUNT) ERR_MIN_PAYOUT_NOT_MET)
     ;; Prevent single payout from draining contract
     (asserts! (<= claimable MAX_SINGLE_PAYOUT) ERR_INVALID_AMOUNT)
+    ;; Rate limiting: max claims per block
+    (let ((block-claims (default-to { count: u0 } (map-get? claim-counts-per-block { block-height: stacks-block-height }))))
+      (asserts! (< (get count block-claims) MAX_CLAIMS_PER_BLOCK) ERR_MAX_CLAIMS_REACHED)
+      (map-set claim-counts-per-block
+        { block-height: stacks-block-height }
+        { count: (+ (get count block-claims) u1) }
+      )
+    )
 
     ;; Update earnings claimed amount BEFORE transfer to prevent reentrancy
     (map-set publisher-earnings
