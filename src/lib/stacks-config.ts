@@ -121,7 +121,11 @@ export const WITHDRAWAL_COOLDOWN_BLOCKS = 12;
  * Convert a Clarity v4 stacks-block-time Unix timestamp to a JS Date.
  */
 export function blockTimeToDate(blockTime: number | bigint): Date {
-  return new Date(Number(blockTime) * 1000);
+  const timestamp = Number(blockTime);
+  if (timestamp < 0 || !Number.isFinite(timestamp)) {
+    throw new RangeError('blockTimeToDate: blockTime must be a non-negative finite number');
+  }
+  return new Date(timestamp * 1000);
 }
 
 /**
