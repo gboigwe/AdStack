@@ -78,6 +78,9 @@ export function connectContractCall(options: ConnectCallOptions): void {
  * Open a Stacks Connect STX transfer dialog.
  */
 export function connectSTXTransfer(options: ConnectTransferOptions): void {
+  if (!options.recipient) throw new Error('connectSTXTransfer: recipient is required');
+  if (options.amount <= 0n) throw new Error('connectSTXTransfer: amount must be positive');
+
   const network = getStacksNetwork(options.network);
 
   const transferOptions: STXTransferOptions = {
