@@ -164,6 +164,10 @@
   (var-get total-campaigns-tracked)
 )
 
+(define-read-only (get-total-spend-recorded)
+  (var-get total-spend-recorded)
+)
+
 ;; --- Public Functions ---
 
 ;; Submit a view for a campaign (called by publishers)
