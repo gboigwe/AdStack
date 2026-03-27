@@ -30,7 +30,8 @@
 (define-constant MAX_DESCRIPTION_LENGTH u256)
 (define-constant MIN_VOTING_PERIOD u144) ;; ~1 day
 (define-constant MAX_VOTING_PERIOD u4320) ;; ~30 days
-(define-constant QUORUM_THRESHOLD u3) ;; Minimum 3 votes for quorum
+(define-constant QUORUM_THRESHOLD u10) ;; Minimum 10 votes for quorum
+(define-constant MIN_PASSING_MARGIN u2) ;; Must win by at least 2 votes
 
 ;; --- Data Variables ---
 
