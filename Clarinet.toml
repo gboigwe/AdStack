@@ -5,15 +5,16 @@ authors = ["Gbolahan Akande <geakande@gmail.com>"]
 telemetry = true
 cache_dir = "./.cache"
 
-[contracts.promo-manager]
-path = "contracts/promo-manager.clar"
-clarity_version = 4
-epoch = '3.0'
-
 [contracts.user-profiles]
 path = "contracts/user-profiles.clar"
 clarity_version = 4
 epoch = '3.0'
+
+[contracts.promo-manager]
+path = "contracts/promo-manager.clar"
+clarity_version = 4
+epoch = '3.0'
+depends_on = ["user-profiles"]
 
 [contracts.stats-tracker]
 path = "contracts/stats-tracker.clar"
